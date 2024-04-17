@@ -1,0 +1,116 @@
+## Levl-Usecase umsetzen
+
+Grundlegende Optionen
+
+1. eigenes ESS vorschalten und Leistung anpassen
+2. eigene Controller/ESS zwischenschalten und Leistung anpassen
+3. pro ESS ein angepasstes Levl-ESS umsetzen
+4. pro Controller einen angepassten Levl-Controller umsetzen
+
+
+## (1a) Ein eigenes Ess vorschalten
+### Idee: wir schalten ein virtuelles Ess vor die echte Batterie und passen ActivePower an
+* allerdings berücksichtigt der Solver alle ess, dadurch bekommt das echte Ess den Wert Null
+* das virtuelle Ess könnte einen Wert über den Channel setzen, aber das wird im Solver nicht berücksichtigt, nur Controller können Werte setzen
+
+### (1b) Über EssCluster
+
+* die Controller geben über die Channels für die Ess Werte für Active Power vor
+** Beispiel: Balancing Controller
+* der Solver erzeugt aus den Eigenschaften der Ess und aus diesen Werten Constraints
+* es gibt verschiedene Strategien, um die Constraints zu lösen, manche Strategien fügen weitere Constraints hinzu
+** KeepAllEqual verteilt die ActivePower gleichmäßig
+** MoveTowardsTarget berücksichtigt die SoC der Ess und priorisiert Ess mit niedrigem SoC
+
+** setActivePowerLessOrEquals: berücksichtigt keine Constraints
+*** Beispiel: FixStateOfCharge und EssEmergencyCapacityReserve
+*** der zuerst ausgeführte Controller gewinnt, die Constraints des anderen spielen keine Rolle
+** setActivePowerEqualsWithPid: berücksichtigt andere Constraints
+*** Beispiel: Balancing und FixedActivePower
+*** Balancing wollte -30.000 anwenden, aber FixedActivePower gab als Constraint -2.000 vor
+
+* Meta-Ess (Cluster) aggregieren die Channels der enthaltenen Ess und erhalten vom Controller Vorgaben für ActivePower
+** im Solver wird ein Constraint hinzugefügt, dass sich die Summe der enhaltenen Ess und der Wert des Clusters sich aufheben müssen
+
+
+### Können wir EssCluster für Levl nutzen?
+* wir könnten einen LevlCluster schreiben, der beim Aggregieren der Channel-Werte z.B. den tatsächlichen SoC anpasst
+* aber wir können ActivePower nicht reduzieren, weil der Wert, den der Cluster enthält, gleich dem Wert des Ess sein muss
+* wir könnten eine weitere simulierte Batterie in den Cluster aufnehmen, diese könnte dann dazu führen, dass das echte Ess weniger ActivePower empfängt
+* aber die Berechung ist recht komplex und verwendet eine Lernrate (basierend auf dem letzten Wert); so kann man eher nicht erreichen,
+dass ein fester Wert vorgeben wird (so wie wir es eigentlich wollen)
+
+## (2) Über einen eigenen Controller und ein eigenes Ess
+* Vorteile
+** wenig Implementierungsaufwand, nicht abhängig von Controller/Ess-Implementierungen
+* Nachteile: 
+** etwas komplex
+** Versatz um einen Zyklus
+** Levl-Ess hat auch Kapazität und wird vom Solver berücksichtigt
+
+## (3) pro ESS ein Levl-ESS
+* falls wir den SoC anpassen: wie sehen wir den tatsächlichen SoC der Batterie?
+* sind wir ggf. zu spät, d.h. wenn wir nicht alle Leistung verbrauchen, wird der Rest dann auf z.B. das Grid verteilt?
+
+## (4) pro Controller ein angepasster Levl-Controller
+* Bisherige Umsetzung des Levl-Balancing Controllers:
+** Den eigentlichen balancing Controller verwenden um die eigentlichen Werte der Eigenverbrauchsoptimierung zu erhalten
+** Die Batterie mit dem Levl-Balancing Controller steuern und dabei einen Vorgegebenen Wert vom des Echten Controllers abziehen
+* Konkretes Problem dabei:
+** Szenario:
+*** Die PV produziert 30kW Strom, aber unsere Batterie hat nur eine Leistung von 10kW, d.h. 20 kW werden eingespeist.
+*** Wir wollen durch den Levl-Usecase aber zusätzliche 5kW ins Netz einspeisen, also 25kW Einspeisung ins Netz und 5kW Batterie Beladung sind das Ziel.
+*** Der Balancing Controller kennt aber nicht die Batterie Werte und gibt an den Solver 30kW Leistung vor ->
+der Levl-Balancing Controller wird 25kW an den Solver geben -> 10kW Beladung der Batterie und nicht wie gewünscht 5kW
+** Mögliche Läsung: die Batteriegrenzen im Levl-Balancing Controller zu beachten, das heißt den Wert des echten balancing
+Controllers auf 10kW (bzw. -10kW) beschränken und von diesem Wert den Levl-Usecase (5kW) abziehen.
+*** Unklar ob es noch weitere Beschränkungen gibt die berücksichtigt werden müssen
+*** Solver hat eine Lernrate (Ramp up), d.h. die vom Controller vorgegebenen Werte werden erst nach einer Weile erfüllt
+** Ähnliches Problem:
+*** Batterie ist voll, Balancing möchte mit 28 kW laden, wir passen den Wert an, der Solver liefert 0 kW
+**** eigentlich sollte dieser Fall nicht auftreten, wenn unsere Prognose stimmt, kann aber in der Praxis trotzdem passieren
+*** Differenz zum Primär-Usecase ggf. nicht einfach zu bestimmen.
+** weitere Lösungsidee:
+*** könnten wir den Solver ohne die Levl-Constraints laufen lassen? dann müsste aber der LevlController am Schluss ausgeführt werden
+
+## Ansatz
+* LevlController:
+** PUC-Power := Wert des echten Controllers
+** PUC-Power beschränken auf gültiges Intervall (via ess.power die Limits ermitteln)
+*** falls SOC > MAX-Value -> PUC-Power darf nicht negativ sein
+*** falls SOC < MIN-Value -> PUC-Power darf nicht positiv sein
+** schreibe PUC-Power + LUC-Power an Ess
+* LevlWorkflow
+** Actual-Power ermitteln
+** Actual-LUC-Power := Actual-Power - PUC-Power
+** LUC-Power für nächste Iteration festlegen
+
+* funktioniert für
+** Batterie-Limits, mindestens teilweise auch für Learning Rate
+** andere Controller (LimitTotalDischarge etc), aber Reihenfolge ist wichtig (LimitController muss vor unserem sein)
+* funktioniert nicht für
+** Batterie leer/voll, da gibt es einen Ramp down
+
+# Offene Fragen:
+* was passiert mit nicht genutzter Energie? z.B. wenn eine virtuelle Ess ActivePower konsumiert? wird das automatisch eingespeist?
+* wir könnten auch angepasste Versionen aller Controller erstellen. Aber wie spielt der Levl-Use-Case mit z.B. netzdienlicher Beladung zusammen?
+** einfache Variante: wir haben einen LevlBalancingController für unseren UseCase, ggf. werden wir durch die netzdienliche  Beladung überschrieben
+** andernfalls könnte man auch eine Levl-Instanz vom Controller für netzdienliche Beladung aktivieren
+* wie genau müssen wir sein, bzw. wie groß ist die Toleranz?
+** wenn wir 1 kW ins Netz einspeisen sollen, ist die Toleranz z.B. 1%?
+
+# OpenEMS-Verhalten nicht nachvollziehbar
+## Verteilung der Leistung auf mehrere Batterien
+* Szenario:
+ ** eine größere (20 KW), eine kleinere Batterie (10 KW), davor ein ess.Cluster, PV erzeugt 30 KW
+ ** beide Batterien haben 50%
+ ** FixStateOfChargeController mit Zielwert 90%
+ ** erwartet: beide Batterien werden geladen
+ ** Verhalten: eine Batterie wird geladen, eine wird entladen
+ ** wenn nur eines der Ess im Cluster hängt, wird dieses richtig beladen, das andere nicht
+* nach mehrmaligem Neustarten von Edge funktioniert es
+
+## Verhalten des Clusters nicht nachvollziehbar
+* Szenario:
+** FixedSoC mit Zielwert 9%, EmergencyReserve mit Zielwert 90%
+** eine Batterie wird beladen, die andere wird mit dem gleichen Wert entladen

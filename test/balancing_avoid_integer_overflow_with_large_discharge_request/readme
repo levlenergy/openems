@@ -1,0 +1,8 @@
+Checks if a levl charge/discharge request's amount of power to realize does not cause
+an integer overflow, but is stored as a long instead.
+
+Target Power W = 2500000
+Converted to Ws in quarter hour: 2500000 * 900 = 2250000000
+Maximum int is                                   2147483647
+
+With integer overflow, we would get -2044967296

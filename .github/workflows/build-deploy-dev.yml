@@ -1,0 +1,56 @@
+name: build-deploy-dev
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  REGISTRY: ghcr.io
+  NAMESPACE: levlenergy/openems
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: build openems
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          PASSWORD: ${{ secrets.IONOS_CLOUD_GITHUB_PASSWORD }}
+        with:
+          host: 82.165.103.27
+          username: ${{ secrets.IONOS_CLOUD_GITHUB_USER }}
+          key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
+          script_stop: true
+          envs: PASSWORD
+          script: |
+            printf '%s\n' "$PASSWORD" | sudo -p "" -S echo login
+            cd /opt/containers/openems
+            git reset --hard @{u}
+            git clean -fx
+            git pull
+            bash gradlew buildEdge
+            bash gradlew buildBackend
+            bash gradlew -p io.openems.edge.levl.controller test
+            bash gradlew -p io.openems.edge.levl.simulator test
+            sudo cp build/*.jar /opt/containers/levl/infrastructure/dev/openems
+            # undo changes
+            git checkout io.openems.backend.application/BackendApp.bndrun
+            git checkout io.openems.edge.application/EdgeApp.bndrun
+            # run e2e tests
+            cd test
+            # todo remove || true
+            bash verify.sh suiteCi || true
+      - name: deploy openems
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          PASSWORD: ${{ secrets.IONOS_CLOUD_GITHUB_PASSWORD }}
+        with:
+          host: 82.165.103.27
+          username: ${{ secrets.IONOS_CLOUD_GITHUB_USER }}
+          key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
+          script_stop: true
+          envs: PASSWORD
+          script: |
+            printf '%s\n' "$PASSWORD" | sudo -p "" -S echo login
+            cd /opt/containers/levl/infrastructure/dev/openems
+            sudo bash redeploy.sh

@@ -1,0 +1,27 @@
+Bundle-Name: Levl Balancing Controller
+Bundle-Vendor: Levl
+Bundle-License: https://opensource.org/licenses/EPL-2.0
+Bundle-Version: 1.0.0.${tstamp}
+
+-buildpath: \
+	${buildpath},\
+	io.openems.common,\
+	io.openems.edge.common,\
+	io.openems.edge.controller.api,\
+	io.openems.edge.ess.api,\
+	io.openems.edge.meter.api
+
+-testpath: \
+    slf4j.simple,\
+	assertj-core,\
+	junit-jupiter-engine,\
+	junit-jupiter-api,\
+	junit-jupiter-params,\
+	junit-platform-suite,\
+	junit-platform-engine,\
+	junit-platform-commons,\
+	org.mockito.mockito-core;version=2.17.0,\
+	net.bytebuddy.byte-buddy;version=1.8.5,\
+	net.bytebuddy.byte-buddy-agent;version=1.8.5,\
+	org.objenesis;version=2.6.0
+
