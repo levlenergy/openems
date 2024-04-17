@@ -9,7 +9,7 @@ FAIL_COUNT=0
 
 FAILING_TESTS=
 
-OPENEMS_EXECUTION_TIME_SECONDS=10
+OPENEMS_EXECUTION_TIME_SECONDS=14
 
 EXPECTED_FILENAME_LOCAL=expected
 EXPECTED_FILENAME_CI=expectedci
@@ -18,7 +18,7 @@ LEVL_OUTPUT_NAME="levl.out"
 
 OPENEMS_URL=http://localhost:8084/jsonrpc
 EXPECTED_FILENAME=$EXPECTED_FILENAME_LOCAL
-OPENEMS_WAIT_BEFORE_CURL_SECONDS=5
+OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
 
 function extractTestName() {
   withoutConfig=${1/config_/}
@@ -39,7 +39,8 @@ function run() {
   timeout $OPENEMS_EXECUTION_TIME_SECONDS java -Dfelix.cm.dir=$(pwd)/$configDir -jar ../../build/openems-edge.jar >$FULL_OUTPUT_NAME &
   pid=$!
   wait $pid
-  cat $FULL_OUTPUT_NAME | grep levlWorkflow0 | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' >$LEVL_OUTPUT_NAME
+  cat $FULL_OUTPUT_NAME | grep -a levlWorkflow0 | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' >$LEVL_OUTPUT_NAME
+  sleep 2
 }
 
 function runWithRequest() {
@@ -54,7 +55,8 @@ function runWithRequest() {
   curl --location --connect-timeout 15 --request POST "$OPENEMS_URL" --header 'Authorization: Basic YWRtaW46YWRtaW4=' --header 'Content-Type: application/json' -d @$levlRequest
   echo
   wait $pid
-  cat $FULL_OUTPUT_NAME | grep -E 'remaining|levlWorkflow' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' | sed -e 's/.*\(remaining.*\).*/\1/' > $LEVL_OUTPUT_NAME
+  cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' | sed -e 's/.*\(remaining.*\).*/\1/' > $LEVL_OUTPUT_NAME
+  sleep 2
 }
 
 function runAndLogOutput() {
@@ -108,7 +110,7 @@ function check {
     fi
     line=$(echo $line | tr -d '\r')
     validLines=$((validLines + 1))
-    if ! grep -Fq "$line" $LEVL_OUTPUT_NAME; then
+    if ! grep -Fqa "$line" $LEVL_OUTPUT_NAME; then
       echo "$testName: ERROR: missing in $LEVL_OUTPUT_NAME:"
       echo "    $line"
       echo "actual output:"
