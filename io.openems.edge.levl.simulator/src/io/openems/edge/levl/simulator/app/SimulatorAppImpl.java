@@ -69,16 +69,16 @@ import io.openems.edge.levl.simulator.datasource.api.SimulatorDatasource;
 import io.openems.edge.timedata.api.Timedata;
 import io.openems.edge.timedata.api.Timeranges;
 
-//@Designate(ocd = Config.class, factory = false)
-//@Component(//
-//		name = SimulatorAppImpl.SINGLETON_SERVICE_PID, //
-//		immediate = true, //
-//		configurationPolicy = ConfigurationPolicy.REQUIRE //
-//)
-//@EventTopics({ //
-//		EdgeEventConstants.TOPIC_CYCLE_AFTER_PROCESS_IMAGE, //
-//		EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE //
-//})
+@Designate(ocd = Config.class, factory = false)
+@Component(//
+		name = SimulatorAppImpl.SINGLETON_SERVICE_PID, //
+		immediate = true, //
+		configurationPolicy = ConfigurationPolicy.REQUIRE //
+)
+@EventTopics({ //
+		EdgeEventConstants.TOPIC_CYCLE_AFTER_PROCESS_IMAGE, //
+		EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE //
+})
 public class SimulatorAppImpl extends AbstractOpenemsComponent
 		implements SimulatorApp, SimulatorDatasource, ClockProvider, OpenemsComponent, JsonApi, EventHandler, Timedata {
 

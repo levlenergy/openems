@@ -36,15 +36,15 @@ import io.openems.edge.levl.simulator.DataContainer;
 import io.openems.edge.timedata.api.Timedata;
 import io.openems.edge.timedata.api.Timeranges;
 
-//@Designate(ocd = Config.class, factory = true)
-//@Component(//
-//		name = "Simulator.Timedata", //
-//		immediate = true, //
-//		configurationPolicy = ConfigurationPolicy.REQUIRE //
-//)
-//@EventTopics({ //
-//		EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE //
-//})
+@Designate(ocd = Config.class, factory = true)
+@Component(//
+		name = "Simulator.Timedata", //
+		immediate = true, //
+		configurationPolicy = ConfigurationPolicy.REQUIRE //
+)
+@EventTopics({ //
+		EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE //
+})
 public class SimulatorTimedataImpl extends AbstractOpenemsComponent
 		implements SimulatorTimedata, Timedata, OpenemsComponent {
 
