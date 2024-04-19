@@ -113,7 +113,7 @@ AppCenterMetadata.UiData {
 
 	@Override
 	public User authenticate(String username, String password) throws OpenemsNamedException {
-        if (!authenticateAdmin(username, password)) {
+        if (!this.authenticateAdmin(username, password)) {
             throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
         }
         var name = "User #" + this.nextUserId.incrementAndGet();
@@ -126,7 +126,7 @@ AppCenterMetadata.UiData {
 
 	@Override
 	public User authenticate(String token) throws OpenemsNamedException {
-        if (!authenticateAdmin(ADMIN_USERNAME, token)) {
+        if (!this.authenticateAdmin(ADMIN_USERNAME, token)) {
             throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
         }
         for (var user : this.users.values()) {
@@ -150,7 +150,7 @@ AppCenterMetadata.UiData {
 	
     private boolean authenticateAdmin(String username, String password) {
         try {
-            return ADMIN_USERNAME.equals(username) && HASHED_ADMIN_PASSWORD.equals(hashPassword(password));
+            return ADMIN_USERNAME.equals(username) && HASHED_ADMIN_PASSWORD.equals(this.hashPassword(password));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             return false;
         }
