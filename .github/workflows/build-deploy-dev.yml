@@ -29,9 +29,9 @@ jobs:
             git reset --hard @{u}
             git clean -fx
             git pull
-            bash gradlew buildNeeded
-            bash gradlew buildEdge
-            bash gradlew buildBackend
+            bash gradlew build
+            bash gradlew resolve
+            bash gradlew buildEdge buildBackend
             bash gradlew -p io.openems.edge.levl.controller test
             bash gradlew -p io.openems.edge.levl.simulator test
             sudo cp build/*.jar /opt/containers/levl/infrastructure/dev/openems
