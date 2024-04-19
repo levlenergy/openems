@@ -27,7 +27,7 @@ jobs:
             printf '%s\n' "$PASSWORD" | sudo -p "" -S echo login
             cd /opt/containers/openems
             git reset --hard @{u}
-            git clean -fx
+            git clean -fdx
             git pull
             bash gradlew build
             bash gradlew resolve
