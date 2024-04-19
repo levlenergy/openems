@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -17,7 +18,7 @@ jobs:
         env:
           PASSWORD: ${{ secrets.IONOS_CLOUD_GITHUB_PASSWORD }}
         with:
-          host: 82.165.103.27
+          host: ${{ secrets.OPENEMS_SERVER_IP_ADDRESS }}
           username: ${{ secrets.IONOS_CLOUD_GITHUB_USER }}
           key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
           script_stop: true
@@ -46,7 +47,7 @@ jobs:
         env:
           PASSWORD: ${{ secrets.IONOS_CLOUD_GITHUB_PASSWORD }}
         with:
-          host: 82.165.103.27
+          host: ${{ secrets.OPENEMS_SERVER_IP_ADDRESS }}
           username: ${{ secrets.IONOS_CLOUD_GITHUB_USER }}
           key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
           script_stop: true
