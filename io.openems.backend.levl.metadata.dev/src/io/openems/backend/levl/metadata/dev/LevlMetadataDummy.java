@@ -62,7 +62,7 @@ import io.openems.common.utils.ThreadPoolUtils;
 
 @Designate(ocd = Config.class, factory = false)
 @Component(//
-		name = "Metadata.Dummy", //
+		name = "Levl.Metadata.Dev", //
 		configurationPolicy = ConfigurationPolicy.REQUIRE, //
 		immediate = true //
 )
@@ -95,7 +95,7 @@ AppCenterMetadata.UiData {
 
 	@Activate
 	public LevlMetadataDummy(@Reference EventAdmin eventadmin) {
-		super("Metadata.Dummy");
+		super("Levl.Metadata.Dev");
 		this.eventAdmin = eventadmin;
 		this.logInfo(this.log, "Activate");
 
