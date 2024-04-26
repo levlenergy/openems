@@ -10,41 +10,45 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class LevlComponentManagerTest {
-    private ComponentManager openEmsComponentManager = mock(ComponentManager.class);
-    private LevlComponentManager underTest = new LevlComponentManager(openEmsComponentManager);
+	private ComponentManager openEmsComponentManager = mock(ComponentManager.class);
+	private LevlComponentManager underTest = new LevlComponentManager(this.openEmsComponentManager);
 
-    private String component1Key = "component1";
-    private String component2Key = "component2";
+	private String component1Key = "component1";
+	private String component2Key = "component2";
 
-    private OpenemsComponent component1 = mock(OpenemsComponent.class);
-    private OpenemsComponent component2 = mock(OpenemsComponent.class);
-    private OpenemsComponent componentLevl = mock(OpenemsComponent.class);
+	private OpenemsComponent component1 = mock(OpenemsComponent.class);
+	private OpenemsComponent component2 = mock(OpenemsComponent.class);
+	private OpenemsComponent componentLevl = mock(OpenemsComponent.class);
 
-    @Test
-    public void getComponent_ComponentNotFound() throws OpenemsError.OpenemsNamedException {
-        assertThat(underTest.<OpenemsComponent>getComponent(component1Key)).isNull();
-    }
-    @Test
-    public void getComponent_GetOverwrittenComponent() throws OpenemsError.OpenemsNamedException {
-        underTest.overwriteComponent(component1Key, component1);
+	@Test
+	public void getComponent_ComponentNotFound() throws OpenemsError.OpenemsNamedException {
+		assertThat(this.underTest.<OpenemsComponent>getComponent(this.component1Key)).isNull();
+	}
 
-        assertThat(underTest.<OpenemsComponent>getComponent(component1Key)).isSameAs(component1);
-    }
+	@Test
+	public void getComponent_GetOverwrittenComponent() throws OpenemsError.OpenemsNamedException {
+		this.underTest.overwriteComponent(this.component1Key, this.component1);
 
-    @Test
-    public void getComponent_ReturnsOpenEmsComponent_IfNoOverwrittenComponent() throws OpenemsError.OpenemsNamedException {
-        when(openEmsComponentManager.getComponent(component2Key)).thenReturn(component2);
-        underTest.overwriteComponent(component1Key, component1);
+		assertThat(this.underTest.<OpenemsComponent>getComponent(this.component1Key)).isSameAs(this.component1);
+	}
 
-        assertThat(underTest.<OpenemsComponent>getComponent(component1Key)).isSameAs(component1);
-        assertThat(underTest.<OpenemsComponent>getComponent(component2Key)).isSameAs(component2);
-    }
-    @Test
-    public void getComponent_OverwrittenComponent_HasPrecedenceOverOpenEmsComponent() throws OpenemsError.OpenemsNamedException {
-        when(openEmsComponentManager.getComponent(component1Key)).thenReturn(component1);
-        underTest.overwriteComponent(component1Key, componentLevl);
+	@Test
+	public void getComponent_ReturnsOpenEmsComponent_IfNoOverwrittenComponent()
+			throws OpenemsError.OpenemsNamedException {
+		when(this.openEmsComponentManager.getComponent(this.component2Key)).thenReturn(this.component2);
+		this.underTest.overwriteComponent(this.component1Key, this.component1);
 
-        assertThat(underTest.<OpenemsComponent>getComponent(component1Key)).isSameAs(componentLevl);
-    }
+		assertThat(this.underTest.<OpenemsComponent>getComponent(this.component1Key)).isSameAs(this.component1);
+		assertThat(this.underTest.<OpenemsComponent>getComponent(this.component2Key)).isSameAs(this.component2);
+	}
+
+	@Test
+	public void getComponent_OverwrittenComponent_HasPrecedenceOverOpenEmsComponent()
+			throws OpenemsError.OpenemsNamedException {
+		when(this.openEmsComponentManager.getComponent(this.component1Key)).thenReturn(this.component1);
+		this.underTest.overwriteComponent(this.component1Key, this.componentLevl);
+
+		assertThat(this.underTest.<OpenemsComponent>getComponent(this.component1Key)).isSameAs(this.componentLevl);
+	}
 
 }

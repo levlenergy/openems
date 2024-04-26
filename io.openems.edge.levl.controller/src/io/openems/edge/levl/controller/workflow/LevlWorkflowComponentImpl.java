@@ -24,7 +24,12 @@ import io.openems.edge.levl.controller.workflow.storage.LevlWorkflowStateConfigP
 import io.openems.edge.meter.api.ElectricityMeter;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.event.propertytypes.EventTopics;
@@ -36,180 +41,183 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-
 @Designate(ocd = Config.class, factory = true)
 @Component(//
-        name = "Levl.Workflow", // This name has to be kept for compatibility reasons
-        immediate = true, //
-        configurationPolicy = ConfigurationPolicy.REQUIRE //
+		name = "Levl.Workflow", // This name has to be kept for compatibility reasons
+		immediate = true, //
+		configurationPolicy = ConfigurationPolicy.REQUIRE //
 )
 @EventTopics({ //
-        EdgeEventConstants.TOPIC_CYCLE_BEFORE_CONTROLLERS, //
-        EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE, //
+		EdgeEventConstants.TOPIC_CYCLE_BEFORE_CONTROLLERS, //
+		EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE, //
 })
-public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent implements EventHandler, OpenemsComponent, JsonApi, LevlWorkflowReference, LevlWorkflowComponent {
+public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
+		implements EventHandler, OpenemsComponent, JsonApi, LevlWorkflowReference, LevlWorkflowComponent {
 
-    private Config config;
-    private final Logger log = LoggerFactory.getLogger(LevlWorkflowComponentImpl.class);
+	private Config config;
+	private final Logger log = LoggerFactory.getLogger(LevlWorkflowComponentImpl.class);
 
-    @Reference
-    ComponentManager componentManager;
-    @Reference
-    ConfigurationAdmin cm;
-    @Reference
-    ManagedSymmetricEss ess;
-    @Reference
-    ElectricityMeter meter;
+	@Reference
+	protected ComponentManager componentManager;
+	@Reference
+	protected ConfigurationAdmin cm;
+	@Reference 
+	protected ManagedSymmetricEss ess;
+	@Reference
+	protected ElectricityMeter meter;
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
-    volatile LevlWorkflowStateConfigProvider levlWorkflowSavedState;
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	protected volatile LevlWorkflowStateConfigProvider levlWorkflowSavedState;
 
-    boolean wasRestoredFromConfig = false;
-    LevlWorkflowState state = new LevlWorkflowState();
+	private boolean wasRestoredFromConfig = false;
+	protected LevlWorkflowState levlState = new LevlWorkflowState();
 
+	public LevlWorkflowComponentImpl() {
+		super(//
+				OpenemsComponent.ChannelId.values(), //
+				Controller.ChannelId.values(), //
+				LevlWorkflowComponent.ChannelId.values() //
+		);
+	}
 
-    public LevlWorkflowComponentImpl() {
-        super(//
-                OpenemsComponent.ChannelId.values(), //
-                Controller.ChannelId.values(), //
-                LevlWorkflowComponent.ChannelId.values() //
-        );
-    }
+	@Activate
+	protected void activate(ComponentContext context, Config config) {
+		super.activate(context, config.id(), config.alias(), config.enabled());
+		this.config = config;
+		if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "ess", config.ess_id())) {
+			return;
+		}
+		if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "meter", config.meter_id())) {
+			return;
+		}
+		if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "levlWorkflowSavedState",
+				config.levl_workflow_state_id())) {
+			return;
+		}
+	}
 
-    @Activate
-    protected void activate(ComponentContext context, Config config) {
-        super.activate(context, config.id(), config.alias(), config.enabled());
-        this.config = config;
-        if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "ess", config.ess_id())) {
-            return;
-        }
-        if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "meter", config.meter_id())) {
-            return;
-        }
-        if (OpenemsComponent.updateReferenceFilter(this.cm, this.servicePid(), "levlWorkflowSavedState", config.levl_workflow_state_id())) {
-            return;
-        }
-    }
+	@Override
+	@Deactivate
+	protected void deactivate() {
+		super.deactivate();
+	}
 
-    @Override
-    @Deactivate
-    protected void deactivate() {
-        super.deactivate();
-    }
+	// Passiert jede Sekunde durch OpenEMS
+	@Override
+	public void handleEvent(Event event) {
+		this.tryToRestoreStateIfRequired();
+		this.levlState.updateState();
+		switch (event.getTopic()) {
+		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_CONTROLLERS -> this.levlState.determineNextDischargePower();
+		case EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE -> {
+			Optional<Integer> actualPowerW = this.ess.getDebugSetActivePowerChannel().getNextValue().asOptional();
+			this.levlState.checkActualDischargePower(actualPowerW);
+			this.updateChannels(actualPowerW);
+			this.saveState();
+		}
+		}
+	}
 
+	private void updateChannels(Optional<Integer> actualPowerW) {
+		actualPowerW.ifPresent(this::_setActualDischargePowerW);
+		_setRealizedPowerW(this.levlState.getLastCompletedRequestDischargePowerW());
+		_setPrimaryUseCaseDischargePowerW(this.levlState.getPrimaryUseCaseActivePowerW());
+		_setLevlDischargePowerW(this.levlState.getActualLevlPowerW());
+		_setLastControlRequestTimestamp(this.levlState.getLastCompletedRequestTimestamp());
+	}
 
-    // Passiert jede Sekunde durch OpenEMS
-    @Override
-    public void handleEvent(Event event) {
-        tryToRestoreStateIfRequired();
-        state.updateState();
-        switch (event.getTopic()) {
-            case EdgeEventConstants.TOPIC_CYCLE_BEFORE_CONTROLLERS -> state.determineNextDischargePower();
-            case EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE -> {
-                Optional<Integer> actualPowerW = ess.getDebugSetActivePowerChannel().getNextValue().asOptional();
-                state.checkActualDischargePower(actualPowerW);
-                updateChannels(actualPowerW);
-                saveState();
-            }
-        }
-    }
+	@Override
+	public void setPrimaryUseCaseActivePowerW(int originalActivePowerW) {
+		this.levlState.setPrimaryUseCaseActivePowerW(originalActivePowerW);
+	}
 
-    private void updateChannels(Optional<Integer> actualPowerW) {
-        actualPowerW.ifPresent(this::_setActualDischargePowerW);
-        _setRealizedPowerW(state.getLastCompletedRequestDischargePowerW());
-        _setPrimaryUseCaseDischargePowerW(state.getPrimaryUseCaseActivePowerW());
-        _setLevlDischargePowerW(state.getActualLevlPowerW());
-        _setLastControlRequestTimestamp(state.getLastCompletedRequestTimestamp());
-    }
+	@Override
+	public int getNextDischargePowerW() {
+		return this.levlState.getNextDischargePowerW();
+	}
 
-    @Override
-    public void setPrimaryUseCaseActivePowerW(int originalActivePowerW) {
-        state.setPrimaryUseCaseActivePowerW(originalActivePowerW);
-    }
+	@Override
+	public Limit getLevlUseCaseConstraints() {
+		return this.levlState.getLevlUseCaseConstraints(this.meter.getActivePower(), this.ess.getSoc());
+	}
 
-    @Override
-    public int getNextDischargePowerW() {
-        return state.getNextDischargePowerW();
-    }
+	@Override
+	public Limit determinePrimaryUseCaseConstraints() {
+		int minPower = this.ess.getPower().getMinPower(this.ess, Phase.ALL, Pwr.ACTIVE);
+		int maxPower = this.ess.getPower().getMaxPower(this.ess, Phase.ALL, Pwr.ACTIVE);
+		return this.levlState.determinePrimaryUseCaseConstraints(this.ess.getSoc(), this.ess.getCapacity(), minPower,
+				maxPower);
+	}
 
-    @Override
-    public Limit getLevlUseCaseConstraints() {
-        return state.getLevlUseCaseConstraints(meter.getActivePower(), ess.getSoc());
-    }
+	@Override
+	public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request)
+			throws OpenemsError.OpenemsNamedException {
+		if (LevlControlRequest.METHOD.equals(request.getMethod())) {
+			var levlControlRequest = LevlControlRequest.from(request);
+			this.levlState.handleRequest(levlControlRequest, this.config.physical_soc_lower_bound_percent(),
+					this.config.physical_soc_upper_bound_percent());
+			return CompletableFuture.completedFuture(JsonrpcResponseSuccess
+					.from(this.generateResponse(request.getId(), levlControlRequest.getLevlRequestId())));
+		}
+		throw OpenemsError.JSONRPC_UNHANDLED_METHOD.exception(request.getMethod());
+	}
 
-    @Override
-    public Limit determinePrimaryUseCaseConstraints() {
-        int minPower = ess.getPower().getMinPower(ess, Phase.ALL, Pwr.ACTIVE);
-        int maxPower = ess.getPower().getMaxPower(ess, Phase.ALL, Pwr.ACTIVE);
-        return state.determinePrimaryUseCaseConstraints(ess.getSoc(), ess.getCapacity(), minPower, maxPower);
-    }
+	private JsonObject generateResponse(UUID requestId, String levlRequestId) {
+		JsonObject response = new JsonObject();
+		var result = new JsonObject();
+		result.addProperty("levlRequestId", levlRequestId);
+		response.addProperty("id", requestId.toString());
+		response.add("result", result);
+		return response;
+	}
 
-    @Override
-    public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request) throws OpenemsError.OpenemsNamedException {
-        if (LevlControlRequest.METHOD.equals(request.getMethod())) {
-            var levlControlRequest = LevlControlRequest.from(request);
-            state.handleRequest(levlControlRequest, config.physical_soc_lower_bound_percent(), config.physical_soc_upper_bound_percent());
-            return CompletableFuture.completedFuture(JsonrpcResponseSuccess.from(generateResponse(request.getId(), levlControlRequest.getLevlRequestId())));
-        }
-        throw OpenemsError.JSONRPC_UNHANDLED_METHOD.exception(request.getMethod());
-    }
+	public void saveState() {
+		var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
+		if (currentLevlWorkflowSavedState == null) {
+			return;
+		}
+		try {
+			var stateMemento = this.levlState.save();
+			var properties = new LevlWorkflowStateConverter().asProperties(stateMemento);
+			var request = new UpdateComponentConfigRequest(currentLevlWorkflowSavedState.id(), properties);
+			try {
+				// TODO: 14.02.2024 Dennis: Was wird hier gemacht? Hier wird auch ein
+				// jsonRpcRequest erstellt?
+				var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
+				var response = this.componentManager.handleJsonrpcRequest(user, request);
+				response.whenComplete((r, e) -> {
+					if (e != null) {
+						this.log.error("### could not save state to config: " + e.getMessage());
+					}
+				});
+			} catch (OpenemsError.OpenemsNamedException e) {
+				throw new RuntimeException(e);
+			}
+		} catch (Exception e) {
+			this.log.error("### could not save state to config: " + e.getMessage());
 
-    private JsonObject generateResponse(UUID requestId, String levlRequestId) {
-        JsonObject response = new JsonObject();
-        var result = new JsonObject();
-        result.addProperty("levlRequestId", levlRequestId);
-        response.addProperty("id", requestId.toString());
-        response.add("result", result);
-        return response;
-    }
+		}
+	}
 
+	void tryToRestoreStateIfRequired() {
+		if (this.wasRestoredFromConfig) {
+			return;
+		}
 
-    public void saveState() {
-        var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
-        if (currentLevlWorkflowSavedState == null) {
-            return;
-        }
-        try {
-            var stateMemento = state.save();
-            var properties = new LevlWorkflowStateConverter().asProperties(stateMemento);
-            var request = new UpdateComponentConfigRequest(currentLevlWorkflowSavedState.id(), properties);
-            try {
-                // TODO: 14.02.2024 Dennis: Was wird hier gemacht? Hier wird auch ein jsonRpcRequest erstellt?
-                var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
-                var response = componentManager.handleJsonrpcRequest(user, request);
-                response.whenComplete((r, e) -> {
-                    if (e != null) {
-                        log.error("### could not save state to config: " + e.getMessage());
-                    }
-                });
-            } catch (OpenemsError.OpenemsNamedException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (Exception e) {
-            log.error("### could not save state to config: " + e.getMessage());
-
-        }
-    }
-
-    void tryToRestoreStateIfRequired() {
-        if (wasRestoredFromConfig) {
-            return;
-        }
-
-        var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
-        if (currentLevlWorkflowSavedState == null) {
-            return;
-        }
-        try {
-            var configState = currentLevlWorkflowSavedState.getConfig();
-            if (configState != null) {
-                state.restore(new LevlWorkflowStateConverter().levlWorkflowComponentFromConfig(configState));
-                log.info("### restored state from config");
-                state.initAfterRestore();
-                wasRestoredFromConfig = true;
-            }
-        } catch (Exception e) {
-            log.error("### could not restore state from config: " + e.getMessage());
-        }
-    }
+		var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
+		if (currentLevlWorkflowSavedState == null) {
+			return;
+		}
+		try {
+			var configState = currentLevlWorkflowSavedState.getConfig();
+			if (configState != null) {
+				this.levlState.restore(new LevlWorkflowStateConverter().levlWorkflowComponentFromConfig(configState));
+				this.log.info("### restored state from config");
+				this.levlState.initAfterRestore();
+				this.wasRestoredFromConfig = true;
+			}
+		} catch (Exception e) {
+			this.log.error("### could not restore state from config: " + e.getMessage());
+		}
+	}
 }

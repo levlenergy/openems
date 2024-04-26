@@ -13,10 +13,12 @@ import io.openems.edge.levl.controller.controllers.common.LevlWorkflowReference;
 import io.openems.edge.levl.controller.controllers.common.ReadOnlyManagedSymmetricEss;
 import io.openems.edge.levl.controller.workflow.LevlControllerAction;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -28,10 +30,8 @@ import java.lang.reflect.InvocationTargetException;
 )
 public class LevlControllerEssPeakshavingImpl extends AbstractOpenemsComponent implements Controller, OpenemsComponent, ControllerEssPeakShaving {
 
-    private final Logger log = LoggerFactory.getLogger(LevlControllerEssPeakshavingImpl.class);
-
     @Reference
-    ComponentManager componentManager;
+    protected ComponentManager componentManager;
 
     @Reference
     protected ManagedSymmetricEss ess;
@@ -60,18 +60,18 @@ public class LevlControllerEssPeakshavingImpl extends AbstractOpenemsComponent i
     protected void activate(ComponentContext context, Config config) {
         super.activate(context, config.id(), config.alias(), config.enabled());
         this.config = config;
-        realController = createRealController();
-        levlControllerAction = new LevlControllerAction(ess, levlWorkflow);
+        this.realController = this.createRealController();
+        this.levlControllerAction = new LevlControllerAction(this.ess, this.levlWorkflow);
     }
 
     private ControllerEssPeakShavingImpl createRealController() {
-        wrappedEss = new ReadOnlyManagedSymmetricEss(ess);
-        levlComponentManager = new LevlComponentManager(componentManager);
-        levlComponentManager.overwriteComponent(ess.id(), wrappedEss);
+        this.wrappedEss = new ReadOnlyManagedSymmetricEss(this.ess);
+        this.levlComponentManager = new LevlComponentManager(this.componentManager);
+        this.levlComponentManager.overwriteComponent(this.ess.id(), this.wrappedEss);
         try {
             var result = new ControllerEssPeakShavingImpl();
-            ReflectionUtils.setAttribute(ControllerEssPeakShavingImpl.class, result, "config", config);
-            ReflectionUtils.setAttribute(ControllerEssPeakShavingImpl.class, result, "componentManager", levlComponentManager);
+            ReflectionUtils.setAttribute(ControllerEssPeakShavingImpl.class, result, "config", this.config);
+            ReflectionUtils.setAttribute(ControllerEssPeakShavingImpl.class, result, "componentManager", this.levlComponentManager);
             return result;
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -86,11 +86,11 @@ public class LevlControllerEssPeakshavingImpl extends AbstractOpenemsComponent i
 
     @Override
     public void run() throws OpenemsNamedException {
-        wrappedEss.reset();
-        realController.run();
-        Integer originalUnconstrainedActivePower = wrappedEss.getReceivedActivePowerEqualsWithPid();
+    	this.wrappedEss.reset();
+        this.realController.run();
+        Integer originalUnconstrainedActivePower = this.wrappedEss.getReceivedActivePowerEqualsWithPid();
         if (originalUnconstrainedActivePower != null) {
-            levlControllerAction.onlyIncreaseAbsolutePower(originalUnconstrainedActivePower);
+        	this.levlControllerAction.onlyIncreaseAbsolutePower(originalUnconstrainedActivePower);
         }
     }
 }

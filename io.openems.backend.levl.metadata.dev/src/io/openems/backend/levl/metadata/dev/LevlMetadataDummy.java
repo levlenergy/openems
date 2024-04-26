@@ -76,7 +76,7 @@ AppCenterMetadata.UiData {
     public static final String ADMIN_USERNAME = "levlAdminEms";
     @Reference
     private ConfigurationAdmin cm;
-    
+
     private static final Pattern NAME_NUMBER_PATTERN = Pattern.compile("[^0-9]+([0-9]+)$");
 
 	private final Logger log = LoggerFactory.getLogger(LevlMetadataDummy.class);
@@ -147,7 +147,7 @@ AppCenterMetadata.UiData {
 		}
 		throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
 	}
-	
+
     private boolean authenticateAdmin(String username, String password) {
         try {
             return ADMIN_USERNAME.equals(username) && HASHED_ADMIN_PASSWORD.equals(this.hashPassword(password));
@@ -313,7 +313,7 @@ AppCenterMetadata.UiData {
 	public Optional<String> getSerialNumberForEdge(Edge edge) {
 		throw new UnsupportedOperationException("DummyMetadata.getSerialNumberForEdge() is not implemented");
 	}
-	
+
 	@Override
 	public UserAlertingSettings getUserAlertingSettings(String edgeId, String userId) throws OpenemsException {
 		throw new UnsupportedOperationException("DummyMetadata.getUserAlertingSettings() is not implemented");
@@ -406,7 +406,7 @@ AppCenterMetadata.UiData {
 	public Optional<Level> getSumState(String edgeId) {
 		throw new UnsupportedOperationException("DummyMetadata.getSumState() is not implemented");
 	}
-	
+
 	@Override
 	public void logGenericSystemLog(GenericSystemLog systemLog) {
 		this.logInfo(this.log,

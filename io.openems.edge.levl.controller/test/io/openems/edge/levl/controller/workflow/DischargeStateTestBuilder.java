@@ -21,7 +21,7 @@ public final class DischargeStateTestBuilder {
         return new DischargeStateTestBuilder();
     }
 
-    public static DischargeStateTestBuilder Default() {
+	public static DischargeStateTestBuilder Default() {
         return DischargeStateTestBuilder.aDischargeState()
                 .withTotalRealizedDischargeEnergyWs(10000)
                 .withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(9000)
@@ -86,15 +86,15 @@ public final class DischargeStateTestBuilder {
     }
 
     public DischargeState build() {
-        return new DischargeState(totalRealizedDischargeEnergyWs,
-                totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
-                currentRequestRemainingDischargeEnergyWs,
-                currentRequestRealizedDischargeEnergyWs,
-                lastCompletedRequestRealizedDischargeEnergyWs,
-                currentEfficiencyPercent,
-                nextRequestEfficiencyPercent,
-                lastCompletedRequestTimestamp,
-                request,
-                nextRequest);
+        return new DischargeState(this.totalRealizedDischargeEnergyWs,
+        		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
+        		this.currentRequestRemainingDischargeEnergyWs,
+        		this.currentRequestRealizedDischargeEnergyWs,
+        		this.lastCompletedRequestRealizedDischargeEnergyWs,
+        		this.currentEfficiencyPercent,
+        		this.nextRequestEfficiencyPercent,
+        		this.lastCompletedRequestTimestamp,
+        		this.request,
+        		this.nextRequest);
     }
 }

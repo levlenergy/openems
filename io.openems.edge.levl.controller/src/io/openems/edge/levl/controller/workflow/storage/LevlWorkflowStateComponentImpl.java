@@ -21,9 +21,6 @@ import org.slf4j.LoggerFactory;
 )
 public class LevlWorkflowStateComponentImpl extends AbstractOpenemsComponent implements OpenemsComponent, LevlWorkflowStateConfigProvider {
 
-    private final Logger log = LoggerFactory.getLogger(LevlWorkflowStateComponentImpl.class);
-
-
     private Config config;
 
 
@@ -50,6 +47,6 @@ public class LevlWorkflowStateComponentImpl extends AbstractOpenemsComponent imp
 
     @Override
     public Config getConfig() {
-        return config;
+        return this.config;
     }
 }

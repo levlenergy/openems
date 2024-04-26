@@ -14,8 +14,8 @@ public class UnitsTest {
     private static Stream<Arguments> provideData() {
         return Stream.of(
                 Arguments.of(7200, 2.0, "exact result"),
-                Arguments.of(7199, 7199.0/3600, "one ws missing" ),
-                Arguments.of(7201, 7201.0/3600, "one ws too much" )
+                Arguments.of(7199, 7199.0 / 3600, "one ws missing"),
+                Arguments.of(7201, 7201.0 / 3600, "one ws too much")
         );
     }
 

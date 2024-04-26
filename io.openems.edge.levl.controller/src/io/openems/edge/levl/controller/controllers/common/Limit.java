@@ -18,30 +18,31 @@ public record Limit(int minPower, int maxPower) {
     }
 
     public LimitMemento save() {
-        return new LimitMemento(minPower, maxPower);
+        return new LimitMemento(this.minPower, this.maxPower);
     }
+    
     public static Limit restore(LimitMemento memento) {
         return new Limit(memento.minPower, memento.maxPower);
     }
 
     public int apply(int value) {
-        return Math.max(Math.min(value, maxPower), minPower);
+        return Math.max(Math.min(value, this.maxPower), this.minPower);
     }
 
     public Limit intersect(Limit otherLimit) {
-        return new Limit(Math.max(minPower, otherLimit.minPower), Math.min(maxPower, otherLimit.maxPower));
+        return new Limit(Math.max(this.minPower, otherLimit.minPower), Math.min(this.maxPower, otherLimit.maxPower));
     }
 
     public Limit invert() {
-        return new Limit(-maxPower, -minPower);
+        return new Limit(-this.maxPower, -this.minPower);
     }
 
     public Limit shiftBy(int delta) {
-        return new Limit(minPower + delta, maxPower + delta);
+        return new Limit(this.minPower + delta, this.maxPower + delta);
     }
 
     public Limit ensureValidLimitWithZero() {
-        return new Limit(Math.min(0, minPower), Math.max(0, maxPower));
+        return new Limit(Math.min(0, this.minPower), Math.max(0, this.maxPower));
     }
 
 }

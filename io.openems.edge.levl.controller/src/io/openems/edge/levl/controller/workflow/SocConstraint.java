@@ -15,7 +15,7 @@ public class SocConstraint {
     }
 
     public SocConstraintMemento save() {
-        return new SocConstraintMemento(socLowerBoundPercent, socUpperBoundPercent);
+        return new SocConstraintMemento(this.socLowerBoundPercent, this.socUpperBoundPercent);
     }
 
     public static SocConstraint restore(SocConstraintMemento memento) {
@@ -23,31 +23,31 @@ public class SocConstraint {
     }
 
     public Limit determineSocConstraintWithCapacityOffsetPercent(int soc, int levlCapacityPercentDischarged) {
-        var lowerLimit = shouldNotCharge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MIN_VALUE;
-        var upperLimit = shouldNotDischarge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MAX_VALUE;
+		var lowerLimit = this.shouldNotCharge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MIN_VALUE;
+        var upperLimit = this.shouldNotDischarge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MAX_VALUE;
         return new Limit(lowerLimit, upperLimit);
     }
 
     private boolean shouldNotDischarge(Integer soc, Integer levlCapacityPercentDischarged) {
-        return soc <= getLowerSocLimitPercent(levlCapacityPercentDischarged);
+        return soc <= this.getLowerSocLimitPercent(levlCapacityPercentDischarged);
     }
 
     private boolean shouldNotCharge(Integer soc, Integer levlCapacityPercentDischarged) {
-        return soc >= getUpperSocLimitPercent(levlCapacityPercentDischarged);
+        return soc >= this.getUpperSocLimitPercent(levlCapacityPercentDischarged);
     }
 
     private int getUpperSocLimitPercent(int levlCapacityPercentDischarged) {
-        if (hasLevlOverallDischarged(levlCapacityPercentDischarged)) {
-            return socUpperBoundPercent - levlCapacityPercentDischarged;
+        if (this.hasLevlOverallDischarged(levlCapacityPercentDischarged)) {
+            return this.socUpperBoundPercent - levlCapacityPercentDischarged;
         }
-        return socUpperBoundPercent;
+        return this.socUpperBoundPercent;
     }
 
     private int getLowerSocLimitPercent(int levlCapacityPercentDischarged) {
-        if (hasLevlOverallCharged(levlCapacityPercentDischarged)) {
-            return socLowerBoundPercent - levlCapacityPercentDischarged;
+        if (this.hasLevlOverallCharged(levlCapacityPercentDischarged)) {
+            return this.socLowerBoundPercent - levlCapacityPercentDischarged;
         }
-        return socLowerBoundPercent;
+        return this.socLowerBoundPercent;
     }
 
     private boolean hasLevlOverallDischarged(int levlCapacityPercentDischarged) {
