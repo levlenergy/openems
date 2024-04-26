@@ -27,26 +27,26 @@ public class LevlPowerCalculatorTest {
     @ParameterizedTest(name = "{index} {3}")
     @MethodSource("determineActualLevlPowerWData")
     public void determineActualLevlPowerW_Discharge_EssReturnsValue(Integer essValue, int primaryUseCaseActivePowerW, int expectedLevlPowerW, String description) {
-        int result = underTest.determineActualLevlPowerW(Optional.ofNullable(essValue), primaryUseCaseActivePowerW);
+        int result = this.underTest.determineActualLevlPowerW(Optional.ofNullable(essValue), primaryUseCaseActivePowerW);
 
         assertThat(result).isEqualTo(expectedLevlPowerW);
     }
 
     @Test
     public void determineNextDischargePowerW() {
-        var result = underTest.determineNextDischargePowerW(1234);
+        var result = this.underTest.determineNextDischargePowerW(1234);
         assertThat(result).isEqualTo(1234);
     }
 
     @Test
     public void determineNextDischargePowerW_Large_Value() {
-        var result = underTest.determineNextDischargePowerW(Integer.MAX_VALUE + 1L);
+        var result = this.underTest.determineNextDischargePowerW(Integer.MAX_VALUE + 1L);
         assertThat(result).isEqualTo(Integer.MAX_VALUE);
     }
 
     @Test
     public void determineNextDischargePowerW_Large_Negative_Value() {
-        var result = underTest.determineNextDischargePowerW(Integer.MIN_VALUE - 1L);
+        var result = this.underTest.determineNextDischargePowerW(Integer.MIN_VALUE - 1L);
         assertThat(result).isEqualTo(Integer.MIN_VALUE);
     }
 }

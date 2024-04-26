@@ -6,7 +6,7 @@ public class OnlyIncreaseAbsolutePowerStrategy implements PowerStrategy {
     @Override
     public int combinePrimaryUseCaseAndLevlDischargePowerW(int primaryUseCaseDischargePowerW, int levlActiveDischargeW) {
         if (Sign.haveSameSign(primaryUseCaseDischargePowerW, levlActiveDischargeW)) {
-            return primaryUseCaseDischargePowerW+levlActiveDischargeW;
+            return primaryUseCaseDischargePowerW + levlActiveDischargeW;
         }
         return primaryUseCaseDischargePowerW;
     }

@@ -9,9 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.stream.Stream;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.Mockito.*;
+import java.util.stream.Stream;
 
 public class LevlControllerActionTest {
 
@@ -207,37 +209,37 @@ public class LevlControllerActionTest {
 
     @BeforeEach
     public void setUp() {
-        ess = mock(ManagedSymmetricEss.class);
-        levlWorkflow = mock(LevlWorkflowReference.class);
-        underTest = new LevlControllerAction(ess, levlWorkflow);
+    	this.ess = mock(ManagedSymmetricEss.class);
+    	this.levlWorkflow = mock(LevlWorkflowReference.class);
+    	this.underTest = new LevlControllerAction(this.ess, this.levlWorkflow);
     }
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("applyLevlUsecaseAddPowersScenarios")
     public void applyLevlUsecaseAddPowers(Scenario scenario) throws OpenemsError.OpenemsNamedException {
-        when(levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.levlConstraint);
-        when(levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
-        when(levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.gridPowerConstraint);
+        when(this.levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.levlConstraint);
+        when(this.levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
+        when(this.levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.gridPowerConstraint);
 
-        underTest.addPowers(scenario.originalUnconstrainedActivePowerW);
+        this.underTest.addPowers(scenario.originalUnconstrainedActivePowerW);
 
-        verify(levlWorkflow).setPrimaryUseCaseActivePowerW(scenario.expectedResultingOriginalPowerW);
-        verify(ess).setActivePowerEquals(scenario.expectedActivePowerW);
-        verify(ess).setReactivePowerEquals(0);
+        verify(this.levlWorkflow).setPrimaryUseCaseActivePowerW(scenario.expectedResultingOriginalPowerW);
+        verify(this.ess).setActivePowerEquals(scenario.expectedActivePowerW);
+        verify(this.ess).setReactivePowerEquals(0);
     }
 
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("applyLevlUsecaseOnlyIncreaseAbsolutePowerScenarios")
     public void applyLevlUsecaseOnlyIncreaseAbsolutePower(Scenario scenario) throws OpenemsError.OpenemsNamedException {
-        when(levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.levlConstraint);
-        when(levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
-        when(levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.gridPowerConstraint);
+        when(this.levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.levlConstraint);
+        when(this.levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
+        when(this.levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.gridPowerConstraint);
 
-        underTest.onlyIncreaseAbsolutePower(scenario.originalUnconstrainedActivePowerW);
+        this.underTest.onlyIncreaseAbsolutePower(scenario.originalUnconstrainedActivePowerW);
 
-        verify(levlWorkflow).setPrimaryUseCaseActivePowerW(scenario.expectedResultingOriginalPowerW);
-        verify(ess).setActivePowerEquals(scenario.expectedActivePowerW);
-        verify(ess).setReactivePowerEquals(0);
+        verify(this.levlWorkflow).setPrimaryUseCaseActivePowerW(scenario.expectedResultingOriginalPowerW);
+        verify(this.ess).setActivePowerEquals(scenario.expectedActivePowerW);
+        verify(this.ess).setReactivePowerEquals(0);
     }
 
     private static class Scenario {
@@ -263,7 +265,7 @@ public class LevlControllerActionTest {
         }
 
         public Scenario withLevlConstraint(int lower, int upper) {
-            levlConstraint = new Limit(lower, upper);
+        	this.levlConstraint = new Limit(lower, upper);
             return this;
         }
 
@@ -273,7 +275,7 @@ public class LevlControllerActionTest {
         }
 
         public Scenario withShiftedLevlGridPowerWConstraint(int lower, int upper) {
-            gridPowerConstraint = new Limit(lower, upper);
+        	this.gridPowerConstraint = new Limit(lower, upper);
             return this;
         }
 
@@ -293,7 +295,7 @@ public class LevlControllerActionTest {
 
         @Override
         public String toString() {
-            return description;
+            return this.description;
         }
     }
 }

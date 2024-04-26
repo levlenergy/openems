@@ -10,7 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class LevlControllerEssPeakshavingImplTest {
 
@@ -28,40 +31,40 @@ class LevlControllerEssPeakshavingImplTest {
         when(config.meter_id()).thenReturn("meter0");
         when(config.levl_workflow_id()).thenReturn("workflow0");
         when(config.id()).thenReturn("controller0");
-        wrappedEss = mock(ReadOnlyManagedSymmetricEss.class);
-        ess = mock(ManagedSymmetricEss.class);
-        realController = mock(ControllerEssPeakShavingImpl.class);
-        levlControllerAction = mock(LevlControllerAction.class);
+        this.wrappedEss = mock(ReadOnlyManagedSymmetricEss.class);
+        this.ess = mock(ManagedSymmetricEss.class);
+        this.realController = mock(ControllerEssPeakShavingImpl.class);
+        this.levlControllerAction = mock(LevlControllerAction.class);
 
-        underTest = new LevlControllerEssPeakshavingImpl();
-        underTest.componentManager = mock(ComponentManager.class);
-        underTest.ess = ess;
-        underTest.activate(new DummyComponentContext(), config);
-        underTest.wrappedEss = wrappedEss;
-        underTest.realController = realController;
-        underTest.levlControllerAction = levlControllerAction;
+        this.underTest = new LevlControllerEssPeakshavingImpl();
+        this.underTest.componentManager = mock(ComponentManager.class);
+        this.underTest.ess = this.ess;
+        this.underTest.activate(new DummyComponentContext(), config);
+        this.underTest.wrappedEss = this.wrappedEss;
+        this.underTest.realController = this.realController;
+        this.underTest.levlControllerAction = this.levlControllerAction;
     }
 
     @Test
     public void run_ControllerSetsValue() throws OpenemsError.OpenemsNamedException {
-        when(wrappedEss.getReceivedActivePowerEqualsWithPid()).thenReturn(VALUE);
+        when(this.wrappedEss.getReceivedActivePowerEqualsWithPid()).thenReturn(VALUE);
 
-        underTest.run();
+        this.underTest.run();
 
-        verify(realController).run();
-        verify(wrappedEss).reset();
-        verify(levlControllerAction).onlyIncreaseAbsolutePower(VALUE);
+        verify(this.realController).run();
+        verify(this.wrappedEss).reset();
+        verify(this.levlControllerAction).onlyIncreaseAbsolutePower(VALUE);
     }
 
     @Test
     public void run_ControllerSetsNoValue_UseCaseIsNotInvoked() throws OpenemsError.OpenemsNamedException {
-        when(wrappedEss.getReceivedActivePowerEqualsWithPid()).thenReturn(null);
+        when(this.wrappedEss.getReceivedActivePowerEqualsWithPid()).thenReturn(null);
 
-        underTest.run();
+        this.underTest.run();
 
-        verify(realController).run();
-        verify(wrappedEss).reset();
-        verify(levlControllerAction, never()).onlyIncreaseAbsolutePower(anyInt());
+        verify(this.realController).run();
+        verify(this.wrappedEss).reset();
+        verify(this.levlControllerAction, never()).onlyIncreaseAbsolutePower(anyInt());
     }
 
 

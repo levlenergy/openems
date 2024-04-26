@@ -13,7 +13,7 @@ class DischargeRequestTest {
     @Test
     public void of() {
         var result = DischargeRequest.of(NOW, "2024-02-15 15:00:00Z","Req01", 1000, 20, 10);
-        var expected = new DischargeRequest("Req01", "2024-02-15 15:00:00Z", 900000, NOW.plusSeconds(20) , NOW.plusSeconds(30), true);
+        var expected = new DischargeRequest("Req01", "2024-02-15 15:00:00Z", 900000, NOW.plusSeconds(20), NOW.plusSeconds(30), true);
         assertThat(result).isEqualTo(expected);
     }
 

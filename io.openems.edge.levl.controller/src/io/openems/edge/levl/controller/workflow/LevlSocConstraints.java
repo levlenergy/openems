@@ -24,7 +24,7 @@ public class LevlSocConstraints {
     }
 
     public LevlSocConstraintsMemento save() {
-        return new LevlSocConstraintsMemento(physicalSocConstraint.save(), socConstraint.save());
+        return new LevlSocConstraintsMemento(this.physicalSocConstraint.save(), this.socConstraint.save());
     }
 
     public static LevlSocConstraints restore(LevlSocConstraintsMemento memento) {
@@ -36,16 +36,16 @@ public class LevlSocConstraints {
             System.out.println("************ soc or capacity not defined\n");
             return Limit.unconstrained();
         }
-        var levlCapacityPercentDischarged = calculateLevlCapacityOffsetPercentFromDischargePowerWs(totalDischargePowerWs, capacity.get());
+        var levlCapacityPercentDischarged = this.calculateLevlCapacityOffsetPercentFromDischargePowerWs(totalDischargePowerWs, capacity.get());
         System.out.println("************ levlCapacityPercentDischarged: " + levlCapacityPercentDischarged + "\n");
-        return physicalSocConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), levlCapacityPercentDischarged);
+        return this.physicalSocConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), levlCapacityPercentDischarged);
     }
 
     public Limit determineLevlUseCaseSocConstraints(Value<Integer> soc) {
         if (!soc.isDefined()) {
             return Limit.unconstrained();
         }
-        return socConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), 0);
+        return this.socConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), 0);
     }
 
 

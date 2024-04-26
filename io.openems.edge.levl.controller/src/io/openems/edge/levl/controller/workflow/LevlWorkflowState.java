@@ -10,15 +10,15 @@ import java.util.Optional;
 
 public class LevlWorkflowState {
 
-    Clock clock = Clock.systemDefaultZone();
+	protected Clock clock = Clock.systemDefaultZone();
 
-    LevlPowerCalculator calculator = new LevlPowerCalculator();
-    DischargeState dischargeState = new DischargeState();
-    LevlSocConstraints levlSocConstraints = new LevlSocConstraints(0, 100, 0, 100);
-    Limit gridPowerLimitW = new Limit(0, 0);
-    private int primaryUseCaseActivePowerW;
-    int nextDischargePowerW;
-    int actualLevlPowerW;
+    protected LevlPowerCalculator calculator = new LevlPowerCalculator();
+    protected DischargeState dischargeState = new DischargeState();
+    protected LevlSocConstraints levlSocConstraints = new LevlSocConstraints(0, 100, 0, 100);
+    protected Limit gridPowerLimitW = new Limit(0, 0);
+    protected int primaryUseCaseActivePowerW;
+    protected int nextDischargePowerW;
+    protected int actualLevlPowerW;
 
     record LevlWorkflowStateMemento(int primaryUseCaseActivePowerW, int nextDischargePowerW, int actualLevlPowerW,
                                     DischargeState.DischargeStateMemento state,
@@ -29,70 +29,70 @@ public class LevlWorkflowState {
 
 
     public LevlWorkflowStateMemento save() {
-        return new LevlWorkflowStateMemento(primaryUseCaseActivePowerW, nextDischargePowerW, actualLevlPowerW, dischargeState.save(), levlSocConstraints.save(), gridPowerLimitW.save());
+        return new LevlWorkflowStateMemento(this.primaryUseCaseActivePowerW, this.nextDischargePowerW, this.actualLevlPowerW, this.dischargeState.save(), this.levlSocConstraints.save(), this.gridPowerLimitW.save());
     }
 
     public void initAfterRestore() {
-        dischargeState.initAfterRestore(LocalDateTime.now(clock));
+    	this.dischargeState.initAfterRestore(LocalDateTime.now(this.clock));
     }
 
 
     public void setPrimaryUseCaseActivePowerW(int originalActivePowerW) {
-        primaryUseCaseActivePowerW = originalActivePowerW;
+    	this.primaryUseCaseActivePowerW = originalActivePowerW;
     }
 
     public int getPrimaryUseCaseActivePowerW() {
-        return primaryUseCaseActivePowerW;
+        return this.primaryUseCaseActivePowerW;
     }
 
     public String getLastCompletedRequestTimestamp() {
-        return dischargeState.getLastCompletedRequestTimestamp();
+        return this.dischargeState.getLastCompletedRequestTimestamp();
     }
 
     public int getActualLevlPowerW() {
-        return actualLevlPowerW;
+        return this.actualLevlPowerW;
     }
 
     public int getLastCompletedRequestDischargePowerW() {
-        return dischargeState.getLastCompletedRequestDischargePowerW();
+        return this.dischargeState.getLastCompletedRequestDischargePowerW();
     }
 
     public int getNextDischargePowerW() {
-        return nextDischargePowerW;
+        return this.nextDischargePowerW;
     }
 
     public Limit getLevlUseCaseConstraints(Value<Integer> meterActivePowerW, Value<Integer> essSoc) {
-        var gridConstraints = determineShiftedGridConstraints(meterActivePowerW);
-        var socConstraints = levlSocConstraints.determineLevlUseCaseSocConstraints(essSoc);
+        var gridConstraints = this.determineShiftedGridConstraints(meterActivePowerW);
+        var socConstraints = this.levlSocConstraints.determineLevlUseCaseSocConstraints(essSoc);
         return gridConstraints.intersect(socConstraints);
     }
 
     private Limit determineShiftedGridConstraints(Value<Integer> meterActivePowerW) {
-        Limit gridConstraints = gridPowerLimitW.invert();
+        Limit gridConstraints = this.gridPowerLimitW.invert();
         if (meterActivePowerW.isDefined()) {
-            return gridConstraints.shiftBy(meterActivePowerW.get() + actualLevlPowerW).ensureValidLimitWithZero();
+            return gridConstraints.shiftBy(meterActivePowerW.get() + this.actualLevlPowerW).ensureValidLimitWithZero();
         }
         return gridConstraints;
     }
 
     void checkActualDischargePower(Optional<Integer> actualPowerW) {
-        actualLevlPowerW = calculator.determineActualLevlPowerW(actualPowerW, primaryUseCaseActivePowerW);
-        dischargeState.handleRealizedDischargePowerWForOneSecond(actualLevlPowerW);
+    	this.actualLevlPowerW = this.calculator.determineActualLevlPowerW(actualPowerW, this.primaryUseCaseActivePowerW);
+        this.dischargeState.handleRealizedDischargePowerWForOneSecond(this.actualLevlPowerW);
     }
 
     void determineNextDischargePower() {
-        nextDischargePowerW = calculator.determineNextDischargePowerW(dischargeState.getCurrentRequestRemainingDischargePowerWs());
-        System.out.println("*********** next discharge power W " + nextDischargePowerW);
+    	this.nextDischargePowerW = this.calculator.determineNextDischargePowerW(this.dischargeState.getCurrentRequestRemainingDischargePowerWs());
+        System.out.println("*********** next discharge power W " + this.nextDischargePowerW);
     }
 
     public void updateState() {
-        dischargeState.update(LocalDateTime.now(clock));
+    	this.dischargeState.update(LocalDateTime.now(this.clock));
     }
 
     public Limit determinePrimaryUseCaseConstraints(Value<Integer> essSoc, Value<Integer> essCapacity, int minPower, int maxPower) {
         var openemsLimit = new Limit(minPower, maxPower);
-        var socLimit = levlSocConstraints.determineLimitFromPhysicalSocConstraintAndLevlSocOffset(
-                dischargeState.getTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(),
+        var socLimit = this.levlSocConstraints.determineLimitFromPhysicalSocConstraintAndLevlSocOffset(
+        		this.dischargeState.getTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(),
                 essSoc,
                 essCapacity
         );
@@ -101,17 +101,17 @@ public class LevlWorkflowState {
     }
 
     public void handleRequest(LevlControlRequest request, int physicalSocLowerPercent, int physicalSocUpperPercent) {
-        gridPowerLimitW = request.createGridPowerLimitW();
-        levlSocConstraints = request.createLevlSocConstraints(physicalSocLowerPercent, physicalSocUpperPercent);
-        dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), request.createDischargeRequest(LocalDateTime.now(clock)));
+    	this.gridPowerLimitW = request.createGridPowerLimitW();
+        this.levlSocConstraints = request.createLevlSocConstraints(physicalSocLowerPercent, physicalSocUpperPercent);
+        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), request.createDischargeRequest(LocalDateTime.now(this.clock)));
     }
 
     void restore(LevlWorkflowStateMemento memento) {
-        primaryUseCaseActivePowerW = memento.primaryUseCaseActivePowerW;
-        nextDischargePowerW = memento.nextDischargePowerW;
-        actualLevlPowerW = memento.actualLevlPowerW;
-        dischargeState = DischargeState.restore(memento.state);
-        levlSocConstraints = LevlSocConstraints.restore(memento.levlSocConstraints);
-        gridPowerLimitW = Limit.restore(memento.gridPowerLimitW);
+    	this.primaryUseCaseActivePowerW = memento.primaryUseCaseActivePowerW;
+        this.nextDischargePowerW = memento.nextDischargePowerW;
+        this.actualLevlPowerW = memento.actualLevlPowerW;
+        this.dischargeState = DischargeState.restore(memento.state);
+        this.levlSocConstraints = LevlSocConstraints.restore(memento.levlSocConstraints);
+        this.gridPowerLimitW = Limit.restore(memento.gridPowerLimitW);
     }
 }

@@ -41,172 +41,172 @@ public class WorkflowStorageConfig implements Config {
 
     @Override
     public String id() {
-        return configId;
+        return this.configId;
     }
 
     @Override
     public String alias() {
-        return alias;
+        return this.alias;
     }
 
     @Override
     public boolean enabled() {
-        return enabled;
+        return this.enabled;
     }
 
     @Override
     public String current_discharge_request_id() {
-        return currentDischargeRequestId;
+        return this.currentDischargeRequestId;
     }
 
     @Override
     public String current_discharge_request_timestamp() {
-        return currentDischargeRequestTimestamp;
+        return this.currentDischargeRequestTimestamp;
     }
 
     @Override
     public String current_discharge_request_energy_ws() {
-        return currentDischargeRequestEnergyWs;
+        return this.currentDischargeRequestEnergyWs;
     }
 
     @Override
     public String current_discharge_request_start() {
-        return currentDischargeRequestStart;
+        return this.currentDischargeRequestStart;
     }
 
     @Override
     public String current_discharge_request_deadline() {
-        return currentDischargeRequestDeadline;
+        return this.currentDischargeRequestDeadline;
     }
 
     @Override
     public boolean current_discharge_request_active() {
-        return currentDischargeRequestActive;
+        return this.currentDischargeRequestActive;
     }
 
     @Override
     public String next_discharge_request_id() {
-        return nextDischargeRequestId;
+        return this.nextDischargeRequestId;
     }
 
     @Override
     public String next_discharge_request_timestamp() {
-        return nextDischargeRequestTimestamp;
+        return this.nextDischargeRequestTimestamp;
     }
 
     @Override
     public String next_discharge_request_energy_ws() {
-        return nextDischargeRequestEnergyWs;
+        return this.nextDischargeRequestEnergyWs;
     }
 
     @Override
     public String next_discharge_request_start() {
-        return nextDischargeRequestStart;
+        return this.nextDischargeRequestStart;
     }
 
     @Override
     public String next_discharge_request_deadline() {
-        return nextDischargeRequestDeadline;
+        return this.nextDischargeRequestDeadline;
     }
 
     @Override
     public boolean next_discharge_request_active() {
-        return nextDischargeRequestActive;
+        return this.nextDischargeRequestActive;
     }
 
     @Override
     public String total_realized_discharge_energy_ws() {
-        return totalRealizedDischargeEnergyWs;
+        return this.totalRealizedDischargeEnergyWs;
     }
 
     @Override
     public String total_discharge_energy_ws_at_battery_scaled_with_efficiency() {
-        return totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
+        return this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
     }
 
     @Override
     public String current_request_remaining_discharge_energy_ws() {
-        return currentRequestRemainingDischargeEnergyWs;
+        return this.currentRequestRemainingDischargeEnergyWs;
     }
 
     @Override
     public String current_request_realized_discharge_energy_ws() {
-        return currentRequestRealizedDischargeEnergyWs;
+        return this.currentRequestRealizedDischargeEnergyWs;
     }
 
     @Override
     public String last_request_realized_discharge_energy_ws() {
-        return lastRequestRealizedDischargeEnergyWs;
+        return this.lastRequestRealizedDischargeEnergyWs;
     }
 
     @Override
     public String last_discharge_request_timestamp() {
-        return lastDischargeRequestTimestamp;
+        return this.lastDischargeRequestTimestamp;
     }
 
     @Override
     public int levl_soc_constraints_lower_physical_percent() {
-        return levlSocConstraintsLowerPhysicalPercent;
+        return this.levlSocConstraintsLowerPhysicalPercent;
     }
 
     @Override
     public int levl_soc_constraints_upper_physical_percent() {
-        return levlSocConstraintUpperPhysicalPercent;
+        return this.levlSocConstraintUpperPhysicalPercent;
     }
 
     @Override
     public int levl_soc_constraints_lower_logical_percent() {
-        return levlSocConstraintsLowerLogicalPercent;
+        return this.levlSocConstraintsLowerLogicalPercent;
     }
 
     @Override
     public int levl_soc_constraints_upper_logical_percent() {
-        return levlSocConstraintsUpperLogicalPercent;
+        return this.levlSocConstraintsUpperLogicalPercent;
     }
 
     @Override
     public int grid_power_limit_w_lower() {
-        return gridPowerLimitWLower;
+        return this.gridPowerLimitWLower;
     }
 
     @Override
     public int grid_power_limit_w_upper() {
-        return gridPowerLimitWUpper;
+        return this.gridPowerLimitWUpper;
     }
 
     @Override
     public int current_request_efficiency_percent_multiplied_by_hundred() {
-        return currentRequestEfficiencyPercent;
+        return this.currentRequestEfficiencyPercent;
     }
 
     @Override
     public int next_request_efficiency_percent_multiplied_by_hundred() {
-        return nextRequestEfficiencyPercent;
+        return this.nextRequestEfficiencyPercent;
     }
 
     @Override
     public int primary_use_case_active_power_w() {
-        return primaryUsecasActivePowerW;
+        return this.primaryUsecasActivePowerW;
     }
 
     @Override
     public int next_discharge_power_w() {
-        return nextDischargePowerW;
+        return this.nextDischargePowerW;
     }
 
     @Override
     public int actual_levl_power_w() {
-        return actualLevlPowerW;
+        return this.actualLevlPowerW;
     }
 
     @Override
     public String webconsole_configurationFactory_nameHint() {
-        return webconsoleConfigurationHint;
+        return this.webconsoleConfigurationHint;
     }
 
     @Override
     public Class<? extends Annotation> annotationType() {
-        return annotationType;
+        return this.annotationType;
     }
 
     public void setConfigId(String configId) {

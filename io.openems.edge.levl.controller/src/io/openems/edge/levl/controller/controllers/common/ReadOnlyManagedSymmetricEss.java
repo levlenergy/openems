@@ -32,37 +32,37 @@ public class ReadOnlyManagedSymmetricEss implements ManagedSymmetricEss {
 
     @Override
     public String id() {
-        return ess.id();
+        return this.ess.id();
     }
 
     @Override
     public String alias() {
-        return ess.alias();
+        return this.ess.alias();
     }
 
     @Override
     public boolean isEnabled() {
-        return ess.isEnabled();
+        return this.ess.isEnabled();
     }
 
     @Override
     public String servicePid() {
-        return ess.servicePid();
+        return this.ess.servicePid();
     }
 
     @Override
     public String serviceFactoryPid() {
-        return ess.serviceFactoryPid();
+        return this.ess.serviceFactoryPid();
     }
 
     @Override
     public boolean isManaged() {
-        return ess.isManaged();
+        return this.ess.isManaged();
     }
 
     @Override
     public ComponentContext getComponentContext() {
-        return ess.getComponentContext();
+        return this.ess.getComponentContext();
     }
 
     @Override
@@ -77,335 +77,335 @@ public class ReadOnlyManagedSymmetricEss implements ManagedSymmetricEss {
 
     @Override
     public StateCollectorChannel getStateChannel() {
-        return ess.getStateChannel();
+        return this.ess.getStateChannel();
     }
 
     @Override
     public Level getState() {
-        return ess.getState();
+        return this.ess.getState();
     }
 
     @Override
     public <T extends Channel<?>> T _getChannelAs(OpenemsComponent.ChannelId channelId, Class<T> type) {
-        return ess._getChannelAs(channelId, type);
+        return this.ess._getChannelAs(channelId, type);
     }
 
     @Override
     public Power getPower() {
-        return ess.getPower();
+        return this.ess.getPower();
     }
 
     @Override
     public IntegerReadChannel getAllowedChargePowerChannel() {
-        return ess.getAllowedChargePowerChannel();
+        return this.ess.getAllowedChargePowerChannel();
     }
 
     @Override
     public Value<Integer> getAllowedChargePower() {
-        return ess.getAllowedChargePower();
+        return this.ess.getAllowedChargePower();
     }
 
     @Override
     public IntegerReadChannel getAllowedDischargePowerChannel() {
-        return ess.getAllowedDischargePowerChannel();
+        return this.ess.getAllowedDischargePowerChannel();
     }
 
     @Override
     public Value<Integer> getAllowedDischargePower() {
-        return ess.getAllowedDischargePower();
+        return this.ess.getAllowedDischargePower();
     }
 
     @Override
     public IntegerWriteChannel getSetActivePowerEqualsChannel() {
-        return ess.getSetActivePowerEqualsChannel();
+        return this.ess.getSetActivePowerEqualsChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetActivePowerEqualsWithPidChannel() {
-        return ess.getSetActivePowerEqualsWithPidChannel();
+        return this.ess.getSetActivePowerEqualsWithPidChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetReactivePowerEqualsChannel() {
-        return ess.getSetReactivePowerEqualsChannel();
+        return this.ess.getSetReactivePowerEqualsChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetActivePowerLessOrEqualsChannel() {
-        return ess.getSetActivePowerLessOrEqualsChannel();
+        return this.ess.getSetActivePowerLessOrEqualsChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetActivePowerGreaterOrEqualsChannel() {
-        return ess.getSetActivePowerGreaterOrEqualsChannel();
+        return this.ess.getSetActivePowerGreaterOrEqualsChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetReactivePowerLessOrEqualsChannel() {
-        return ess.getSetReactivePowerLessOrEqualsChannel();
+        return this.ess.getSetReactivePowerLessOrEqualsChannel();
     }
 
     @Override
     public IntegerWriteChannel getSetReactivePowerGreaterOrEqualsChannel() {
-        return ess.getSetReactivePowerGreaterOrEqualsChannel();
+        return this.ess.getSetReactivePowerGreaterOrEqualsChannel();
     }
 
     @Override
     public IntegerReadChannel getDebugSetActivePowerChannel() {
-        return ess.getDebugSetActivePowerChannel();
+        return this.ess.getDebugSetActivePowerChannel();
     }
 
     @Override
     public Value<Integer> getDebugSetActivePower() {
-        return ess.getDebugSetActivePower();
+        return this.ess.getDebugSetActivePower();
     }
 
     @Override
     public IntegerReadChannel getDebugSetReactivePowerChannel() {
-        return ess.getDebugSetReactivePowerChannel();
+        return this.ess.getDebugSetReactivePowerChannel();
     }
 
     @Override
     public Value<Integer> getDebugSetReactivePower() {
-        return ess.getDebugSetReactivePower();
+        return this.ess.getDebugSetReactivePower();
     }
 
     @Override
     public StateChannel getApplyPowerFailedChannel() {
-        return ess.getApplyPowerFailedChannel();
+        return this.ess.getApplyPowerFailedChannel();
     }
 
     @Override
     public Value<Boolean> getApplyPowerFailed() {
-        return ess.getApplyPowerFailed();
+        return this.ess.getApplyPowerFailed();
     }
 
     @Override
     public void applyPower(int activePower, int reactivePower) {
-        appliedActivePower = activePower;
-        appliedReactivePower = reactivePower;
+        this.appliedActivePower = activePower;
+        this.appliedReactivePower = reactivePower;
     }
 
     @Override
     public int getPowerPrecision() {
-        return ess.getPowerPrecision();
+        return this.ess.getPowerPrecision();
     }
 
     @Override
     public Constraint[] getStaticConstraints() throws OpenemsError.OpenemsNamedException {
-        return ess.getStaticConstraints();
+        return this.ess.getStaticConstraints();
     }
 
     @Override
     public IntegerReadChannel getSocChannel() {
-        return ess.getSocChannel();
+        return this.ess.getSocChannel();
     }
 
     @Override
     public Value<Integer> getSoc() {
-        return ess.getSoc();
+        return this.ess.getSoc();
     }
 
     @Override
     public IntegerReadChannel getCapacityChannel() {
-        return ess.getCapacityChannel();
+        return this.ess.getCapacityChannel();
     }
 
     @Override
     public Value<Integer> getCapacity() {
-        return ess.getCapacity();
+        return this.ess.getCapacity();
     }
 
     @Override
     public Channel<GridMode> getGridModeChannel() {
-        return ess.getGridModeChannel();
+        return this.ess.getGridModeChannel();
     }
 
     @Override
     public GridMode getGridMode() {
-        return ess.getGridMode();
+        return this.ess.getGridMode();
     }
 
     @Override
     public IntegerReadChannel getActivePowerChannel() {
-        return ess.getActivePowerChannel();
+        return this.ess.getActivePowerChannel();
     }
 
     @Override
     public Value<Integer> getActivePower() {
-        return ess.getActivePower();
+        return this.ess.getActivePower();
     }
 
     @Override
     public IntegerReadChannel getReactivePowerChannel() {
-        return ess.getReactivePowerChannel();
+        return this.ess.getReactivePowerChannel();
     }
 
     @Override
     public Value<Integer> getReactivePower() {
-        return ess.getReactivePower();
+        return this.ess.getReactivePower();
     }
 
     @Override
     public IntegerReadChannel getMaxApparentPowerChannel() {
-        return ess.getMaxApparentPowerChannel();
+        return this.ess.getMaxApparentPowerChannel();
     }
 
     @Override
     public Value<Integer> getMaxApparentPower() {
-        return ess.getMaxApparentPower();
+        return this.ess.getMaxApparentPower();
     }
 
     @Override
     public LongReadChannel getActiveChargeEnergyChannel() {
-        return ess.getActiveChargeEnergyChannel();
+        return this.ess.getActiveChargeEnergyChannel();
     }
 
     @Override
     public Value<Long> getActiveChargeEnergy() {
-        return ess.getActiveChargeEnergy();
+        return this.ess.getActiveChargeEnergy();
     }
 
     @Override
     public LongReadChannel getActiveDischargeEnergyChannel() {
-        return ess.getActiveDischargeEnergyChannel();
+        return this.ess.getActiveDischargeEnergyChannel();
     }
 
     @Override
     public Value<Long> getActiveDischargeEnergy() {
-        return ess.getActiveDischargeEnergy();
+        return this.ess.getActiveDischargeEnergy();
     }
 
     @Override
     public IntegerReadChannel getMinCellVoltageChannel() {
-        return ess.getMinCellVoltageChannel();
+        return this.ess.getMinCellVoltageChannel();
     }
 
     @Override
     public Value<Integer> getMinCellVoltage() {
-        return ess.getMinCellVoltage();
+        return this.ess.getMinCellVoltage();
     }
 
     @Override
     public IntegerReadChannel getMaxCellVoltageChannel() {
-        return ess.getMaxCellVoltageChannel();
+        return this.ess.getMaxCellVoltageChannel();
     }
 
     @Override
     public Value<Integer> getMaxCellVoltage() {
-        return ess.getMaxCellVoltage();
+        return this.ess.getMaxCellVoltage();
     }
 
     @Override
     public IntegerReadChannel getMinCellTemperatureChannel() {
-        return ess.getMinCellTemperatureChannel();
+        return this.ess.getMinCellTemperatureChannel();
     }
 
     @Override
     public Value<Integer> getMinCellTemperature() {
-        return ess.getMinCellTemperature();
+        return this.ess.getMinCellTemperature();
     }
 
     @Override
     public IntegerReadChannel getMaxCellTemperatureChannel() {
-        return ess.getMaxCellTemperatureChannel();
+        return this.ess.getMaxCellTemperatureChannel();
     }
 
     @Override
     public Value<Integer> getMaxCellTemperature() {
-        return ess.getMaxCellTemperature();
+        return this.ess.getMaxCellTemperature();
     }
 
     @Override
     public String debugLog() {
-        return ess.debugLog();
+        return this.ess.debugLog();
     }
 
     @Override
     public boolean hasFaults() {
-        return ess.hasFaults();
+        return this.ess.hasFaults();
     }
 
     @Override
     public void setActivePowerEquals(Integer value) {
-        receivedActivePowerEquals = value;
+    	this.receivedActivePowerEquals = value;
     }
 
     @Override
     public void setActivePowerEqualsWithPid(Integer value) {
-        receivedActivePowerEqualsWithPid = value;
+    	this.receivedActivePowerEqualsWithPid = value;
     }
 
     @Override
     public void setActivePowerLessOrEquals(Integer value) {
-        receivedActivePowerLessOrEquals = value;
+    	this.receivedActivePowerLessOrEquals = value;
     }
 
     @Override
     public void setActivePowerGreaterOrEquals(Integer value) {
-        receivedActivePowerGreaterOrEquals = value;
+    	this.receivedActivePowerGreaterOrEquals = value;
     }
 
     @Override
     public void setReactivePowerEquals(Integer value) {
-        receivedReactivePowerEquals = value;
+    	this.receivedReactivePowerEquals = value;
     }
 
     @Override
     public void setReactivePowerLessOrEquals(Integer value) {
-        receivedReactivePowerLessOrEquals = value;
+    	this.receivedReactivePowerLessOrEquals = value;
     }
 
     @Override
     public void setReactivePowerGreaterOrEquals(Integer value) {
-        receivedReactivePowerGreaterOrEquals = value;
+    	this.receivedReactivePowerGreaterOrEquals = value;
     }
 
     public Integer getAppliedActivePower() {
-        return appliedActivePower;
+        return this.appliedActivePower;
     }
 
     public Integer getAppliedReactivePower() {
-        return appliedReactivePower;
+        return this.appliedReactivePower;
     }
 
     public Integer getReceivedActivePowerEqualsWithPid() {
-        return receivedActivePowerEqualsWithPid;
+        return this.receivedActivePowerEqualsWithPid;
     }
 
     public Integer getReceivedActivePowerEquals() {
-        return receivedActivePowerEquals;
+        return this.receivedActivePowerEquals;
     }
 
     public Integer getReceivedActivePowerLessOrEquals() {
-        return receivedActivePowerLessOrEquals;
+        return this.receivedActivePowerLessOrEquals;
     }
 
     public Integer getReceivedActivePowerGreaterOrEquals() {
-        return receivedActivePowerGreaterOrEquals;
+        return this.receivedActivePowerGreaterOrEquals;
     }
 
     public Integer getReceivedReactivePowerEquals() {
-        return receivedReactivePowerEquals;
+        return this.receivedReactivePowerEquals;
     }
 
     public Integer getReceivedReactivePowerLessOrEquals() {
-        return receivedReactivePowerLessOrEquals;
+        return this.receivedReactivePowerLessOrEquals;
     }
 
     public Integer getReceivedReactivePowerGreaterOrEquals() {
-        return receivedReactivePowerGreaterOrEquals;
+        return this.receivedReactivePowerGreaterOrEquals;
     }
 
     public void reset() {
-        appliedActivePower = null;
-        appliedReactivePower = null;
-        receivedActivePowerEqualsWithPid = null;
-        receivedActivePowerEquals = null;
-        receivedActivePowerLessOrEquals = null;
-        receivedActivePowerGreaterOrEquals = null;
-        receivedReactivePowerEquals = null;
-        receivedReactivePowerLessOrEquals = null;
-        receivedReactivePowerGreaterOrEquals = null;
+        this.appliedActivePower = null;
+        this.appliedReactivePower = null;
+        this.receivedActivePowerEqualsWithPid = null;
+        this.receivedActivePowerEquals = null;
+        this.receivedActivePowerLessOrEquals = null;
+        this.receivedActivePowerGreaterOrEquals = null;
+        this.receivedReactivePowerEquals = null;
+        this.receivedReactivePowerLessOrEquals = null;
+        this.receivedReactivePowerGreaterOrEquals = null;
     }
 }

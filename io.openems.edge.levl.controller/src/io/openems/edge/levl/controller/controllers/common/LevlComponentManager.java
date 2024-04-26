@@ -26,7 +26,7 @@ public class LevlComponentManager implements ComponentManager {
     }
 
     public void overwriteComponent(String key, OpenemsComponent value) {
-        componentOverwrites.put(key, value);
+    	this.componentOverwrites.put(key, value);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class LevlComponentManager implements ComponentManager {
 
     @Override
     public <T extends OpenemsComponent> T getComponent(String componentId) throws OpenemsError.OpenemsNamedException {
-        T overwrittenComponent = (T) componentOverwrites.get(componentId);
+        T overwrittenComponent = (T) this.componentOverwrites.get(componentId);
         if (overwrittenComponent == null) {
-            return openEmsComponentManager.getComponent(componentId);
+            return this.openEmsComponentManager.getComponent(componentId);
         }
         return overwrittenComponent;
     }

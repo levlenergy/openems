@@ -32,7 +32,7 @@ public class LevlControlRequest extends JsonrpcRequest {
         super(LevlControlRequest.METHOD);
         this.params = params;
         try {
-            parseFields(params);
+            this.parseFields(params);
         } catch (NullPointerException e) {
             throw OpenemsError.JSONRPC_INVALID_MESSAGE.exception("missing fields in request: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -47,43 +47,43 @@ public class LevlControlRequest extends JsonrpcRequest {
     }
 
     public String getLevlRequestId() {
-        return levlRequestId;
+        return this.levlRequestId;
     }
 
     public BigDecimal getEfficiencyPercent() {
-        return efficiencyPercent;
+        return this.efficiencyPercent;
     }
 
     private void parseFields(JsonObject params) {
-        levlRequestId = params.get("levlRequestId").getAsString();
-        levlRequestTimestamp = params.get("levlRequestTimestamp").getAsString();
-        levlPowerW = params.get("levlPowerW").getAsInt();
-        levlChargeDelaySec = params.get("levlChargeDelaySec").getAsInt();
-        levlChargeDurationSec = params.get("levlChargeDurationSec").getAsInt();
-        levlSocLowerBoundPercent = params.get("levlSocLowerBoundPercent").getAsInt();
-        levlSocUpperBoundPercent = params.get("levlSocUpperBoundPercent").getAsInt();
-        sellToGridLimitW = params.get("sellToGridLimitW").getAsInt();
-        buyFromGridLimitW = params.get("buyFromGridLimitW").getAsInt();
-        efficiencyPercent = params.get("efficiencyPercent").getAsBigDecimal();
+    	this.levlRequestId = params.get("levlRequestId").getAsString();
+        this.levlRequestTimestamp = params.get("levlRequestTimestamp").getAsString();
+        this.levlPowerW = params.get("levlPowerW").getAsInt();
+        this.levlChargeDelaySec = params.get("levlChargeDelaySec").getAsInt();
+        this.levlChargeDurationSec = params.get("levlChargeDurationSec").getAsInt();
+        this.levlSocLowerBoundPercent = params.get("levlSocLowerBoundPercent").getAsInt();
+        this.levlSocUpperBoundPercent = params.get("levlSocUpperBoundPercent").getAsInt();
+        this.sellToGridLimitW = params.get("sellToGridLimitW").getAsInt();
+        this.buyFromGridLimitW = params.get("buyFromGridLimitW").getAsInt();
+        this.efficiencyPercent = params.get("efficiencyPercent").getAsBigDecimal();
     }
 
     @Override
     public JsonObject getParams() {
-        return params;
+        return this.params;
     }
 
     public Limit createGridPowerLimitW() {
-        return new Limit(sellToGridLimitW, buyFromGridLimitW);
+        return new Limit(this.sellToGridLimitW, this.buyFromGridLimitW);
     }
 
     public DischargeRequest createDischargeRequest(LocalDateTime now) {
         return DischargeRequest.of(
                 now,
-                levlRequestTimestamp,
-                levlRequestId,
-                levlPowerW,
-                levlChargeDelaySec,
-                levlChargeDurationSec
+                this.levlRequestTimestamp,
+                this.levlRequestId,
+                this.levlPowerW,
+                this.levlChargeDelaySec,
+                this.levlChargeDurationSec
         );
     }
 
@@ -91,8 +91,8 @@ public class LevlControlRequest extends JsonrpcRequest {
         return new LevlSocConstraints(
                 physicalSocLowerBoundPercent,
                 physicalSocUpperBoundPercent,
-                levlSocLowerBoundPercent,
-                levlSocUpperBoundPercent
+                this.levlSocLowerBoundPercent,
+                this.levlSocUpperBoundPercent
         );
     }
 }
