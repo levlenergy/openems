@@ -52,6 +52,14 @@ public class LimitTest {
         );
     }
 
+    /**
+     * Tests the apply method of the Limit class.
+     *
+     * @param minPower the minimum power
+     * @param maxPower the maximum power
+     * @param value the value to apply
+     * @param expected the expected result
+     */
     @ParameterizedTest
     @MethodSource("provideDataApply")
     public void apply(Integer minPower, Integer maxPower, Integer value, Integer expected) {
@@ -62,6 +70,13 @@ public class LimitTest {
         assertThat(result).isEqualTo(expected);
     }
 
+    /**
+     * Tests the intersect method of the Limit class.
+     *
+     * @param oneLimit one limit
+     * @param otherLimit another limit
+     * @param expected the expected result
+     */
     @ParameterizedTest
     @MethodSource("provideDataIntersect")
     public void intersect(Limit oneLimit, Limit otherLimit, Limit expected) {
@@ -70,6 +85,13 @@ public class LimitTest {
         assertThat(result).isEqualTo(expected);
     }
 
+    /**
+     * Tests the shiftBy method of the Limit class.
+     *
+     * @param limit the limit to shift
+     * @param delta the amount to shift by
+     * @param expected the expected result
+     */
     @ParameterizedTest
     @MethodSource("provideDataMove")
     public void shiftBy(Limit limit, int delta, Limit expected) {
@@ -78,6 +100,12 @@ public class LimitTest {
         assertThat(result).isEqualTo(expected);
     }
 
+    /**
+     * Tests the ensureValidLimitWithZero method of the Limit class.
+     *
+     * @param limit the limit to validate
+     * @param expected the expected result
+     */
     @ParameterizedTest
     @MethodSource("provideDataEnsureValidLimitWithZero")
     public void ensureValidLimitWithZero(Limit limit, Limit expected) {
@@ -88,7 +116,6 @@ public class LimitTest {
 
     @Test
     public void invert() {
-
         Limit limit = new Limit(-100, 200);
         Limit expected = new Limit(-200, 100);
 

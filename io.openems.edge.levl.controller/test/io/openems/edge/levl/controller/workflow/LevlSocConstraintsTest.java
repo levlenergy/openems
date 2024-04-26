@@ -39,6 +39,16 @@ public class LevlSocConstraintsTest {
         );
     }
 
+    /**
+     * This method determines the primary use case constraints based on the provided parameters.
+     * It uses a parameterized test with data provided by the 'provideDeterminePrimaryUseCaseConstraints' method.
+     *
+     * @param soc The state of charge. Can be null.
+     * @param capacityWh The capacity in watt-hours.
+     * @param levlTotalDischargePowerWs The total discharge power of the LEVL device in watt-seconds.
+     * @param expectedLimit The expected limit.
+     * @param description A description of the test case.
+     */
     @ParameterizedTest(name = "{index} {4}")
     @MethodSource("provideDeterminePrimaryUseCaseConstraints")
     public void determinePrimaryUseCaseConstraints(Integer soc, Integer capacityWh, int levlTotalDischargePowerWs, Limit expectedLimit, String description) {
@@ -49,6 +59,14 @@ public class LevlSocConstraintsTest {
         assertThat(result).isEqualTo(expectedLimit);
     }
 
+    /**
+     * This method determines the lower state of charge (SoC) limit percent based on the provided parameters.
+     * It uses a parameterized test with data provided by the 'provideDetermineLevlUseCaseConstraints' method.
+     *
+     * @param soc The state of charge. Can be null.
+     * @param expectedLevlPowerWs The expected power of the LEVL device in watts.
+     * @param description A description of the test case.
+     */
     @ParameterizedTest(name = "{index} {2}")
     @MethodSource("provideDetermineLevlUseCaseConstraints")
     public void getLowerSocLimitPercent(Integer soc, Limit expectedLevlPowerWs, String description) {

@@ -214,6 +214,13 @@ public class LevlControllerActionTest {
     	this.underTest = new LevlControllerAction(this.ess, this.levlWorkflow);
     }
 
+    /**
+     * This is a parameterized test method that applies the Levl use case add powers.
+     * It calls the method under test with the original unconstrained active power from the scenario.
+     *
+     * @param scenario the scenario to apply
+     * @throws OpenemsError.OpenemsNamedException if an error occurs
+     */
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("applyLevlUsecaseAddPowersScenarios")
     public void applyLevlUsecaseAddPowers(Scenario scenario) throws OpenemsError.OpenemsNamedException {
@@ -228,6 +235,13 @@ public class LevlControllerActionTest {
         verify(this.ess).setReactivePowerEquals(0);
     }
 
+    /**
+     * This is a parameterized test method that applies the Levl use case increase absolute power.
+     * It calls the method under test with the original unconstrained active power from the scenario.
+     *
+     * @param scenario the scenario to apply
+     * @throws OpenemsError.OpenemsNamedException if an error occurs
+     */
     @ParameterizedTest(name = "{index} {0}")
     @MethodSource("applyLevlUsecaseOnlyIncreaseAbsolutePowerScenarios")
     public void applyLevlUsecaseOnlyIncreaseAbsolutePower(Scenario scenario) throws OpenemsError.OpenemsNamedException {

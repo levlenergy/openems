@@ -39,26 +39,62 @@ public enum ConfigAttributes {
 		this.attributeName = attributeName;
 	}
 
+	/**
+	 * Returns a new Property instance with the given value.
+	 *
+	 * @param value the value to set
+	 * @return a new Property instance
+	 */
 	public UpdateComponentConfigRequest.Property asProperty(String value) {
 		return new UpdateComponentConfigRequest.Property(this.attributeName, value);
 	}
 
+	/**
+	 * Returns a new Property instance with the given value.
+	 *
+	 * @param value the value to set
+	 * @return a new Property instance
+	 */
 	public UpdateComponentConfigRequest.Property asProperty(long value) {
 		return new UpdateComponentConfigRequest.Property(this.attributeName, "" + value);
 	}
 
+	/**
+	 * Returns a new Property instance with the given value.
+	 *
+	 * @param value the value to set
+	 * @return a new Property instance
+	 */
 	public UpdateComponentConfigRequest.Property asProperty(int value) {
 		return new UpdateComponentConfigRequest.Property(this.attributeName, value);
 	}
 
+	/**
+	 * Returns a new Property instance with the given value.
+	 *
+	 * @param value the value to set
+	 * @return a new Property instance
+	 */
 	public UpdateComponentConfigRequest.Property asProperty(boolean value) {
 		return new UpdateComponentConfigRequest.Property(this.attributeName, value);
 	}
 
+	/**
+	 * Returns a new Property instance with the given value.
+	 *
+	 * @param time the value to set
+	 * @return a new Property instance
+	 */
 	public UpdateComponentConfigRequest.Property asProperty(LocalDateTime time) {
 		return new UpdateComponentConfigRequest.Property(this.attributeName, time.toString());
 	}
 
+	/**
+	 * Parses the given string into a LocalDateTime instance.
+	 *
+	 * @param time the string to parse
+	 * @return a LocalDateTime instance
+	 */
 	public static LocalDateTime parseLocalDateTime(String time) {
 		return LocalDateTime.parse(time);
 	}

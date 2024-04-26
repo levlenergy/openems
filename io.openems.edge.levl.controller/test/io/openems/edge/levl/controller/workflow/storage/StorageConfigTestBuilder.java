@@ -42,26 +42,53 @@ public final class StorageConfigTestBuilder {
     private StorageConfigTestBuilder() {
     }
 
+    /**
+     * Returns a new instance of the StorageConfigTestBuilder with default values.
+     ** @return a new instance of StorageConfigTestBuilder
+     */
     public static StorageConfigTestBuilder aDefaultStorageConfig() {
         return new StorageConfigTestBuilder();
     }
 
-
+    /**
+     * Sets the nextDischargeRequestDeadline property of the WorkflowStorageConfig.
+     *
+     * @param nextDischargeRequestDeadline the next discharge request deadline
+     * @return this builder
+     */
     public StorageConfigTestBuilder withNextDischargeRequestDeadline(String nextDischargeRequestDeadline) {
         this.nextDischargeRequestDeadline = nextDischargeRequestDeadline;
         return this;
     }
 
+    /**
+     * Sets the nextDischargeRequestStart property of the WorkflowStorageConfig.
+     *
+     * @param nextDischargeRequestStart the start time of the next discharge request
+     * @return this builder
+     */
     public StorageConfigTestBuilder withNextDischargeRequestStart(String nextDischargeRequestStart) {
         this.nextDischargeRequestStart = nextDischargeRequestStart;
         return this;
     }
 
+    /**
+     * Sets the currentDischargeRequestDeadline property of the WorkflowStorageConfig.
+     *
+     * @param currentDischargeRequestDeadline the current discharge request deadline
+     * @return this builder
+     */
     public StorageConfigTestBuilder withCurrentDischargeRequestDeadline(String currentDischargeRequestDeadline) {
         this.currentDischargeRequestDeadline = currentDischargeRequestDeadline;
         return this;
     }
 
+    /**
+     * Sets the currentDischargeRequestStart property of the WorkflowStorageConfig.
+     *
+     * @param currentDischargeRequestStart the start time of the current discharge request
+     * @return this builder
+     */
     public StorageConfigTestBuilder withCurrentDischargeRequestStart(String currentDischargeRequestStart) {
         this.currentDischargeRequestStart = currentDischargeRequestStart;
         return this;

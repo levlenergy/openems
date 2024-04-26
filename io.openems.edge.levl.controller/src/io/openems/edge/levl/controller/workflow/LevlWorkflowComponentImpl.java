@@ -171,6 +171,16 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 		return response;
 	}
 
+	/**
+	 * Saves the current state of the LevlWorkflowComponent.
+	 *
+	 * <p>This method saves the current state of the LevlWorkflowComponent by creating a memento of the state and
+	 * converting it to properties. These properties are then used to create an UpdateComponentConfigRequest.
+	 *
+	 * <p>If the state cannot be saved due to an exception, an error message is logged.
+	 *
+	 * <p>If the levlWorkflowSavedState is null, the method will return without performing any operations.
+	 */
 	public void saveState() {
 		var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
 		if (currentLevlWorkflowSavedState == null) {
@@ -181,8 +191,7 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 			var properties = new LevlWorkflowStateConverter().asProperties(stateMemento);
 			var request = new UpdateComponentConfigRequest(currentLevlWorkflowSavedState.id(), properties);
 			try {
-				// TODO: 14.02.2024 Dennis: Was wird hier gemacht? Hier wird auch ein
-				// jsonRpcRequest erstellt?
+				// TODO: 14.02.2024 Dennis: What is being done here? Why is a jsonRpcRequest created here?
 				var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
 				var response = this.componentManager.handleJsonrpcRequest(user, request);
 				response.whenComplete((r, e) -> {

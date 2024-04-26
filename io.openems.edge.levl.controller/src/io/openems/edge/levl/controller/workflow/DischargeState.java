@@ -55,6 +55,11 @@ public class DischargeState {
 		this.nextRequest = nextRequest;
 	}
 
+	/**
+	 * Saves the current state of this DischargeState.
+	 *
+	 * @return a new DischargeStateMemento containing the current state
+	 */
 	public DischargeStateMemento save() {
 		return new DischargeStateMemento(this.totalRealizedDischargeEnergyWs,
 				this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency, this.currentRequestRemainingDischargeEnergyWs,
@@ -63,6 +68,12 @@ public class DischargeState {
 				this.request.save(), this.nextRequest.save());
 	}
 
+	/**
+	 * Restores a DischargeState from a memento.
+	 *
+	 * @param memento the memento to restore from
+	 * @return a new DischargeState with the state restored from the memento
+	 */
 	public static DischargeState restore(DischargeStateMemento memento) {
 		return new DischargeState(memento.totalRealizedDischargeEnergyWs,
 				memento.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
@@ -88,12 +99,23 @@ public class DischargeState {
 		return (int) (this.lastCompletedRequestRealizedDischargeEnergyWs) / DischargeRequest.QUARTER_HOUR_TO_SECONDS;
 	}
 
+	/**
+	 * Handles a received request and updates the next request and its efficiency.
+	 *
+	 * @param efficiencyPercent the efficiency of the received request
+	 * @param receivedRequest the received request
+	 */
 	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest) {
 		this.log.info("Received new levl request: {}", receivedRequest);
 		this.nextRequestEfficiencyPercent = efficiencyPercent;
 		this.nextRequest = receivedRequest;
 	}
 
+	/**
+	 * Initializes the state after it has been restored.
+	 *
+	 * @param now the current time
+	 */
 	public void initAfterRestore(LocalDateTime now) {
 		if (this.nextRequest.isExpired(now)) {
 			this.nextRequest = DischargeRequest.inactiveRequest();
@@ -102,6 +124,11 @@ public class DischargeState {
 		this.update(now);
 	}
 
+	/**
+	 * Updates the state based on the current time.
+	 *
+	 * @param now the current time
+	 */
 	public void update(LocalDateTime now) {
 		if (this.request.isExpired(now)) {
 			this.completeCurrentRequest("request expired");
@@ -122,6 +149,11 @@ public class DischargeState {
 		}
 	}
 
+	/**
+	 * Handles the realized discharge power for one second.
+	 *
+	 * @param newRealizedPowerW the new realized power in watts
+	 */
 	public void handleRealizedDischargePowerWForOneSecond(int newRealizedPowerW) {
 		if (!this.request.isActive()) {
 			return;
@@ -148,6 +180,11 @@ public class DischargeState {
 		}
 	}
 
+	/**
+	 * Completes the current request and updates the state accordingly.
+	 *
+	 * @param reason the reason for stopping the execution of the request
+	 */
 	private void completeCurrentRequest(String reason) {
 		this.log.info("stopped executing levl request: {} {}", reason, this.request);
 		this.lastCompletedRequestTimestamp = this.request.getRequestTimestamp();

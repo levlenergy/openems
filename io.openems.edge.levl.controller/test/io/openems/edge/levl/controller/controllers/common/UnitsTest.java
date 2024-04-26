@@ -19,6 +19,13 @@ public class UnitsTest {
         );
     }
 
+    /**
+     * Tests the convertWsToWh method with various inputs.
+     *
+     * @param valueWs the value in watt-seconds to convert
+     * @param expected the expected result in watt-hours
+     * @param description a description of the test case
+     */
     @ParameterizedTest(name = "{index} {2}")
     @MethodSource("provideData")
     public void convertWsToWh(int valueWs, double expected, String description) {

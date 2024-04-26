@@ -22,6 +22,13 @@ public class PercentTest {
         );
     }
 
+    /**
+     * Tests the calculatePercentOfTotal method of the Percent class.
+     *
+     * @param value the value to calculate the percentage of.
+     * @param total the total value.
+     * @param expected the expected result.
+     */
     @ParameterizedTest
     @MethodSource("provideCalculatePercentOfTotalValues")
     public void calculateWsToPercent(BigDecimal value, int total, int expected) {
@@ -37,6 +44,13 @@ public class PercentTest {
         );
     }
 
+    /**
+     * Tests the applyPercentage method of the Percent class.
+     *
+     * @param total the total value.
+     * @param percentage the percentage to apply.
+     * @param expected the expected result.
+     */
     @ParameterizedTest
     @MethodSource("provideApplyPercentageValues")
     public void applyPercentage(int total, int percentage, int expected) {
@@ -51,6 +65,13 @@ public class PercentTest {
         );
     }
 
+    /**
+     * Tests the undoPercentage method of the Percent class.
+     *
+     * @param total the total value.
+     * @param percentage the percentage to undo.
+     * @param expected the expected result.
+     */
     @ParameterizedTest
     @MethodSource("provideUndoPercentageValues")
     public void undoPercentage(int total, int percentage, int expected) {

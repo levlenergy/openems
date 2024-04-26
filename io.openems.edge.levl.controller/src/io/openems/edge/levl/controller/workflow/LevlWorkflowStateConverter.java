@@ -16,6 +16,13 @@ import java.util.List;
 public class LevlWorkflowStateConverter {
 	private final Logger log = LoggerFactory.getLogger(LevlWorkflowStateConverter.class);
 
+	/**
+	 * Converts the given LevlWorkflowStateMemento into a list of UpdateComponentConfigRequest.Property.
+	 * Each property represents a specific configuration attribute of the LevlWorkflowStateMemento.
+	 *
+	 * @param memento the LevlWorkflowStateMemento to be converted
+	 * @return a list of UpdateComponentConfigRequest.Property representing the configuration attributes of the memento
+	 */
 	public List<UpdateComponentConfigRequest.Property> asProperties(
 			LevlWorkflowState.LevlWorkflowStateMemento memento) {
 		var properties = List.of(
@@ -92,6 +99,14 @@ public class LevlWorkflowStateConverter {
 				ConfigAttributes.LEVL_SOC_CONSTRAINTS_UPPER_LOGICAL_PERCENT.asProperty(memento.socUpperBoundPercent()));
 	}
 
+	/**
+	 * Converts the given Config into a LevlWorkflowStateMemento.
+	 * The Config contains the configuration attributes for the Levl workflow state.
+	 * Each attribute in the Config is mapped to a corresponding attribute in the LevlWorkflowStateMemento.
+	 *
+	 * @param config the Config to be converted
+	 * @return a LevlWorkflowStateMemento representing the configuration attributes of the Config
+	 */
 	public LevlWorkflowState.LevlWorkflowStateMemento levlWorkflowComponentFromConfig(Config config) {
 		return new LevlWorkflowState.LevlWorkflowStateMemento(config.primary_use_case_active_power_w(),
 				config.next_discharge_power_w(), config.actual_levl_power_w(), this.dischargeStateFromConfig(config),

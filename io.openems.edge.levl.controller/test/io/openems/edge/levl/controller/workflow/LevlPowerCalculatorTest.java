@@ -24,6 +24,14 @@ public class LevlPowerCalculatorTest {
                 Arguments.of(null, 1000, 0, "no ess valuee"));
     }
 
+    /**
+     * This method is testing the calculation of the actual power based on the ess value and the primary use case active power.
+     *
+     * @param essValue The value from the energy storage system (ESS). Can be null.
+     * @param primaryUseCaseActivePowerW The active power of the primary use case in watts.
+     * @param expectedLevlPowerW The expected power of the LEVL device in watts.
+     * @param description A description of the test case.
+     */
     @ParameterizedTest(name = "{index} {3}")
     @MethodSource("determineActualLevlPowerWData")
     public void determineActualLevlPowerW_Discharge_EssReturnsValue(Integer essValue, int primaryUseCaseActivePowerW, int expectedLevlPowerW, String description) {

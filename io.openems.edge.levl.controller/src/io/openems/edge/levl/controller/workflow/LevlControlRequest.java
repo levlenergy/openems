@@ -22,12 +22,24 @@ public class LevlControlRequest extends JsonrpcRequest {
     private BigDecimal efficiencyPercent;
     private final JsonObject params;
 
-
+    /**
+     * Creates a new LevlControlRequest from a JsonrpcRequest.
+     *
+     * @param request the JsonrpcRequest
+     * @return a new LevlControlRequest
+     * @throws OpenemsError.OpenemsNamedException if the request is invalid
+     */
     public static LevlControlRequest from(JsonrpcRequest request) throws OpenemsError.OpenemsNamedException {
         var params = request.getParams();
         return new LevlControlRequest(params);
     }
 
+    /**
+     * Creates a new LevlControlRequest from a JsonObject.
+     *
+     * @param params the JsonObject
+     * @throws OpenemsError.OpenemsNamedException if the request is invalid
+     */
     public LevlControlRequest(JsonObject params) throws OpenemsError.OpenemsNamedException {
         super(LevlControlRequest.METHOD);
         this.params = params;
@@ -46,16 +58,13 @@ public class LevlControlRequest extends JsonrpcRequest {
         }
     }
 
-    public String getLevlRequestId() {
-        return this.levlRequestId;
-    }
-
-    public BigDecimal getEfficiencyPercent() {
-        return this.efficiencyPercent;
-    }
-
+    /**
+     * Parses the fields from a JsonObject.
+     *
+     * @param params the JsonObject
+     */
     private void parseFields(JsonObject params) {
-    	this.levlRequestId = params.get("levlRequestId").getAsString();
+        this.levlRequestId = params.get("levlRequestId").getAsString();
         this.levlRequestTimestamp = params.get("levlRequestTimestamp").getAsString();
         this.levlPowerW = params.get("levlPowerW").getAsInt();
         this.levlChargeDelaySec = params.get("levlChargeDelaySec").getAsInt();
@@ -67,15 +76,21 @@ public class LevlControlRequest extends JsonrpcRequest {
         this.efficiencyPercent = params.get("efficiencyPercent").getAsBigDecimal();
     }
 
-    @Override
-    public JsonObject getParams() {
-        return this.params;
-    }
-
+    /**
+     * Creates a new Limit instance.
+     *
+     * @return a new Limit instance
+     */
     public Limit createGridPowerLimitW() {
         return new Limit(this.sellToGridLimitW, this.buyFromGridLimitW);
     }
 
+    /**
+     * Creates a new DischargeRequest instance.
+     *
+     * @param now the current time
+     * @return a new DischargeRequest instance
+     */
     public DischargeRequest createDischargeRequest(LocalDateTime now) {
         return DischargeRequest.of(
                 now,
@@ -87,6 +102,13 @@ public class LevlControlRequest extends JsonrpcRequest {
         );
     }
 
+    /**
+     * Creates a new LevlSocConstraints instance.
+     *
+     * @param physicalSocLowerBoundPercent the physical lower bound of the state of charge
+     * @param physicalSocUpperBoundPercent the physical upper bound of the state of charge
+     * @return a new LevlSocConstraints instance
+     */
     public LevlSocConstraints createLevlSocConstraints(int physicalSocLowerBoundPercent, int physicalSocUpperBoundPercent) {
         return new LevlSocConstraints(
                 physicalSocLowerBoundPercent,

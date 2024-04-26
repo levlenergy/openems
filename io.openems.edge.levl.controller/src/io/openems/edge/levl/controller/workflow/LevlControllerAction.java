@@ -21,12 +21,24 @@ public class LevlControllerAction {
         this.levlWorkflow = levlWorkflow;
     }
 
+    /**
+     * Adds the powers of the original unconstrained active power.
+     *
+     * @param originalUnconstrainedActivePower the original unconstrained active power
+     * @throws OpenemsError.OpenemsNamedException if an error occurs
+     */
     public void addPowers(int originalUnconstrainedActivePower) throws OpenemsError.OpenemsNamedException {
-    	this.applyStrategy(originalUnconstrainedActivePower, new AddPowerStrategy());
+        this.applyStrategy(originalUnconstrainedActivePower, new AddPowerStrategy());
     }
 
+    /**
+     * Increases the absolute power of the original unconstrained active power.
+     *
+     * @param originalUnconstrainedActivePower the original unconstrained active power
+     * @throws OpenemsError.OpenemsNamedException if an error occurs
+     */
     public void onlyIncreaseAbsolutePower(Integer originalUnconstrainedActivePower) throws OpenemsError.OpenemsNamedException {
-    	this.applyStrategy(originalUnconstrainedActivePower, new OnlyIncreaseAbsolutePowerStrategy());
+        this.applyStrategy(originalUnconstrainedActivePower, new OnlyIncreaseAbsolutePowerStrategy());
     }
 
     private void applyStrategy(int originalUnconstrainedActivePower, PowerStrategy powerStrategy) throws OpenemsError.OpenemsNamedException {
@@ -47,7 +59,7 @@ public class LevlControllerAction {
     }
 
     private int determinePrimaryUseCasePower(int originalUnconstrainedActivePower) {
-    	this.log.debug("######### original unconstrained controller power: {}", originalUnconstrainedActivePower);
+        this.log.debug("######### original unconstrained controller power: {}", originalUnconstrainedActivePower);
         System.out.println("************ originalUnconstrainedActivePower: " + originalUnconstrainedActivePower + "\n");
         var constraints = this.levlWorkflow.determinePrimaryUseCaseConstraints();
         System.out.println("************ PUC constraints: " + constraints + "\n");
