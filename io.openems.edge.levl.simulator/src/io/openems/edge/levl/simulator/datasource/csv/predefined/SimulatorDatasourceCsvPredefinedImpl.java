@@ -8,12 +8,17 @@ import io.openems.edge.levl.simulator.DataContainer;
 import io.openems.edge.levl.simulator.datasource.api.AbstractOneWeekCsvDatasource;
 import io.openems.edge.levl.simulator.datasource.api.SimulatorDatasource;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.event.propertytypes.EventTopics;
 import org.osgi.service.metatype.annotations.Designate;
 
 import java.io.IOException;
+
 
 @Designate(ocd = Config.class, factory = true)
 @Component(//

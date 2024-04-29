@@ -12,7 +12,7 @@ public class DataContainer {
 
 	final List<Float[]> records;
 
-	int currentIndex = -1;
+	protected int currentIndex = -1;
 
 	public DataContainer() {
 		this.records = new ArrayList<>();
