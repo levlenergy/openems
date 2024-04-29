@@ -5,6 +5,9 @@ import io.openems.edge.levl.controller.controllers.common.Limit;
 import io.openems.edge.levl.controller.controllers.common.Percent;
 import io.openems.edge.levl.controller.controllers.common.Units;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class represents the SoC constraints for the LEVL controller.
  * It provides methods to determine the limit based on the physical SoC constraint and the levl SoC offset,
@@ -14,6 +17,8 @@ public class LevlSocConstraints {
     private final SocConstraint physicalSocConstraint;
     private final SocConstraint socConstraint;
 
+    private final Logger log = LoggerFactory.getLogger(LevlSocConstraints.class);    
+    
     /**
      * This record represents a memento of the LevlSocConstraints object.
      */
@@ -69,13 +74,14 @@ public class LevlSocConstraints {
      */
     public Limit determineLimitFromPhysicalSocConstraintAndLevlSocOffset(long totalDischargePowerWs, Value<Integer> soc, Value<Integer> capacity) {
         if (!soc.isDefined() || !capacity.isDefined()) {
-            System.out.println("************ soc or capacity not defined\n");
+            this.log.debug("soc or capacity not defined");
             return Limit.unconstrained();
         }
         var levlCapacityPercentDischarged = this.calculateLevlCapacityOffsetPercentFromDischargePowerWs(totalDischargePowerWs, capacity.get());
-        System.out.println("************ levlCapacityPercentDischarged: " + levlCapacityPercentDischarged + "\n");
+        this.log.debug("levlCapacityPercentDischarged: " + levlCapacityPercentDischarged);
         return this.physicalSocConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), levlCapacityPercentDischarged);
     }
+
 
     /**
      * Determines the levl use case SoC constraints.

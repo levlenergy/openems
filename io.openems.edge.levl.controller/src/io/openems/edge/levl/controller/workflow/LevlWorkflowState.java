@@ -7,6 +7,9 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LevlWorkflowState {
 
     protected Clock clock = Clock.systemDefaultZone();
@@ -17,6 +20,8 @@ public class LevlWorkflowState {
     protected int primaryUseCaseActivePowerW;
     protected int nextDischargePowerW;
     protected int actualLevlPowerW;
+    
+    private final Logger log = LoggerFactory.getLogger(LevlWorkflowState.class);
 
     record LevlWorkflowStateMemento(int primaryUseCaseActivePowerW, int nextDischargePowerW, int actualLevlPowerW,
                                     DischargeState.DischargeStateMemento state,
@@ -106,7 +111,7 @@ public class LevlWorkflowState {
      */
     void determineNextDischargePower() {
         this.nextDischargePowerW = this.calculator.determineNextDischargePowerW(this.dischargeState.getCurrentRequestRemainingDischargePowerWs());
-        System.out.println("*********** next discharge power W " + this.nextDischargePowerW);
+        this.log.debug("Next discharge power W " + this.nextDischargePowerW);
     }
 
     /**
@@ -132,7 +137,7 @@ public class LevlWorkflowState {
                 essSoc,
                 essCapacity
         );
-        System.out.println("************ socLimit for PUC: " + socLimit + "\n");
+        this.log.debug("socLimit for PUC: " + socLimit);
         return openemsLimit.intersect(socLimit);
     }
 

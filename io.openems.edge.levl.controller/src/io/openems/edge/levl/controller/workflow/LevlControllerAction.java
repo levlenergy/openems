@@ -44,27 +44,27 @@ public class LevlControllerAction {
     private void applyStrategy(int originalUnconstrainedActivePower, PowerStrategy powerStrategy) throws OpenemsError.OpenemsNamedException {
         int originalActivePower = this.determinePrimaryUseCasePower(originalUnconstrainedActivePower);
         int levlNextDischargePowerW = this.levlWorkflow.getNextDischargePowerW();
-
+        
         Limit levlUseCaseConstraints = this.levlWorkflow.getLevlUseCaseConstraints();
-        System.out.println("************ levlUseCaseConstraints: " + levlUseCaseConstraints + "\n");
+        this.log.debug("levlUseCaseConstraints: " + levlUseCaseConstraints);
         int gridConstrainedLevlNextDischargePowerW = levlUseCaseConstraints.apply(levlNextDischargePowerW);
-        System.out.println("************ gridConstrainedLevlNextDischargePowerW: " + gridConstrainedLevlNextDischargePowerW + "\n");
+        this.log.debug("gridConstrainedLevlNextDischargePowerW: " + gridConstrainedLevlNextDischargePowerW);
         int overallPower = powerStrategy.combinePrimaryUseCaseAndLevlDischargePowerW(originalActivePower, gridConstrainedLevlNextDischargePowerW);
-        System.out.println("************ overallPower: " + overallPower + "\n");
-        this.log.debug("+++++++++++workflow request {}", this.levlWorkflow.getNextDischargePowerW());
-        this.log.debug("######### overall controller power: {}", overallPower);
+        this.log.debug("overallPower: " + overallPower);
+        this.log.debug("workflow request {}", this.levlWorkflow.getNextDischargePowerW());
+        this.log.debug("overall controller power: {}", overallPower);
 
         this.ess.setActivePowerEquals(overallPower);
         this.ess.setReactivePowerEquals(0);
     }
 
     private int determinePrimaryUseCasePower(int originalUnconstrainedActivePower) {
-        this.log.debug("######### original unconstrained controller power: {}", originalUnconstrainedActivePower);
-        System.out.println("************ originalUnconstrainedActivePower: " + originalUnconstrainedActivePower + "\n");
+        this.log.debug("original unconstrained controller power: {}", originalUnconstrainedActivePower);
+        this.log.debug("originalUnconstrainedActivePower: " + originalUnconstrainedActivePower);
         var constraints = this.levlWorkflow.determinePrimaryUseCaseConstraints();
-        System.out.println("************ PUC constraints: " + constraints + "\n");
+        this.log.debug("PUC constraints: " + constraints);
         var originalActivePower = constraints.apply(originalUnconstrainedActivePower);
-        System.out.println("************ originalActivePower: " + originalActivePower + "\n");
+        this.log.debug("originalActivePower: " + originalActivePower);
         this.levlWorkflow.setPrimaryUseCaseActivePowerW(originalActivePower);
         return originalActivePower;
     }
