@@ -37,8 +37,8 @@ class DischargeStateTest {
 
 	@Test
 	void registerNewRequest_FirstRequest() {
-		this.underTest = DischargeStateTestBuilder.Default().build();
-		this.expected = DischargeStateTestBuilder.Default().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
+		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequest(FIRST_REQUEST).build();
 
 		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST);
@@ -48,8 +48,8 @@ class DischargeStateTest {
 
 	@Test
 	void registerNewRequest_SecondRequestOverwritesFirstRequest() {
-		this.underTest = DischargeStateTestBuilder.Default().build();
-		this.expected = DischargeStateTestBuilder.Default().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
+		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequest(SECOND_REQUEST).build();
 
 		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST);
@@ -60,8 +60,8 @@ class DischargeStateTest {
 
 	@Test
 	void registerNewRequest_RequestWithSameId_NewRequestIsUsed() {
-		this.underTest = DischargeStateTestBuilder.Default().build();
-		DischargeState expected = DischargeStateTestBuilder.Default()
+		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
+		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequest(FIRST_REQUEST_WITH_OTHER_VALUES).build();
 
@@ -73,10 +73,10 @@ class DischargeStateTest {
 
 	@Test
 	void registerNewRequest_FirstRequestIsActive_SecondRequestIsQueued() {
-		DischargeState expected = DischargeStateTestBuilder.Default()
+		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).withRequest(FIRST_REQUEST)
 				.withNextRequest(NEW_REQUEST).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST).build();
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST).build();
 
 		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST);
 
@@ -85,9 +85,9 @@ class DischargeStateTest {
 
 	@Test
 	void update_nextRequestHasNotStartedYet() {
-		this.expected = DischargeStateTestBuilder.Default().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequest(FIRST_REQUEST).build();
-		this.underTest = DischargeStateTestBuilder.Default()
+		this.underTest = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).withNextRequest(FIRST_REQUEST)
 				.build();
 
@@ -98,11 +98,11 @@ class DischargeStateTest {
 
 	@Test
 	void update_nextRequestShouldStart() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequestEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT)
 				.withCurrentEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default()
+		this.underTest = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).withNextRequest(FIRST_REQUEST)
 				.build();
 
@@ -113,9 +113,9 @@ class DischargeStateTest {
 
 	@Test
 	void update_requestShouldContinueIfNotExpiredYet() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withRequest(FIRST_REQUEST).build();
 
 		this.underTest.update(NOW.plusSeconds(DELAY_START_SECONDS + DURATION_SECONDS));
@@ -125,13 +125,13 @@ class DischargeStateTest {
 
 	@Test
 	void update_requestShouldCompleteIfExpired() {
-		this.expected = DischargeStateTestBuilder.Default().withCurrentRequestRemainingDischargeEnergyWs(0)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withCurrentRequestRemainingDischargeEnergyWs(0)
 				.withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withRequest(FIRST_REQUEST)
 				.withCurrentRequestRealizedDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs()).build();
 
@@ -142,14 +142,14 @@ class DischargeStateTest {
 
 	@Test
 	void update_requestShouldStartNextRequestIfNextRequestShouldStart() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(SECOND_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(SECOND_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(SECOND_REQUEST.getDischargeEnergyWs())
 				.withNextRequestEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withCurrentEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequest(SECOND_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
@@ -161,13 +161,13 @@ class DischargeStateTest {
 
 	@Test
 	void initAfterRestore_bothRequestsExpired() {
-		this.expected = DischargeStateTestBuilder.Default().withCurrentRequestRemainingDischargeEnergyWs(0)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withCurrentRequestRemainingDischargeEnergyWs(0)
 				.withNextRequestEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequest(SECOND_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
@@ -179,12 +179,12 @@ class DischargeStateTest {
 
 	@Test
 	void initAfterRestore_firstRequestActive() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequestEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).withNextRequest(SECOND_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequest(SECOND_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
@@ -196,7 +196,7 @@ class DischargeStateTest {
 
 	@Test
 	void initAfterRestore_secondRequestActive() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(SECOND_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(SECOND_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(SECOND_REQUEST.getDischargeEnergyWs())
 				.withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
@@ -205,7 +205,7 @@ class DischargeStateTest {
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withNextRequestEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentRequestRemainingDischargeEnergyWs(FIRST_REQUEST.getDischargeEnergyWs())
 				.withNextRequest(SECOND_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).build();
@@ -219,7 +219,7 @@ class DischargeStateTest {
 	void handleDischargePowerWs_shouldAdjustFieldValuesCorrectly_batteryIsBeingDischarged() {
 		int currentRequestRemainingDischargeEnergyWs = 600;
 		int newRealizedPowerW = 201;
-		this.expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
@@ -231,7 +231,7 @@ class DischargeStateTest {
 								+ newRealizedPowerW / CURRENT_REQUEST_EFFICIENCY))
 				.build();
 
-		this.underTest = DischargeStateTestBuilder.Default()
+		this.underTest = DischargeStateTestBuilder.defaultInstance()
 				.withCurrentRequestRemainingDischargeEnergyWs(currentRequestRemainingDischargeEnergyWs)
 				.withRequest(FIRST_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
@@ -243,7 +243,7 @@ class DischargeStateTest {
 	@Test
 	void handleDischargePowerWs_shouldAdjustFieldValuesCorrectly_batteryIsBeingCharged() {
 		int newRealizedPowerW = -300;
-		this.expected = DischargeStateTestBuilder.Default()
+		this.expected = DischargeStateTestBuilder.defaultInstance()
 				.withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(
@@ -255,7 +255,7 @@ class DischargeStateTest {
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
 								+ CURRENT_REQUEST_EFFICIENCY * newRealizedPowerW))
 				.build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
@@ -265,7 +265,7 @@ class DischargeStateTest {
 
 	@Test
 	void handleDischargePowerWs_shouldAdjustFieldValuesCorrectly_batteryIsBeingChargedDischargedCharged() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + 390)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - 390)
@@ -273,7 +273,7 @@ class DischargeStateTest {
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + 560)
 				.build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(900); // scaled: 1000
@@ -286,7 +286,7 @@ class DischargeStateTest {
 	@Test
 	void handleDischargePowerWs_requestShouldCompleteIfSignChanged_Discharge() {
 		int newRealizedPowerW = 601;
-		this.expected = DischargeStateTestBuilder.Default().withRequest(DischargeRequest.inactiveRequest())
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
 				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
@@ -297,7 +297,7 @@ class DischargeStateTest {
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
 				.build();
-		this.underTest = DischargeStateTestBuilder.Default().withCurrentRequestRemainingDischargeEnergyWs(600)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withCurrentRequestRemainingDischargeEnergyWs(600)
 				.withRequest(FIRST_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
@@ -308,7 +308,7 @@ class DischargeStateTest {
 	@Test
 	void handleDischargePowerWs_requestShouldCompleteIfSignChanged_Charge() {
 		int newRealizedPowerW = -501;
-		this.expected = DischargeStateTestBuilder.Default().withRequest(DischargeRequest.inactiveRequest())
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
 				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
@@ -319,7 +319,7 @@ class DischargeStateTest {
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
 				.build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
@@ -329,8 +329,8 @@ class DischargeStateTest {
 
 	@Test
 	void handleDischargePowerWs_inactiveRequestShouldDoNothing() {
-		this.expected = DischargeStateTestBuilder.Default().withRequest(DischargeRequest.inactiveRequest()).build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(DischargeRequest.inactiveRequest()).build();
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest()).build();
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest()).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(300);
 
@@ -340,7 +340,7 @@ class DischargeStateTest {
 	@Test
 	void handleDischargePowerWs_doesNotGoBeyondZero() {
 		int newRealizedPowerW = -600;
-		this.expected = DischargeStateTestBuilder.Default().withRequest(DischargeRequest.inactiveRequest())
+		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
 				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
@@ -351,7 +351,7 @@ class DischargeStateTest {
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
 				.build();
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
 		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
@@ -367,7 +367,7 @@ class DischargeStateTest {
 				CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS, CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS, 100,
 				CURRENT_REQUEST_EFFICIENTY_PERCENT, NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST_TIMESTAMP,
 				FIRST_REQUEST.save(), SECOND_REQUEST.save());
-		this.underTest = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST).withNextRequest(SECOND_REQUEST)
+		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST).withNextRequest(SECOND_REQUEST)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS)
 				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY)
@@ -390,7 +390,7 @@ class DischargeStateTest {
 				CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS, CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS, 100,
 				CURRENT_REQUEST_EFFICIENTY_PERCENT, NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST_TIMESTAMP,
 				FIRST_REQUEST.save(), SECOND_REQUEST.save());
-		DischargeState expected = DischargeStateTestBuilder.Default().withRequest(FIRST_REQUEST)
+		DischargeState expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withNextRequest(SECOND_REQUEST)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS)
