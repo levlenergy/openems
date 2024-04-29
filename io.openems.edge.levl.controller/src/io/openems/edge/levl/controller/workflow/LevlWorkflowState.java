@@ -92,7 +92,7 @@ public class LevlWorkflowState {
     }
 
     /**
-     * Determines the actual power and handles the realized discharge power for one second
+     * Determines the actual power and handles the realized discharge power for one second.
      *
      * @param actualPowerW the actual power in watts
      */

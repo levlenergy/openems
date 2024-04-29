@@ -244,6 +244,17 @@ public class LevlWorkflowComponentImplTest {
 				"intersect with levl constraints"));
 	}
 
+	/**
+	 * Determines the primary use case constraints based on the provided parameters.
+	 *
+	 * @param minPowerW The minimum power in watts.
+	 * @param maxPowerW The maximum power in watts.
+	 * @param socPercent The state of charge percentage.
+	 * @param capacity The capacity.
+	 * @param levlConstraint The levl constraint.
+	 * @param expectedConstraint The expected constraint.
+	 * @param description A description of the test case.
+	 */
 	@ParameterizedTest(name = "{index} {6}")
 	@MethodSource("provideData")
 	public void determineConstraints(int minPowerW, int maxPowerW, Integer socPercent, Integer capacity,

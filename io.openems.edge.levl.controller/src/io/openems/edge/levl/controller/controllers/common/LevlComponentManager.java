@@ -25,6 +25,13 @@ public class LevlComponentManager implements ComponentManager {
         this.openEmsComponentManager = openEmsComponentManager;
     }
 
+    /**
+     * Overwrites an existing component in the component manager with a new value.
+     * If the component does not exist, it will be added to the component manager.
+     *
+     * @param key   the ID of the component to be overwritten
+     * @param value the new component to replace the existing one
+     */
     public void overwriteComponent(String key, OpenemsComponent value) {
     	this.componentOverwrites.put(key, value);
     }

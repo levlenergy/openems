@@ -44,7 +44,8 @@ public final class StorageConfigTestBuilder {
 
     /**
      * Returns a new instance of the StorageConfigTestBuilder with default values.
-     ** @return a new instance of StorageConfigTestBuilder
+     * 
+     * @return a new instance of StorageConfigTestBuilder
      */
     public static StorageConfigTestBuilder aDefaultStorageConfig() {
         return new StorageConfigTestBuilder();
