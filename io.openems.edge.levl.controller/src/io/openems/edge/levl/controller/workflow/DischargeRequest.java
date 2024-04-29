@@ -97,7 +97,7 @@ public class DischargeRequest {
 	 * @return true if the requests are the same, false otherwise
 	 */
 	public boolean isSameRequest(DischargeRequest other) {
-		return this.equals(other.requestId);
+		return this.requestId.equals(other.requestId);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class DischargeRequest {
 				+ ", deadline=" + this.deadline + ", active=" + this.active + '}';
 	}
 
-	// TODO: 15.02.2024 Dennis: equals und hashCode anpassen
+	// TODO: 15.02.2024 Dennis: equals und hashCode anpassen, da der requestTimestamp nicht berücksichtigt wird (Story #795)
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -138,7 +138,7 @@ public class DischargeRequest {
 		}
 		DischargeRequest that = (DischargeRequest) o;
 		return this.dischargeEnergyWs == that.dischargeEnergyWs && this.active == that.active
-				&& this.equals(that.requestId) && this.start.equals(that.start) && this.deadline.equals(that.deadline);
+				&& this.requestId.equals(that.requestId) && this.start.equals(that.start) && this.deadline.equals(that.deadline);
 	}
 
 	@Override
