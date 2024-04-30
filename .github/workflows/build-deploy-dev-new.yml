@@ -37,7 +37,7 @@ jobs:
       - name: Save build-artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-artifacts-java
           path: |
             build/openems-edge.jar
             build/openems-backend.jar
@@ -75,7 +75,7 @@ jobs:
       - name: Save build-artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: build-artifacts-ui
           path: build/openems-ui.zip
 
   deploy:
@@ -85,8 +85,16 @@ jobs:
       - name: Load build-artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
           path: build
+          merge-multiple: true
+      - name: copy file via ssh
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.OPENEMS_SERVER_IP_ADDRESS }}
+          username: ${{ secrets.IONOS_CLOUD_GITHUB_USER }}
+          key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
+          source: "build/*"
+          target: "/opt/containers/levl/infrastructure/dev/openems"
       - name: Deploy OpenEMS
         uses: appleboy/ssh-action@v1.0.0
         env:
@@ -99,6 +107,5 @@ jobs:
           envs: PASSWORD
           script: |
             printf '%s\n' "$PASSWORD" | sudo -p "" -S echo login
-            sudo cp build/*.jar /opt/containers/levl/infrastructure/dev/openems
             cd /opt/containers/levl/infrastructure/dev/openems
             sudo bash redeploy.sh
