@@ -2,13 +2,9 @@ package io.openems.backend.levl.metadata.dev;
 
 import static java.util.stream.Collectors.joining;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -69,15 +65,13 @@ import io.openems.common.utils.ThreadPoolUtils;
 @EventTopics({ //
 		Edge.Events.ON_SET_CONFIG //
 })
-public class LevlMetadataDummy extends AbstractMetadata implements Metadata, EventHandler,AppCenterMetadata.EdgeData,
-AppCenterMetadata.UiData {
+public class LevlMetadataDummy extends AbstractMetadata
+		implements Metadata, EventHandler, AppCenterMetadata.EdgeData, AppCenterMetadata.UiData {
 
-    public static final String HASHED_ADMIN_PASSWORD = "fe7bd5b6a2e8cbf01db532b4c9a026075af4a9e75662d93dc4e7c968248cc9cbb96f99d640aa4ff5524687ac618f1fd3f160484e42f4dc6cbef89cff60394a25";
-    public static final String ADMIN_USERNAME = "levlAdminEms";
-    @Reference
-    private ConfigurationAdmin cm;
+	@Reference
+	private ConfigurationAdmin cm;
 
-    private static final Pattern NAME_NUMBER_PATTERN = Pattern.compile("[^0-9]+([0-9]+)$");
+	private static final Pattern NAME_NUMBER_PATTERN = Pattern.compile("[^0-9]+([0-9]+)$");
 
 	private final Logger log = LoggerFactory.getLogger(LevlMetadataDummy.class);
 
@@ -113,10 +107,10 @@ AppCenterMetadata.UiData {
 
 	@Override
 	public User authenticate(String username, String password) throws OpenemsNamedException {
-        if (!this.authenticateAdmin(username, password)) {
-            throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
-        }
-        var name = "User #" + this.nextUserId.incrementAndGet();
+		if (!this.authenticateAdmin(username, password)) {
+			throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
+		}
+		var name = "User #" + this.nextUserId.incrementAndGet();
 		var token = UUID.randomUUID().toString();
 		var user = new User(username, name, token, this.defaultLanguage, Role.ADMIN, this.hasMultipleEdges(),
 				this.settings);
@@ -126,10 +120,10 @@ AppCenterMetadata.UiData {
 
 	@Override
 	public User authenticate(String token) throws OpenemsNamedException {
-        if (!this.authenticateAdmin(ADMIN_USERNAME, token)) {
-            throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
-        }
-        for (var user : this.users.values()) {
+		if (!this.authenticateAdmin(getAdminUsernameFromEnv(), token)) {
+			throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
+		}
+		for (var user : this.users.values()) {
 			if (!user.getToken().equals(token)) {
 				continue;
 			}
@@ -148,21 +142,36 @@ AppCenterMetadata.UiData {
 		throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
 	}
 
-    private boolean authenticateAdmin(String username, String password) {
-        try {
-            return ADMIN_USERNAME.equals(username) && HASHED_ADMIN_PASSWORD.equals(this.hashPassword(password));
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            return false;
-        }
-    }
+	private boolean authenticateAdmin(String username, String password) {
+		try {
+			return secureCompare(getAdminUsernameFromEnv(), username)
+					&& secureCompare(getAdminPasswordFromEnv(), password);
+		} catch (RuntimeException e) {
+			log.error("Authentication failed due to configuration error", e);
+			return false;
+		}
+	}
 
-    String hashPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] salt = new byte[]{73, -7, 75, -118, -34, -32, 120, -78, 14, -114, -18, 106, -83, 60, -125, 37};
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
-        byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
-        return HexFormat.of().formatHex(hashedPassword);
-    }
+	private String getAdminUsernameFromEnv() {
+		return getEnvVariable("ADMIN_USERNAME");
+	}
+
+	private String getAdminPasswordFromEnv() {
+		return getEnvVariable("ADMIN_PASSWORD");
+	}
+
+	private String getEnvVariable(String key) {
+		String value = System.getenv().get(key);
+		if (value == null || value.isEmpty()) {
+			log.error(key + " env variable missing");
+			throw new RuntimeException(key + " env variable missing");
+		}
+		return value;
+	}
+
+	private boolean secureCompare(String a, String b) {
+		return MessageDigest.isEqual(a.getBytes(), b.getBytes());
+	}
 
 	private User createUser(String username, String name, String token, boolean hasMultipleEdges) {
 		return new User(username, name, token, this.defaultLanguage, Role.ADMIN, this.hasMultipleEdges(),
@@ -421,53 +430,57 @@ AppCenterMetadata.UiData {
 		this.settings = settings == null ? new JsonObject() : settings;
 	}
 
-	 @Override
-	    public JsonObject sendIsKeyApplicable(String key, String edgeId, String appId) throws OpenemsNamedException {
-	        return new JsonObject();
-	    }
+	@Override
+	public JsonObject sendIsKeyApplicable(String key, String edgeId, String appId) throws OpenemsNamedException {
+		return new JsonObject();
+	}
 
-	    @Override
-	    public JsonArray sendGetPossibleApps(String key, String edgeId) throws OpenemsNamedException {
-	        return new JsonArray();
-	    }
+	@Override
+	public JsonArray sendGetPossibleApps(String key, String edgeId) throws OpenemsNamedException {
+		return new JsonArray();
+	}
 
-	    @Override
-	    public void sendAddInstallAppInstanceHistory(String key, String edgeId, String appId, UUID instanceId, String userId) throws OpenemsNamedException {
+	@Override
+	public void sendAddInstallAppInstanceHistory(String key, String edgeId, String appId, UUID instanceId,
+			String userId) throws OpenemsNamedException {
 
-	    }
+	}
 
-	    @Override
-	    public void sendAddDeinstallAppInstanceHistory(String edgeId, String appId, UUID instanceId, String userId) throws OpenemsNamedException {
+	@Override
+	public void sendAddDeinstallAppInstanceHistory(String edgeId, String appId, UUID instanceId, String userId)
+			throws OpenemsNamedException {
 
-	    }
+	}
 
-	    @Override
-	    public JsonObject sendGetInstalledApps(String edgeId) throws OpenemsNamedException {
-	        return JsonUtils.buildJsonArray().build().getAsJsonObject();
-	    }
+	@Override
+	public JsonObject sendGetInstalledApps(String edgeId) throws OpenemsNamedException {
+		return JsonUtils.buildJsonArray().build().getAsJsonObject();
+	}
 
-	    @Override
-	    public void sendAddRegisterKeyHistory(String edgeId, String appId, String key, User user) throws OpenemsNamedException {
+	@Override
+	public void sendAddRegisterKeyHistory(String edgeId, String appId, String key, User user)
+			throws OpenemsNamedException {
 
-	    }
+	}
 
-	    @Override
-	    public void sendAddUnregisterKeyHistory(String edgeId, String appId, String key, User user) throws OpenemsNamedException {
+	@Override
+	public void sendAddUnregisterKeyHistory(String edgeId, String appId, String key, User user)
+			throws OpenemsNamedException {
 
-	    }
+	}
 
-	    @Override
-	    public JsonArray sendGetRegisteredKeys(String edgeId, String appId) throws OpenemsNamedException {
-	        return new JsonArray();
-	    }
+	@Override
+	public JsonArray sendGetRegisteredKeys(String edgeId, String appId) throws OpenemsNamedException {
+		return new JsonArray();
+	}
 
-	    @Override
-	    public String getSuppliableKey(User user, String edgeId, String appId) throws OpenemsNamedException {
-	        return "invalid";
-	    }
+	@Override
+	public String getSuppliableKey(User user, String edgeId, String appId) throws OpenemsNamedException {
+		return "invalid";
+	}
 
-	    @Override
-	    public boolean isAppFree(User user, String appId) throws OpenemsNamedException {
-	        return false;
-	    }
+	@Override
+	public boolean isAppFree(User user, String appId) throws OpenemsNamedException {
+		return false;
+	}
 }
