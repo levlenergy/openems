@@ -120,7 +120,7 @@ public class LevlMetadataDummy extends AbstractMetadata
 
 	@Override
 	public User authenticate(String token) throws OpenemsNamedException {
-		if (!this.authenticateAdmin(getAdminUsernameFromEnv(), token)) {
+		if (!this.authenticateAdmin(this.getAdminUsernameFromEnv(), token)) {
 			throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
 		}
 		for (var user : this.users.values()) {
@@ -144,26 +144,26 @@ public class LevlMetadataDummy extends AbstractMetadata
 
 	private boolean authenticateAdmin(String username, String password) {
 		try {
-			return secureCompare(getAdminUsernameFromEnv(), username)
-					&& secureCompare(getAdminPasswordFromEnv(), password);
+			return this.secureCompare(this.getAdminUsernameFromEnv(), username)
+					&& this.secureCompare(this.getAdminPasswordFromEnv(), password);
 		} catch (RuntimeException e) {
-			log.error("Authentication failed due to configuration error", e);
+			this.log.error("Authentication failed due to configuration error", e);
 			return false;
 		}
 	}
 
 	private String getAdminUsernameFromEnv() {
-		return getEnvVariable("ADMIN_USERNAME");
+		return this.getEnvVariable("ADMIN_USERNAME");
 	}
 
 	private String getAdminPasswordFromEnv() {
-		return getEnvVariable("ADMIN_PASSWORD");
+		return this.getEnvVariable("ADMIN_PASSWORD");
 	}
 
 	private String getEnvVariable(String key) {
 		String value = System.getenv().get(key);
 		if (value == null || value.isEmpty()) {
-			log.error(key + " env variable missing");
+			this.log.error(key + " env variable missing");
 			throw new RuntimeException(key + " env variable missing");
 		}
 		return value;
