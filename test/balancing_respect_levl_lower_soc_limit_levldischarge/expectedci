@@ -1,0 +1,3 @@
+levlWorkflow0[ActualDischargePowerW:-420 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-420 W|RealizedDischargePowerW:0 W] meterConsumption[552 W] meterGrid[-28 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-448 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-448 W|RealizedDischargePowerW:0 W] meterConsumption[536 W] meterGrid[-16 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-464 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-464 W|RealizedDischargePowerW:0 W] meterConsumption[524 W] meterGrid[-12 W] meterProduction[1000 W]
