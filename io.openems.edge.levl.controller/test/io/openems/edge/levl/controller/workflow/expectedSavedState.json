@@ -1,0 +1,117 @@
+{
+  "componentId": "stateId",
+  "properties": [
+    {
+      "name": "primary.use.case.active.power.w",
+      "value": 222
+    },
+    {
+      "name": "next.discharge.power.w",
+      "value": 333
+    },
+    {
+      "name": "actual.levl.power.w",
+      "value": 111
+    },
+    {
+      "name": "total.realized.discharge.energy.ws",
+      "value": "1"
+    },
+    {
+      "name": "total.discharge.energy.ws.at.battery.scaled.with.efficiency",
+      "value": "2"
+    },
+    {
+      "name": "current.request.remaining.discharge.energy.ws",
+      "value": "3"
+    },
+    {
+      "name": "current.request.realized.discharge.energy.ws",
+      "value": "4"
+    },
+    {
+      "name": "last.request.realized.discharge.energy.ws",
+      "value": "5"
+    },
+    {
+      "name": "last.discharge.request.timestamp",
+      "value": "2024-02-15T12:00:00Z"
+    },
+    {
+      "name": "efficiency.percent.multiplied.by.hundred",
+      "value": 9903
+    },
+    {
+      "name": "current.discharge.request.id",
+      "value": "id0"
+    },
+    {
+      "name": "current.discharge.request.timestamp",
+      "value": "2024-02-15T15:00:00Z"
+    },
+    {
+      "name": "current.discharge.request.energy.ws",
+      "value": "9"
+    },
+    {
+      "name": "current.discharge.request.start",
+      "value": "2021-01-01T00:00:10"
+    },
+    {
+      "name": "current.discharge.request.deadline",
+      "value": "2021-01-01T00:00:11"
+    },
+    {
+      "name": "current.discharge.request.active",
+      "value": true
+    },
+    {
+      "name": "next.discharge.request.id",
+      "value": "id1"
+    },
+    {
+      "name": "next.discharge.request.timestamp",
+      "value": "2024-03-13T18:00:00Z"
+    },
+    {
+      "name": "next.discharge.request.energy.ws",
+      "value": "6"
+    },
+    {
+      "name": "next.discharge.request.start",
+      "value": "2021-01-01T00:00:07"
+    },
+    {
+      "name": "next.discharge.request.deadline",
+      "value": "2021-01-01T00:00:08"
+    },
+    {
+      "name": "next.discharge.request.active",
+      "value": false
+    },
+    {
+      "name": "levl.soc.constraints.lower.physical.percent",
+      "value": 1
+    },
+    {
+      "name": "levl.soc.constraints.upper.physical.percent",
+      "value": 100
+    },
+    {
+      "name": "levl.soc.constraints.lower.logical.percent",
+      "value": 5
+    },
+    {
+      "name": "levl.soc.constraints.upper.logical.percent",
+      "value": 95
+    },
+    {
+      "name": "grid.power.limit.w.lower",
+      "value": -1100
+    },
+    {
+      "name": "grid.power.limit.w.upper",
+      "value": 1200
+    }
+  ]
+}
