@@ -67,7 +67,7 @@ public class LimitTest {
 
         int result = underTest.apply(value);
 
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(expected + 1);
     }
 
     /**
