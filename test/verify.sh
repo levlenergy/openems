@@ -16,7 +16,7 @@ EXPECTED_FILENAME_CI=expectedci
 FULL_OUTPUT_NAME="full.out"
 LEVL_OUTPUT_NAME="levl.out"
 
-OPENEMS_URL=http://127.0.0.1:8084/jsonrpc
+OPENEMS_URL=http://127.0.0.1:1234/jsonrpc
 EXPECTED_FILENAME=$EXPECTED_FILENAME_LOCAL
 OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
 
@@ -52,7 +52,7 @@ function runWithRequest() {
   timeout $OPENEMS_EXECUTION_TIME_SECONDS java -Dfelix.cm.dir=$(pwd)/$configDir -jar ../../build/openems-edge.jar >$FULL_OUTPUT_NAME &
   pid=$!
   sleep $OPENEMS_WAIT_BEFORE_CURL_SECONDS
-  curl --location --connect-timeout 15 --request POST "$OPENEMS_URL" --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' --header 'Content-Type: application/json' -d @$levlRequest
+  curl --location --connect-timeout 15 --request POST "$OPENEMS_URL" --header 'Authorization: Basic YWRtaW46YWRtaW4=' --header 'Content-Type: application/json' -d @$levlRequest
   echo
   wait $pid
   cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' | sed -e 's/.*\(remaining.*\).*/\1/' > $LEVL_OUTPUT_NAME
