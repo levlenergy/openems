@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
 	// Use JUnit test framework.
-	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:5.9.1'
 	
 	// This dependency is used by the application. 
 	implementation 'biz.aQute.bnd.workspace:biz.aQute.bnd.workspace.gradle.plugin:6.4.0'
@@ -344,4 +344,8 @@ task buildAntoraDocs(dependsOn: copyBundleReadmes) {
 			into "${buildDir}/www"
 		}
 	}
+}
+
+test {
+	useJUnitPlatform()
 }
