@@ -186,10 +186,7 @@
 	bnd.identity;id='io.openems.edge.timeofusetariff.entsoe',\
 	bnd.identity;id='io.openems.edge.timeofusetariff.tibber',\
 	bnd.identity;id='io.openems.edge.levl.controller';version=latest,\
-<<<<<<< HEAD
 	bnd.identity;id='io.openems.edge.levl.simulator';version=latest,\
-=======
->>>>>>> levl-controller
 
 -runbundles: \
 	Java-WebSocket;version='[1.5.4,1.5.5)',\
