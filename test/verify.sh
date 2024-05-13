@@ -16,7 +16,7 @@ EXPECTED_FILENAME_CI=expectedci
 FULL_OUTPUT_NAME="full.out"
 LEVL_OUTPUT_NAME="levl.out"
 
-OPENEMS_URL=http://127.0.0.1:8085/jsonrpc
+OPENEMS_URL=http://localhost:8085/jsonrpc
 EXPECTED_FILENAME=$EXPECTED_FILENAME_LOCAL
 OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
 
@@ -56,7 +56,6 @@ function runWithRequest() {
   echo
   wait $pid
   cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' | sed -e 's/.*\(remaining.*\).*/\1/' > $LEVL_OUTPUT_NAME
-  cat $FULL_OUTPUT_NAME
   sleep 2
 }
 
