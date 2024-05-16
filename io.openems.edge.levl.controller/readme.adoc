@@ -1,0 +1,17 @@
+= Levl trading
+
+This controller enables the communication via JsonRPC with the levl platform.
+Furthermore, when the controller receives a levl control request, it execute it without violating the battery's primary use case
+(e.g. peak shaving or self-consumption optimisation).
+To do this, it first determines what the battery would do without levl depending on the configured behaviour
+and then realises the power requested by levl within the scope of all boundaries.
+
+Additional implemented Channels:
+
+- REALIZED_DISCHARGE_POWER_W: the cumulated amount of discharge power that was realized since the last discharge request (in W)
+- ACTUAL_DISCHARGE_POWER_W: the discharge power that was actually applied to the battery (for the current cycle, in W)
+- PRIMARY_USE_CASE_DISCHARGE_POWER_W: the discharge power of the primary use case (for the current cycle, in W)
+- LEVL_DISCHARGE_POWER_W: the discharge power of the levl use case (for the current cycle, in W)
+- REQUEST_TIMESTAMP: the timestamp of the last levl control request
+
+For more information visit https://levl.energy/
