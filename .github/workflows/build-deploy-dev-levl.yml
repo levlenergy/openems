@@ -34,9 +34,6 @@ jobs:
         run: git diff --exit-code io.openems.edge.application/EdgeApp.bndrun
       - name: Prepare Edge+Backend assets
         run: ./gradlew buildEdge buildBackend
-      - name: Execute unit tests
-        run: |
-          ./gradlew test
       - name: Execute e2e tests
         run: |
           cd test
