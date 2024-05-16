@@ -6,3 +6,5 @@ Converted to Ws in quarter hour: 2500000 * 900 = 2250000000
 Maximum int is                                   2147483647
 
 With integer overflow, we would get -2044967296
+
+Contains five different types of expected files, as it depends on the use of the machine at what point in the simulation the request is made.
