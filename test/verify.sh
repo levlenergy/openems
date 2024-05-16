@@ -11,20 +11,11 @@ FAILING_TESTS=
 
 OPENEMS_EXECUTION_TIME_SECONDS=14
 
-EXPECTED_FILENAME_LOCAL=expected
-EXPECTED_FILENAME_CI=expectedci
 FULL_OUTPUT_NAME="full.out"
 LEVL_OUTPUT_NAME="levl.out"
 
 OPENEMS_URL=http://localhost:8085/jsonrpc
-EXPECTED_FILENAME=$EXPECTED_FILENAME_LOCAL
 OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
-
-function extractTestName() {
-  withoutConfig=${1/config_/}
-  withoutExpected=${withoutConfig/$EXPECTED_FILENAME/}
-  echo $withoutExpected
-}
 
 function cleanup {
   find -name "$FULL_OUTPUT_NAME" | xargs rm
@@ -49,8 +40,7 @@ function runWithRequest() {
   levlRequest=$3
   echo -e "\nRUNNING TEST $testName with request $levlRequest ($OPENEMS_EXECUTION_TIME_SECONDS seconds)"
   echo $(pwd)
-  timeout $OPENEMS_EXECUTION_TIME_SECONDS java -Dfelix.cm.dir=$(pwd)/$configDir -jar ../../build/openems-edge.jar >$FULL_OUTPUT_NAME &
-  pid=$!
+  timeout $OPENEMS_EXECUTION_TIME_SECONDS java -Dfelix.cm.dir=$(pwd)/$configDir -jar ../../build/openems-edge.jar >$FULL_OUTPUT_NAME & pid=$!
   sleep $OPENEMS_WAIT_BEFORE_CURL_SECONDS
   curl --location --connect-timeout 15 --request POST "$OPENEMS_URL" --header 'Authorization: Basic YWRtaW46YWRtaW4=' --header 'Content-Type: application/json' -d @$levlRequest
   echo
@@ -84,63 +74,83 @@ function check {
   rm -rf $tempConfigDir
   cp -r config $tempConfigDir
 
-  success=0
-  fail=0
-
-  expected="$EXPECTED_FILENAME"
   if [ -z "$levlRequest" ]; then
     run $testName $tempConfigDir
+    expected_files=("expected")
   else
     runWithRequest $testName $tempConfigDir $levlRequest
+    expected_files=("expected1" "expected2" "expected3" "expected4" "expected5")
   fi
 
   TOTAL_COUNT=$((TOTAL_COUNT + 1))
 
   validLines=0
-  error=0
+  expectedFilesMatched=false
+  missingLine=
+  outputIfFailed=
 
-  if [ ! -f $expected ]; then
-    echo "creating new dummy expectation file $expected"
-    echo "NEW EXPECTATION FILE" >$expected
-  fi
-
-  while read -r line; do
-    if [ -z "$line" ]; then
-      continue
+  # Wenn expected files nicht vorhanden sind, failed der testcase
+  for expected_file in "${expected_files[@]}"; do
+    if [ ! -f $expected_file ]; then
+        echo "$testName: ERROR: missing expected file $expected_file"
+        break
     fi
-    line=$(echo $line | tr -d '\r')
-    validLines=$((validLines + 1))
-    if ! grep -Fqa "$line" $LEVL_OUTPUT_NAME; then
-      echo "$testName: ERROR: missing in $LEVL_OUTPUT_NAME:"
-      echo "    $line"
-      echo "actual output:"
-      cat $LEVL_OUTPUT_NAME | sed -e 's/^/    /'
-      echo
-      fail=$((fail + 1))
-      error=1
+    echo "validate logs against file \"$expected_file\""
+    expectedFileMatched=true
+
+    # expected file Zeile für Zeile einlesen
+    while read -r line; do
+      # leere Zeilen überspringen
+      if [ -z "$line" ]; then
+        continue
+      fi
+      # '\r' aus der Zeile entfernen
+      line=$(echo $line | tr -d '\r')
+
+      validLines=$((validLines + 1))
+
+      # Überprüfen, ob die Zeile in der Ausgabedatei vorhanden ist
+      if ! grep -Fqa "$line" $LEVL_OUTPUT_NAME; then
+        # Wenn die Zeile nicht gefunden wird, speichern wir die Fehler zwischen und brechen die Schleife ab
+        missingLine="    $line (part of expected file $expected_file)"
+        outputIfFailed=$(cat $LEVL_OUTPUT_NAME | sed -e 's/^/    /')
+        expectedFileMatched=false
+        break
+      fi
+    done <$expected_file
+
+    if [ "$expectedFileMatched" = true ]; then
+      echo "$testName: log matched with file \"$expected_file\""
+      expectedFilesMatched=true
       break
     fi
-  done <$expected
+  done
 
   cd ..
 
-  if [ $error -gt 0 ]; then
+  # Wenn kein expected File gematched hat
+  if [ "$expectedFilesMatched" = false ]; then
+    echo "$testName: ERROR: missing in $LEVL_OUTPUT_NAME:"
+    echo "$missingLine"
+    echo "actual output:"
+    echo "$outputIfFailed"
     FAIL_COUNT=$((FAIL_COUNT + 1))
     FAILING_TESTS="$FAILING_TESTS\n$testName"
     return
   fi
+  # Wenn keine gültigen Zeilen gefunden wurden
   if [ $validLines -eq 0 ]; then
     echo "$testName: ERROR: no expected lines $expected"
     FAIL_COUNT=$((FAIL_COUNT + 1))
     return
   fi
 
+  # Wenn der Test erfolgreich war
   echo "$testName: SUCCESS"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 }
 
 function suiteCi() {
-  EXPECTED_FILENAME=$EXPECTED_FILENAME_CI
   OPENEMS_EXECUTION_TIME_SECONDS=16
   OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
   suite
