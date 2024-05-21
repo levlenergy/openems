@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
           cache: gradle
       - uses: kiancross/checkstyle-annotations-action@v1
-      - name: Build all Java packages
+      - name: Build all Java packages and run unit tests
         run: ./gradlew build
       - name: Resolve OpenEMS bundles
         run: ./gradlew resolve
