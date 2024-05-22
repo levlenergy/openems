@@ -102,7 +102,7 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 		super.deactivate();
 	}
 
-	// Passiert jede Sekunde durch OpenEMS
+	// Triggered every second by OpenEMS
 	@Override
 	public void handleEvent(Event event) {
 		this.tryToRestoreStateIfRequired();
@@ -191,7 +191,6 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 			var properties = new LevlWorkflowStateConverter().asProperties(stateMemento);
 			var request = new UpdateComponentConfigRequest(currentLevlWorkflowSavedState.id(), properties);
 			try {
-				// TODO: 14.02.2024 Dennis: What is being done here? Why is a jsonRpcRequest created here?
 				var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
 				var response = this.componentManager.handleJsonrpcRequest(user, request);
 				response.whenComplete((r, e) -> {
