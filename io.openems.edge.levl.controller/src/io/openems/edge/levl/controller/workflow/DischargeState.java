@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class DischargeState {
-	// TODO jonas.flint 16.02.2024 split into different functionalities
 	private final Logger log = LoggerFactory.getLogger(DischargeState.class);
 
 	private long totalRealizedDischargeEnergyWs = 0;
@@ -37,7 +36,6 @@ public class DischargeState {
 	public DischargeState() {
 	}
 
-	// TODO jonas.flint 16.02.2024 Outsource entire state management to a separate package
 	DischargeState(long totalRealizedDischargeEnergyWs, long totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
 			long currentRequestRemainingDischargeEnergyWs, long currentRequestRealizedDischargeEnergyWs,
 			long lastCompletedRequestRealizedDischargeEnergyWs, BigDecimal currentEfficiencyPercent,
@@ -135,8 +133,6 @@ public class DischargeState {
 		}
 		if (this.nextRequest.shouldStart(now)) {
 			if (this.request.isActive()) {
-				// TODO: 15.02.2024 Dennis: Isn't that an error case? Should levl know about it? 
-				// Additionally check on levl side
 				this.completeCurrentRequest("next request should start");
 			}
 
