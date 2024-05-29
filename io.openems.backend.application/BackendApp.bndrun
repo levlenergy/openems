@@ -57,10 +57,7 @@
 	bnd.identity;id='io.openems.backend.timedata.influx',\
 	bnd.identity;id='io.openems.backend.timedata.timescaledb',\
 	bnd.identity;id='io.openems.backend.uiwebsocket',\
-	bnd.identity;id='io.openems.backend.levl.metadata.dev',\
-	bnd.identity;id='org.junit.jupiter.engine',\
-	bnd.identity;id='org.junit.vintage.engine',\
-	bnd.identity;id='biz.aQute.tester.junit-platform'
+	bnd.identity;id='io.openems.backend.levl.metadata.dev',\	
 	
 	
 -runbundles: \
