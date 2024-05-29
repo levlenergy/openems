@@ -24,10 +24,20 @@
 # Always use contracts
 -contract: *
 
+-tester: biz.aQute.tester.junit-platform;version='5.1.2'
+
 # JUnit
 junit: \
-	org.apache.servicemix.bundles.junit;version=4.12
-
+	junit-jupiter-engine,\
+	junit-jupiter-api,\
+	junit-jupiter-params,\
+	junit-platform-suite,\
+	junit-platform-engine,\
+	junit-platform-commons,\
+	org.apache.servicemix.bundles.junit;version=4.12,\
+	junit-vintage-engine;version=5.9.1,\
+	org.opentest4j;version=1.2.0,\
+	
 # OpenEMS bnd.bnd defaults
 buildpath: \
 	osgi.annotation;version='8.1.0',\
