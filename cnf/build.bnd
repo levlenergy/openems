@@ -24,8 +24,6 @@
 # Always use contracts
 -contract: *
 
--tester: biz.aQute.tester.junit-platform;version='5.1.2'
-
 # JUnit
 junit: \
 	junit-jupiter-engine,\
