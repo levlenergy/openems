@@ -408,7 +408,7 @@
 			<artifactId>rrd4j</artifactId>
 			<version>3.9</version>
 		</dependency>
-		<!-- Used by io.openems.edge.levl.controller -->		
+		<!-- JUnit 5 -->
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
@@ -432,6 +432,12 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.9.1</version>
+		</dependency>
+		<!-- To support JUnit 4 and 5 -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
 			<version>5.9.1</version>
 		</dependency>
 	</dependencies>
