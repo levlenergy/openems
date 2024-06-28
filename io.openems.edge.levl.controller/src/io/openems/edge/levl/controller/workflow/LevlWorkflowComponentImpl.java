@@ -2,6 +2,7 @@ package io.openems.edge.levl.controller.workflow;
 
 import com.google.gson.JsonObject;
 import io.openems.common.exceptions.OpenemsError;
+import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
 import io.openems.common.jsonrpc.base.JsonrpcRequest;
 import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
 import io.openems.common.jsonrpc.request.UpdateComponentConfigRequest;
@@ -11,7 +12,10 @@ import io.openems.edge.common.component.AbstractOpenemsComponent;
 import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.event.EdgeEventConstants;
+import io.openems.edge.common.jsonapi.Call;
+import io.openems.edge.common.jsonapi.ComponentJsonApi;
 import io.openems.edge.common.jsonapi.JsonApi;
+import io.openems.edge.common.jsonapi.JsonApiBuilder;
 import io.openems.edge.common.user.ManagedUser;
 import io.openems.edge.common.user.User;
 import io.openems.edge.controller.api.Controller;
@@ -52,7 +56,7 @@ import java.util.concurrent.CompletableFuture;
 		EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE, //
 })
 public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
-		implements EventHandler, OpenemsComponent, JsonApi, LevlWorkflowReference, LevlWorkflowComponent {
+		implements EventHandler, OpenemsComponent, ComponentJsonApi, LevlWorkflowReference, LevlWorkflowComponent {
 
 	private Config config;
 	private final Logger log = LoggerFactory.getLogger(LevlWorkflowComponentImpl.class);
@@ -61,7 +65,7 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	protected ComponentManager componentManager;
 	@Reference
 	protected ConfigurationAdmin cm;
-	@Reference 
+	@Reference
 	protected ManagedSymmetricEss ess;
 	@Reference
 	protected ElectricityMeter meter;
@@ -150,16 +154,14 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	}
 
 	@Override
-	public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request)
-			throws OpenemsError.OpenemsNamedException {
-		if (LevlControlRequest.METHOD.equals(request.getMethod())) {
-			var levlControlRequest = LevlControlRequest.from(request);
+	public void buildJsonApiRoutes(JsonApiBuilder builder) {
+		builder.handleRequest(LevlControlRequest.METHOD, call -> {
+			var levlControlRequest = LevlControlRequest.from(call.getRequest());
 			this.levlState.handleRequest(levlControlRequest, this.config.physical_soc_lower_bound_percent(),
 					this.config.physical_soc_upper_bound_percent());
-			return CompletableFuture.completedFuture(JsonrpcResponseSuccess
-					.from(this.generateResponse(request.getId(), levlControlRequest.getLevlRequestId())));
-		}
-		throw OpenemsError.JSONRPC_UNHANDLED_METHOD.exception(request.getMethod());
+			return JsonrpcResponseSuccess
+					.from(this.generateResponse(call.getRequest().getId(), levlControlRequest.getLevlRequestId()));
+		});
 	}
 
 	private JsonObject generateResponse(UUID requestId, String levlRequestId) {
@@ -174,12 +176,17 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	/**
 	 * Saves the current state of the LevlWorkflowComponent.
 	 *
-	 * <p>This method saves the current state of the LevlWorkflowComponent by creating a memento of the state and
-	 * converting it to properties. These properties are then used to create an UpdateComponentConfigRequest.
+	 * <p>
+	 * This method saves the current state of the LevlWorkflowComponent by creating
+	 * a memento of the state and converting it to properties. These properties are
+	 * then used to create an UpdateComponentConfigRequest.
 	 *
-	 * <p>If the state cannot be saved due to an exception, an error message is logged.
+	 * <p>
+	 * If the state cannot be saved due to an exception, an error message is logged.
 	 *
-	 * <p>If the levlWorkflowSavedState is null, the method will return without performing any operations.
+	 * <p>
+	 * If the levlWorkflowSavedState is null, the method will return without
+	 * performing any operations.
 	 */
 	public void saveState() {
 		var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
@@ -190,14 +197,9 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 			var stateMemento = this.levlState.save();
 			var properties = new LevlWorkflowStateConverter().asProperties(stateMemento);
 			var request = new UpdateComponentConfigRequest(currentLevlWorkflowSavedState.id(), properties);
+			var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
 			try {
-				var user = new ManagedUser("admin", "Admin", Language.DEFAULT, Role.ADMIN, "", "");
-				var response = this.componentManager.handleJsonrpcRequest(user, request);
-				response.whenComplete((r, e) -> {
-					if (e != null) {
-						this.log.error("### could not save state to config: " + e.getMessage());
-					}
-				});
+				this.componentManager.handleUpdateComponentConfigRequest(user, request);
 			} catch (OpenemsError.OpenemsNamedException e) {
 				throw new RuntimeException(e);
 			}
@@ -208,11 +210,13 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	}
 
 	void tryToRestoreStateIfRequired() {
+		// already restored
 		if (this.wasRestoredFromConfig) {
 			return;
 		}
 
 		var currentLevlWorkflowSavedState = this.levlWorkflowSavedState;
+		// savedState is not available
 		if (currentLevlWorkflowSavedState == null) {
 			return;
 		}
