@@ -1,3 +1,4 @@
+// @ts-strict-ignore
 import { Component, Input } from "@angular/core";
 import { AbstractModalLine } from "../abstract-modal-line";
 import { ButtonLabel } from "../modal-button/modal-button";
@@ -31,5 +32,5 @@ export class ModalLineComponent extends AbstractModalLine {
 export enum TextIndentation {
     NONE = '0%',
     SINGLE = '5%',
-    DOUBLE = '10%'
+    DOUBLE = '10%',
 }

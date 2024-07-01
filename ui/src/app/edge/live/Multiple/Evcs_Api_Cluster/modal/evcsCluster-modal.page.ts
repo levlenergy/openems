@@ -1,3 +1,4 @@
+// @ts-strict-ignore
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Edge, EdgeConfig, Service, Websocket } from 'src/app/shared/shared';
@@ -347,7 +348,7 @@ enum ChargeState {
     ERROR,                    //Error
     AUTHORIZATION_REJECTED,   //Authorization rejected
     ENERGY_LIMIT_REACHED,     //Charge limit reached
-    CHARGING_FINISHED         //Charging has finished
+    CHARGING_FINISHED,         //Charging has finished
 }
 
 enum ChargePlug {
@@ -356,5 +357,5 @@ enum ChargePlug {
     PLUGGED_ON_EVCS,                          //Plugged on EVCS
     PLUGGED_ON_EVCS_AND_LOCKED = 3,           //Plugged on EVCS and locked
     PLUGGED_ON_EVCS_AND_ON_EV = 5,            //Plugged on EVCS and on EV
-    PLUGGED_ON_EVCS_AND_ON_EV_AND_LOCKED = 7  //Plugged on EVCS and on EV and locked
+    PLUGGED_ON_EVCS_AND_ON_EV_AND_LOCKED = 7,  //Plugged on EVCS and on EV and locked
 }

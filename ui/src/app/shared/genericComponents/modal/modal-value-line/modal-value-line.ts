@@ -1,3 +1,4 @@
+// @ts-strict-ignore
 import { Component, Input } from "@angular/core";
 import { ChannelAddress, CurrentData } from "src/app/shared/shared";
 
@@ -36,5 +37,5 @@ export class ModalValueLineComponent extends AbstractModalLine {
 export enum TextIndentation {
   NONE = '0%',
   SINGLE = '5%',
-  DOUBLE = '10%'
+  DOUBLE = '10%',
 }
