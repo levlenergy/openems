@@ -1,8 +1,10 @@
 package io.openems.edge.levl.controller.controllers.common;
 
 import io.openems.common.exceptions.OpenemsError;
-import io.openems.common.jsonrpc.base.JsonrpcRequest;
-import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
+import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
+import io.openems.common.jsonrpc.request.CreateComponentConfigRequest;
+import io.openems.common.jsonrpc.request.DeleteComponentConfigRequest;
+import io.openems.common.jsonrpc.request.UpdateComponentConfigRequest;
 import io.openems.common.types.EdgeConfig;
 import io.openems.edge.common.channel.Channel;
 import io.openems.edge.common.component.ComponentManager;
@@ -15,7 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class LevlComponentManager implements ComponentManager {
     private Map<String, OpenemsComponent> componentOverwrites = new HashMap<>();
@@ -105,8 +106,24 @@ public class LevlComponentManager implements ComponentManager {
         return null;
     }
 
-    @Override
-    public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request) {
-        return null;
-    }
+	@Override
+	public void handleCreateComponentConfigRequest(User user, CreateComponentConfigRequest request)
+			throws OpenemsNamedException {
+		this.openEmsComponentManager.handleCreateComponentConfigRequest(user, request);
+		
+	}
+
+	@Override
+	public void handleUpdateComponentConfigRequest(User user, UpdateComponentConfigRequest request)
+			throws OpenemsNamedException {
+		this.openEmsComponentManager.handleUpdateComponentConfigRequest(user, request);
+		
+	}
+
+	@Override
+	public void handleDeleteComponentConfigRequest(User user, DeleteComponentConfigRequest request)
+			throws OpenemsNamedException {
+		this.openEmsComponentManager.handleDeleteComponentConfigRequest(user, request);
+		
+	}
 }

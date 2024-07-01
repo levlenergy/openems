@@ -1,3 +1,4 @@
+// @ts-strict-ignore
 import { Component, Input } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { ModalController } from "@ionic/angular";
@@ -9,7 +10,7 @@ import { Icon } from "../../type/widget";
 export enum Status {
     SUCCESS,
     ERROR,
-    PENDING
+    PENDING,
 }
 
 @Component({
