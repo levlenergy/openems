@@ -61,7 +61,11 @@ import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.cycle.Cycle;
 import io.openems.edge.common.event.EdgeEventConstants;
+import io.openems.edge.common.jsonapi.ComponentJsonApi;
+import io.openems.edge.common.jsonapi.EdgeGuards;
+import io.openems.edge.common.jsonapi.EdgeKeys;
 import io.openems.edge.common.jsonapi.JsonApi;
+import io.openems.edge.common.jsonapi.JsonApiBuilder;
 import io.openems.edge.common.type.TypeUtils;
 import io.openems.edge.common.user.User;
 import io.openems.edge.levl.simulator.app.ExecuteSimulationRequest.Profile;
@@ -155,20 +159,12 @@ public class SimulatorAppImpl extends AbstractOpenemsComponent
 			this.stopSimulation();
 		}
 	}
-
+	
 	@Override
-	public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request)
-			throws OpenemsNamedException {
-		user.assertRoleIsAtLeast("handleJsonrpcRequest", Role.ADMIN);
-
-		switch (request.getMethod()) {
-
-		case ExecuteSimulationRequest.METHOD:
-			return this.handleExecuteSimulationRequest(user, ExecuteSimulationRequest.from(request));
-
-		default:
-			throw OpenemsError.JSONRPC_UNHANDLED_METHOD.exception(request.getMethod());
-		}
+	public void buildJsonApiRoutes(JsonApiBuilder builder) {
+		builder.handleRequest(ExecuteSimulationRequest.METHOD, 
+				def -> def.setGuards(EdgeGuards.roleIsAtleast(Role.ADMIN)), 
+				call -> this.handleExecuteSimulationRequest(call.get(EdgeKeys.USER_KEY), ExecuteSimulationRequest.from(call.getRequest())).get());
 	}
 
 	/**
@@ -189,8 +185,7 @@ public class SimulatorAppImpl extends AbstractOpenemsComponent
 		this.setCycleTime(AbstractWorker.ALWAYS_WAIT_FOR_TRIGGER_NEXT_RUN);
 
 		// Create Ess.Power with disabled PID filter
-		this.componentManager.handleJsonrpcRequest(user,
-				new CreateComponentConfigRequest("Ess.Power", Arrays.asList(new Property("enablePid", false))));
+		this.componentManager.handleCreateComponentConfigRequest(user, new CreateComponentConfigRequest("Ess.Power", Arrays.asList(new Property("enablePid", false)))); ;
 
 		// Create Components
 		Set<String> simulatorComponentIds = new HashSet<>();
@@ -198,7 +193,7 @@ public class SimulatorAppImpl extends AbstractOpenemsComponent
 			this.logInfo(this.log, "Create Component [" + createRequest.getComponentId() + "] from ["
 					+ createRequest.getFactoryPid() + "]");
 			simulatorComponentIds.add(createRequest.getComponentId());
-			this.componentManager.handleJsonrpcRequest(user, createRequest);
+			this.componentManager.handleCreateComponentConfigRequest(user, createRequest);
 		}
 		this.waitForComponentsToActivate(simulatorComponentIds);
 
@@ -388,8 +383,8 @@ public class SimulatorAppImpl extends AbstractOpenemsComponent
 	 */
 	private void deleteComponent(User user, String componentId) throws OpenemsNamedException {
 		this.logInfo(this.log, "Delete Component [" + componentId + "]");
-		var deleteComponentConfigRequest = new DeleteComponentConfigRequest(componentId);
-		this.componentManager.handleJsonrpcRequest(user, deleteComponentConfigRequest);
+		var deleteComponentConfigRequest = new DeleteComponentConfigRequest(componentId); 
+		this.componentManager.handleDeleteComponentConfigRequest(user, deleteComponentConfigRequest);
 	}
 
 	/**
