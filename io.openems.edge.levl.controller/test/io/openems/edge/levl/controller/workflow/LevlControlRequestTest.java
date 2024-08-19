@@ -35,6 +35,7 @@ class LevlControlRequestTest {
                    "buyFromGridLimitW": 20000,
                    "levlRequestId": "MyID",
                    "levlRequestTimestamp": "2024-02-15 15:00:00Z",
+                   "influencePowerFeedIn": false,
                    "someIrrelevantfield": ""
                 }
               }
