@@ -1,5 +1,7 @@
 package io.openems.edge.levl.controller.controllers.common;
 
+import io.openems.edge.common.channel.value.Value;
+
 public interface LevlWorkflowReference {
 
     /**
@@ -29,4 +31,20 @@ public interface LevlWorkflowReference {
      * @return The next discharge power in watts.
      */
     int getNextDischargePowerW();
+
+	/**
+     * Indicates whether or not it is allowed to influence the sell to grid.
+     * 
+     * @return true if it allowed, false if not.
+	 */
+	boolean isInfluenceSellToGridAllowed();
+
+	/**
+	 * Gets the Active Power in [W]. Negative values for Consumption (power that is
+	 * 'leaving the system', e.g. feed-to-grid); positive for Production (power that
+	 * is 'entering the system').
+	 * 
+	 * @return the active power in watts
+	 */
+	Value<Integer> getMeterActivePowerW();
 }

@@ -2,22 +2,18 @@ package io.openems.edge.levl.controller.workflow;
 
 import com.google.gson.JsonObject;
 import io.openems.common.exceptions.OpenemsError;
-import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
-import io.openems.common.jsonrpc.base.JsonrpcRequest;
 import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
 import io.openems.common.jsonrpc.request.UpdateComponentConfigRequest;
 import io.openems.common.session.Language;
 import io.openems.common.session.Role;
+import io.openems.edge.common.channel.value.Value;
 import io.openems.edge.common.component.AbstractOpenemsComponent;
 import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.event.EdgeEventConstants;
-import io.openems.edge.common.jsonapi.Call;
 import io.openems.edge.common.jsonapi.ComponentJsonApi;
-import io.openems.edge.common.jsonapi.JsonApi;
 import io.openems.edge.common.jsonapi.JsonApiBuilder;
 import io.openems.edge.common.user.ManagedUser;
-import io.openems.edge.common.user.User;
 import io.openems.edge.controller.api.Controller;
 import io.openems.edge.ess.api.ManagedSymmetricEss;
 import io.openems.edge.ess.power.api.Phase;
@@ -26,6 +22,7 @@ import io.openems.edge.levl.controller.controllers.common.LevlWorkflowReference;
 import io.openems.edge.levl.controller.controllers.common.Limit;
 import io.openems.edge.levl.controller.workflow.storage.LevlWorkflowStateConfigProvider;
 import io.openems.edge.meter.api.ElectricityMeter;
+
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -43,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Designate(ocd = Config.class, factory = true)
 @Component(//
@@ -139,12 +135,33 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	public int getNextDischargePowerW() {
 		return this.levlState.getNextDischargePowerW();
 	}
-
+	
 	@Override
 	public Limit getLevlUseCaseConstraints() {
 		return this.levlState.getLevlUseCaseConstraints(this.meter.getActivePower(), this.ess.getSoc());
 	}
 
+	@Override
+	public boolean isInfluenceSellToGridAllowed() {
+		return this.levlState.isInfluenceSellToGridAllowed();
+	}
+	
+	@Override
+	public Value<Integer> getMeterActivePowerW() {
+		/**
+		 * Meaning of positive and negative values for Power and Current depends on the
+		 * {@link MeterType} (via {@link #getMeterType()}):
+		 * <ul>
+		 * <li>{@link MeterType#GRID}
+		 * <ul>
+		 * <li>positive: buy-from-grid
+		 * <li>negative: feed-to-grid
+		 */
+		this.log.debug("meter type: " + this.meter);
+		this.log.debug("meterActivePower: " + this.meter.getActivePower().orElse(1234567));
+		return this.meter.getActivePower();
+	}
+	
 	@Override
 	public Limit determinePrimaryUseCaseConstraints() {
 		int minPower = this.ess.getPower().getMinPower(this.ess, Phase.ALL, Pwr.ACTIVE);

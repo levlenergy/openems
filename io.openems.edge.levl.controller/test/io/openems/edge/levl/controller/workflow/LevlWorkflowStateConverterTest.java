@@ -22,10 +22,12 @@ class LevlWorkflowStateConverterTest {
 				"current.discharge.request.timestamp=\"2024-02-15T15:00:00Z\"",
 				"current.discharge.request.energy.ws=\"9\"", "current.discharge.request.start=\"2021-01-01T00:00:10\"",
 				"current.discharge.request.deadline=\"2021-01-01T00:00:11\"", "current.discharge.request.active=true",
-				"next.discharge.request.id=\"id1\"", "next.discharge.request.timestamp=\"2024-03-13T18:00:00Z\"",
+				"current.influence.sell.to.grid=true", "next.discharge.request.id=\"id1\"", 
+				"next.discharge.request.timestamp=\"2024-03-13T18:00:00Z\"",
 				"next.discharge.request.energy.ws=\"6\"", "next.discharge.request.start=\"2021-01-01T00:00:07\"",
 				"next.discharge.request.deadline=\"2021-01-01T00:00:08\"", "next.discharge.request.active=false",
-				"levl.soc.constraints.lower.physical.percent=1", "levl.soc.constraints.upper.physical.percent=100",
+				"next.influence.sell.to.grid=true", "levl.soc.constraints.lower.physical.percent=1", 
+				"levl.soc.constraints.upper.physical.percent=100",
 				"levl.soc.constraints.lower.logical.percent=5", "levl.soc.constraints.upper.logical.percent=95",
 				"grid.power.limit.w.lower=-1100", "grid.power.limit.w.upper=1200");
 	}
@@ -41,8 +43,8 @@ class LevlWorkflowStateConverterTest {
 				"LevlWorkflowStateMemento[primaryUseCaseActivePowerW=222, nextDischargePowerW=333, actualLevlPowerW=111, "
 						+ "state=DischargeStateMemento[totalRealizedDischargeEnergyWs=1, totalDischargeEnergyWsAtBatteryScaledWithEfficiency=2, currentRequestRemainingDischargeEnergyWs=3, "
 						+ "currentRequestRealizedDischargeEnergyWs=4, lastRequestRealizedDischargeEnergyWs=5, currentRequestEfficiencyPercent=99.01, nextRequestEfficiencyPercent=95.44, lastDischargeRequestTimestamp=2024-02-15 14:45:00Z, "
-						+ "request=DischargeRequestMemento[lastRequestId=id0, requestTimestamp=2024-02-15 15:00:00Z, dischargeEnergyWs=9, start=2021-01-01T00:00:10, deadline=2021-01-01T00:00:11, active=true], "
-						+ "nextRequest=DischargeRequestMemento[lastRequestId=id1, requestTimestamp=2024-02-15 15:15:00Z, dischargeEnergyWs=6, start=2021-01-01T00:00:07, deadline=2021-01-01T00:00:08, active=false]], "
+						+ "request=DischargeRequestMemento[lastRequestId=id0, requestTimestamp=2024-02-15 15:00:00Z, dischargeEnergyWs=9, influenceSellToGrid=false, start=2021-01-01T00:00:10, deadline=2021-01-01T00:00:11, active=true], "
+						+ "nextRequest=DischargeRequestMemento[lastRequestId=id1, requestTimestamp=2024-02-15 15:15:00Z, dischargeEnergyWs=6, influenceSellToGrid=false, start=2021-01-01T00:00:07, deadline=2021-01-01T00:00:08, active=false]], "
 						+ "levlSocConstraints=LevlSocConstraintsMemento[physicalSocConstraint=SocConstraintMemento[socLowerBoundPercent=1, socUpperBoundPercent=100], socConstraint=SocConstraintMemento[socLowerBoundPercent=5, socUpperBoundPercent=95]], gridPowerLimitW=LimitMemento[minPower=-1100, maxPower=1200]]");
 	}
 
@@ -58,8 +60,8 @@ class LevlWorkflowStateConverterTest {
 				"LevlWorkflowStateMemento[primaryUseCaseActivePowerW=222, nextDischargePowerW=333, actualLevlPowerW=111, "
 						+ "state=DischargeStateMemento[totalRealizedDischargeEnergyWs=1, totalDischargeEnergyWsAtBatteryScaledWithEfficiency=2, currentRequestRemainingDischargeEnergyWs=3, "
 						+ "currentRequestRealizedDischargeEnergyWs=4, lastRequestRealizedDischargeEnergyWs=5, currentRequestEfficiencyPercent=99.01, nextRequestEfficiencyPercent=95.44, lastDischargeRequestTimestamp=2024-02-15 14:45:00Z, "
-						+ "request=DischargeRequestMemento[lastRequestId=, requestTimestamp=, dischargeEnergyWs=0, start=+999999999-12-31T23:59:59.999999999, deadline=+999999999-12-31T23:59:59.999999999, active=false], "
-						+ "nextRequest=DischargeRequestMemento[lastRequestId=id1, requestTimestamp=2024-02-15 15:15:00Z, dischargeEnergyWs=6, start=2021-01-01T00:00:07, deadline=2021-01-01T00:00:08, active=false]], "
+						+ "request=DischargeRequestMemento[lastRequestId=, requestTimestamp=, dischargeEnergyWs=0, influenceSellToGrid=false, start=+999999999-12-31T23:59:59.999999999, deadline=+999999999-12-31T23:59:59.999999999, active=false], "
+						+ "nextRequest=DischargeRequestMemento[lastRequestId=id1, requestTimestamp=2024-02-15 15:15:00Z, dischargeEnergyWs=6, influenceSellToGrid=false, start=2021-01-01T00:00:07, deadline=2021-01-01T00:00:08, active=false]], "
 						+ "levlSocConstraints=LevlSocConstraintsMemento[physicalSocConstraint=SocConstraintMemento[socLowerBoundPercent=1, socUpperBoundPercent=100], socConstraint=SocConstraintMemento[socLowerBoundPercent=5, socUpperBoundPercent=95]], gridPowerLimitW=LimitMemento[minPower=-1100, maxPower=1200]]");
 	}
 
@@ -74,8 +76,8 @@ class LevlWorkflowStateConverterTest {
 				"LevlWorkflowStateMemento[primaryUseCaseActivePowerW=222, nextDischargePowerW=333, actualLevlPowerW=111, "
 						+ "state=DischargeStateMemento[totalRealizedDischargeEnergyWs=1, totalDischargeEnergyWsAtBatteryScaledWithEfficiency=2, currentRequestRemainingDischargeEnergyWs=3, "
 						+ "currentRequestRealizedDischargeEnergyWs=4, lastRequestRealizedDischargeEnergyWs=5, currentRequestEfficiencyPercent=99.01, nextRequestEfficiencyPercent=95.44, lastDischargeRequestTimestamp=2024-02-15 14:45:00Z, "
-						+ "request=DischargeRequestMemento[lastRequestId=id0, requestTimestamp=2024-02-15 15:00:00Z, dischargeEnergyWs=9, start=2021-01-01T00:00:10, deadline=2021-01-01T00:00:11, active=true], "
-						+ "nextRequest=DischargeRequestMemento[lastRequestId=, requestTimestamp=, dischargeEnergyWs=0, start=+999999999-12-31T23:59:59.999999999, deadline=+999999999-12-31T23:59:59.999999999, active=false]], "
+						+ "request=DischargeRequestMemento[lastRequestId=id0, requestTimestamp=2024-02-15 15:00:00Z, dischargeEnergyWs=9, influenceSellToGrid=false, start=2021-01-01T00:00:10, deadline=2021-01-01T00:00:11, active=true], "
+						+ "nextRequest=DischargeRequestMemento[lastRequestId=, requestTimestamp=, dischargeEnergyWs=0, influenceSellToGrid=false, start=+999999999-12-31T23:59:59.999999999, deadline=+999999999-12-31T23:59:59.999999999, active=false]], "
 						+ "levlSocConstraints=LevlSocConstraintsMemento[physicalSocConstraint=SocConstraintMemento[socLowerBoundPercent=1, socUpperBoundPercent=100], socConstraint=SocConstraintMemento[socLowerBoundPercent=5, socUpperBoundPercent=95]], gridPowerLimitW=LimitMemento[minPower=-1100, maxPower=1200]]");
 	}
 }

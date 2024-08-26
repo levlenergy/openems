@@ -29,7 +29,7 @@ public class DischargeState {
 			long totalDischargeEnergyWsAtBatteryScaledWithEfficiency, long currentRequestRemainingDischargeEnergyWs,
 			long currentRequestRealizedDischargeEnergyWs, long lastRequestRealizedDischargeEnergyWs,
 			BigDecimal currentRequestEfficiencyPercent, BigDecimal nextRequestEfficiencyPercent,
-			String lastDischargeRequestTimestamp, DischargeRequest.DischargeRequestMemento request,
+			String lastDischargeRequestTimestamp, DischargeRequest.DischargeRequestMemento request, 
 			DischargeRequest.DischargeRequestMemento nextRequest) {
 	}
 
@@ -39,8 +39,8 @@ public class DischargeState {
 	DischargeState(long totalRealizedDischargeEnergyWs, long totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
 			long currentRequestRemainingDischargeEnergyWs, long currentRequestRealizedDischargeEnergyWs,
 			long lastCompletedRequestRealizedDischargeEnergyWs, BigDecimal currentEfficiencyPercent,
-			BigDecimal nextRequestEfficiencyPercent, String lastCompletedRequestTimestamp, DischargeRequest request,
-			DischargeRequest nextRequest) {
+			BigDecimal nextRequestEfficiencyPercent, String lastCompletedRequestTimestamp,
+			DischargeRequest request, DischargeRequest nextRequest) {
 		this.totalRealizedDischargeEnergyWs = totalRealizedDischargeEnergyWs;
 		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency = totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
 		this.currentRequestRemainingDischargeEnergyWs = currentRequestRemainingDischargeEnergyWs;
@@ -62,7 +62,7 @@ public class DischargeState {
 		return new DischargeStateMemento(this.totalRealizedDischargeEnergyWs,
 				this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency, this.currentRequestRemainingDischargeEnergyWs,
 				this.currentRequestRealizedDischargeEnergyWs, this.lastCompletedRequestRealizedDischargeEnergyWs,
-				this.currentEfficiencyPercent, this.nextRequestEfficiencyPercent, this.lastCompletedRequestTimestamp,
+				this.currentEfficiencyPercent, this.nextRequestEfficiencyPercent, this.lastCompletedRequestTimestamp, 
 				this.request.save(), this.nextRequest.save());
 	}
 
@@ -95,6 +95,10 @@ public class DischargeState {
 
 	public int getLastCompletedRequestDischargePowerW() {
 		return (int) (this.lastCompletedRequestRealizedDischargeEnergyWs) / DischargeRequest.QUARTER_HOUR_TO_SECONDS;
+	}
+	
+	public boolean isInfluenceSellToGridAllowed() {
+		return this.request.isInfluenceSellToGridAllowed();
 	}
 
 	/**

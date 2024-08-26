@@ -7,20 +7,22 @@ public class DischargeRequest {
 	private final String requestId;
 	private final String requestTimestamp;
 	private final long dischargeEnergyWs;
+	private final boolean influenceSellToGrid;
 	private final LocalDateTime start;
 	private final LocalDateTime deadline;
 	private final boolean active;
 	public static final int QUARTER_HOUR_TO_SECONDS = 900;
 
 	record DischargeRequestMemento(String lastRequestId, String requestTimestamp, long dischargeEnergyWs,
-			LocalDateTime start, LocalDateTime deadline, boolean active) {
+			boolean influenceSellToGrid, LocalDateTime start, LocalDateTime deadline, boolean active) {
 	}
 
-	DischargeRequest(String requestId, String requestTimestamp, long dischargeEnergyWs, LocalDateTime start,
-			LocalDateTime deadline, boolean active) {
+	DischargeRequest(String requestId, String requestTimestamp, long dischargeEnergyWs, boolean influenceSellToGrid,
+			LocalDateTime start, LocalDateTime deadline, boolean active) {
 		this.requestId = requestId;
 		this.requestTimestamp = requestTimestamp;
 		this.dischargeEnergyWs = dischargeEnergyWs;
+		this.influenceSellToGrid = influenceSellToGrid;
 		this.start = start;
 		this.deadline = deadline;
 		this.active = active;
@@ -32,8 +34,8 @@ public class DischargeRequest {
 	 * @return a new DischargeRequestMemento containing the current state
 	 */
 	public DischargeRequestMemento save() {
-		return new DischargeRequestMemento(this.requestId, this.requestTimestamp, this.dischargeEnergyWs, this.start,
-				this.deadline, this.active);
+		return new DischargeRequestMemento(this.requestId, this.requestTimestamp, this.dischargeEnergyWs,
+				this.influenceSellToGrid, this.start, this.deadline, this.active);
 	}
 
 	/**
@@ -44,24 +46,26 @@ public class DischargeRequest {
 	 */
 	public static DischargeRequest restore(DischargeRequestMemento memento) {
 		return new DischargeRequest(memento.lastRequestId, memento.requestTimestamp, memento.dischargeEnergyWs,
-				memento.start, memento.deadline, memento.active);
+				memento.influenceSellToGrid, memento.start, memento.deadline, memento.active);
 	}
 
 	/**
 	 * Creates a new DischargeRequest instance with the given parameters.
 	 *
-	 * @param now the current time
+	 * @param now                  the current time
 	 * @param levlRequestTimestamp the request timestamp from LEVL
-	 * @param lastRequestId the last request id
-	 * @param levlPowerW the power in watts from LEVL
-	 * @param delayStartSeconds the delay start time in seconds
-	 * @param durationSeconds the duration in seconds
+	 * @param lastRequestId        the last request id
+	 * @param levlPowerW           the power in watts from LEVL
+	 * @param influenceSellToGrid  whether it is allowed to influence sell to grid
+	 * @param delayStartSeconds    the delay start time in seconds
+	 * @param durationSeconds      the duration in seconds
 	 * @return a new DischargeRequest instance
 	 */
 	public static DischargeRequest of(LocalDateTime now, String levlRequestTimestamp, String lastRequestId,
-									  int levlPowerW, int delayStartSeconds, int durationSeconds) {
+			int levlPowerW, boolean influenceSellToGrid, int delayStartSeconds, int durationSeconds) {
 		return new DischargeRequest(lastRequestId, levlRequestTimestamp, (long) levlPowerW * QUARTER_HOUR_TO_SECONDS,
-				now.plusSeconds(delayStartSeconds), now.plusSeconds(delayStartSeconds + durationSeconds), true);
+				influenceSellToGrid, now.plusSeconds(delayStartSeconds),
+				now.plusSeconds(delayStartSeconds + durationSeconds), true);
 	}
 
 	/**
@@ -70,7 +74,7 @@ public class DischargeRequest {
 	 * @return a new inactive DischargeRequest instance
 	 */
 	public static DischargeRequest inactiveRequest() {
-		return new DischargeRequest("", "", 0, LocalDateTime.MAX, LocalDateTime.MAX, false);
+		return new DischargeRequest("", "", 0, false, LocalDateTime.MAX, LocalDateTime.MAX, false);
 	}
 
 	/**
@@ -88,6 +92,10 @@ public class DischargeRequest {
 
 	public long getDischargeEnergyWs() {
 		return this.dischargeEnergyWs;
+	}
+
+	public boolean isInfluenceSellToGridAllowed() {
+		return this.influenceSellToGrid;
 	}
 
 	/**
@@ -123,8 +131,9 @@ public class DischargeRequest {
 	@Override
 	public String toString() {
 		return "DischargeRequest{" + "requestId='" + this.requestId + '\'' + ", requestTimestamp="
-				+ this.requestTimestamp + ", dischargeEnergyWs=" + this.dischargeEnergyWs + ", start=" + this.start
-				+ ", deadline=" + this.deadline + ", active=" + this.active + '}';
+				+ this.requestTimestamp + ", dischargeEnergyWs=" + this.dischargeEnergyWs + ", influenceSellToGrid="
+				+ this.influenceSellToGrid + ", start=" + this.start + ", deadline=" + this.deadline + ", active="
+				+ this.active + '}';
 	}
 
 	@Override
@@ -133,17 +142,19 @@ public class DischargeRequest {
 			return true;
 		}
 		if (o == null || getClass() != o.getClass()) {
-			return false;	
+			return false;
 		}
 		DischargeRequest that = (DischargeRequest) o;
 		return this.dischargeEnergyWs == that.dischargeEnergyWs && this.active == that.active
 				&& this.requestId.equals(that.requestId) && this.requestTimestamp.equals(that.requestTimestamp)
-				&& this.start.equals(that.start) && this.deadline.equals(that.deadline);
+				&& this.start.equals(that.start) && this.deadline.equals(that.deadline)
+				&& this.influenceSellToGrid == that.influenceSellToGrid;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.requestId, this.requestTimestamp, this.dischargeEnergyWs, this.start, this.deadline, this.active);
+		return Objects.hash(this.requestId, this.requestTimestamp, this.dischargeEnergyWs, this.influenceSellToGrid,
+				this.start, this.deadline, this.active);
 	}
 
 }

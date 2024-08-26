@@ -11,6 +11,7 @@ public final class DischargeStateTestBuilder {
     private BigDecimal currentEfficiencyPercent;
     private BigDecimal nextRequestEfficiencyPercent;
     private String lastCompletedRequestTimestamp;
+    private boolean influenceSellToGrid;
     private DischargeRequest request;
     private DischargeRequest nextRequest;
 
@@ -41,6 +42,7 @@ public final class DischargeStateTestBuilder {
                 .withCurrentEfficiencyPercent(BigDecimal.valueOf(100))
                 .withNextRequestEfficiencyPercent(BigDecimal.valueOf(100))
                 .withLastCompletedRequestTimestamp("DEFAULT")
+                .withInfluenceSellToGrid(false)
                 .withRequest(DischargeRequest.inactiveRequest())
                 .withNextRequest(DischargeRequest.inactiveRequest());
     }
@@ -130,6 +132,17 @@ public final class DischargeStateTestBuilder {
      */
     public DischargeStateTestBuilder withLastCompletedRequestTimestamp(String lastCompletedRequestTimestamp) {
         this.lastCompletedRequestTimestamp = lastCompletedRequestTimestamp;
+        return this;
+    }
+    
+    /**
+     * Sets the influence sell to grid boolean.
+     *
+     * @param influenceSellToGrid whether influence of sell to grid is allowed
+     * @return this DischargeStateTestBuilder
+     */
+    public DischargeStateTestBuilder withInfluenceSellToGrid(boolean influenceSellToGrid) {
+        this.influenceSellToGrid = influenceSellToGrid;
         return this;
     }
 
