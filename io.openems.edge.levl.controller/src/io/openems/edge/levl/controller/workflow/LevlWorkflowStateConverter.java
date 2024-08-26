@@ -23,8 +23,7 @@ public class LevlWorkflowStateConverter {
 	 * @param memento the LevlWorkflowStateMemento to be converted
 	 * @return a list of UpdateComponentConfigRequest.Property representing the configuration attributes of the memento
 	 */
-	public List<UpdateComponentConfigRequest.Property> asProperties(
-			LevlWorkflowState.LevlWorkflowStateMemento memento) {
+	public List<UpdateComponentConfigRequest.Property> asProperties(LevlWorkflowState.LevlWorkflowStateMemento memento) {
 		var properties = List.of(
 				ConfigAttributes.PRIMARY_USE_CASE_ACTIVE_POWER_W.asProperty(memento.primaryUseCaseActivePowerW()),
 				ConfigAttributes.NEXT_DISCHARGE_POWER_W.asProperty(memento.nextDischargePowerW()),
@@ -71,7 +70,8 @@ public class LevlWorkflowStateConverter {
 				ConfigAttributes.CURRENT_DISCHARGE_REQUEST_ENERGY_WS.asProperty(memento.dischargeEnergyWs()),
 				ConfigAttributes.CURRENT_DISCHARGE_REQUEST_START.asProperty(memento.start()),
 				ConfigAttributes.CURRENT_DISCHARGE_REQUEST_DEADLINE.asProperty(memento.deadline()),
-				ConfigAttributes.CURRENT_DISCHARGE_REQUEST_ACTIVE.asProperty(memento.active()));
+				ConfigAttributes.CURRENT_DISCHARGE_REQUEST_ACTIVE.asProperty(memento.active()),
+				ConfigAttributes.CURRENT_INFLUENCE_SELL_TO_GRID.asProperty(memento.influenceSellToGrid()));
 	}
 
 	private List<UpdateComponentConfigRequest.Property> asNextRequestProperties(
@@ -81,7 +81,8 @@ public class LevlWorkflowStateConverter {
 				ConfigAttributes.NEXT_DISCHARGE_REQUEST_ENERGY_WS.asProperty(memento.dischargeEnergyWs()),
 				ConfigAttributes.NEXT_DISCHARGE_REQUEST_START.asProperty(memento.start()),
 				ConfigAttributes.NEXT_DISCHARGE_REQUEST_DEADLINE.asProperty(memento.deadline()),
-				ConfigAttributes.NEXT_DISCHARGE_REQUEST_ACTIVE.asProperty(memento.active()));
+				ConfigAttributes.NEXT_DISCHARGE_REQUEST_ACTIVE.asProperty(memento.active()),
+				ConfigAttributes.NEXT_INFLUENCE_SELL_TO_GRID.asProperty(memento.influenceSellToGrid()));
 	}
 
 	private List<UpdateComponentConfigRequest.Property> asPhysicalContraintsProperties(
@@ -121,7 +122,8 @@ public class LevlWorkflowStateConverter {
 				Long.parseLong(config.last_request_realized_discharge_energy_ws()),
 				BigDecimal.valueOf(config.current_request_efficiency_percent_multiplied_by_hundred() * 1.0 / 100),
 				BigDecimal.valueOf(config.next_request_efficiency_percent_multiplied_by_hundred() * 1.0 / 100),
-				config.last_discharge_request_timestamp(), this.currentDischargeRequestFromConfig(config),
+				config.last_discharge_request_timestamp(), 
+				this.currentDischargeRequestFromConfig(config),
 				this.nextDischargeRequestFromConfig(config));
 	}
 
@@ -131,6 +133,7 @@ public class LevlWorkflowStateConverter {
 			return new DischargeRequest.DischargeRequestMemento(config.current_discharge_request_id(),
 					config.current_discharge_request_timestamp(),
 					Long.parseLong(config.current_discharge_request_energy_ws()),
+					config.current_influence_sell_to_grid(), 
 					ConfigAttributes.parseLocalDateTime(config.current_discharge_request_start()),
 					ConfigAttributes.parseLocalDateTime(config.current_discharge_request_deadline()),
 					config.current_discharge_request_active());
@@ -145,6 +148,7 @@ public class LevlWorkflowStateConverter {
 			return new DischargeRequest.DischargeRequestMemento(config.next_discharge_request_id(),
 					config.next_discharge_request_timestamp(),
 					Long.parseLong(config.next_discharge_request_energy_ws()),
+					config.next_influence_sell_to_grid(), 
 					ConfigAttributes.parseLocalDateTime(config.next_discharge_request_start()),
 					ConfigAttributes.parseLocalDateTime(config.next_discharge_request_deadline()),
 					config.next_discharge_request_active());

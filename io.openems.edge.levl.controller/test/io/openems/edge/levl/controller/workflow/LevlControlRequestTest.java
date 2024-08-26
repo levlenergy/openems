@@ -35,6 +35,7 @@ class LevlControlRequestTest {
                    "buyFromGridLimitW": 20000,
                    "levlRequestId": "MyID",
                    "levlRequestTimestamp": "2024-02-15 15:00:00Z",
+                   "influenceSellToGrid": false,
                    "someIrrelevantfield": ""
                 }
               }
@@ -54,7 +55,8 @@ class LevlControlRequestTest {
                    "sellToGridLimitW": "xyz",
                    "buyFromGridLimitW": 20000,
                    "levlRequestId": "MyID",
-                   "levlRequestTimestamp": "2024-02-15 15:00:00Z"
+                   "levlRequestTimestamp": "2024-02-15 15:00:00Z",
+                   "influenceSellToGrid": false
                 }
               }
             """;
@@ -94,6 +96,7 @@ class LevlControlRequestTest {
                 "2024-02-15 15:00:00Z",
                 "MyID",
                 1000,
+                false,
                 20,
                 60
         );

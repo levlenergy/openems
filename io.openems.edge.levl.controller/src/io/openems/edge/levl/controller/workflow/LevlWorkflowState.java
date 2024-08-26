@@ -68,6 +68,10 @@ public class LevlWorkflowState {
     public int getNextDischargePowerW() {
         return this.nextDischargePowerW;
     }
+    
+    public boolean isInfluenceSellToGridAllowed() {
+    	return this.dischargeState.isInfluenceSellToGridAllowed();
+    }
 
     /**
      * Determines the constraints for the Levl use case.
@@ -97,7 +101,8 @@ public class LevlWorkflowState {
     }
 
     /**
-     * Determines the actual power and handles the realized discharge power for one second.
+     * Determines the levlPowerW by subtracting the calculated primaryUseCaseActivePowerW from the overall realized power (actualPowerW).
+     * Updating the discharge state with the calculated levl power.
      *
      * @param actualPowerW the actual power in watts
      */

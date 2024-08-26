@@ -67,17 +67,17 @@ public class LevlSocConstraints {
     /**
      * Determines the limit based on the physical SoC constraint and the levl SoC offset.
      *
-     * @param totalDischargePowerWs Total discharge power in watt-seconds.
+     * @param totalDischargeEnergyWs Total discharge energy in watt-seconds.
      * @param soc State of Charge value.
      * @param capacity Capacity value.
      * @return The determined limit.
      */
-    public Limit determineLimitFromPhysicalSocConstraintAndLevlSocOffset(long totalDischargePowerWs, Value<Integer> soc, Value<Integer> capacity) {
+    public Limit determineLimitFromPhysicalSocConstraintAndLevlSocOffset(long totalDischargeEnergyWs, Value<Integer> soc, Value<Integer> capacity) {
         if (!soc.isDefined() || !capacity.isDefined()) {
             this.log.debug("soc or capacity not defined");
             return Limit.unconstrained();
         }
-        var levlCapacityPercentDischarged = this.calculateLevlCapacityOffsetPercentFromDischargePowerWs(totalDischargePowerWs, capacity.get());
+        var levlCapacityPercentDischarged = this.calculateLevlCapacityOffsetPercentFromDischargeEnergyWs(totalDischargeEnergyWs, capacity.get());
         this.log.debug("levlCapacityPercentDischarged: " + levlCapacityPercentDischarged);
         return this.physicalSocConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), levlCapacityPercentDischarged);
     }
@@ -97,13 +97,13 @@ public class LevlSocConstraints {
     }
 
     /**
-     * Calculates the LEVL capacity offset percent from the total discharge power in watt-seconds.
+     * Calculates the levl SoC in percent.
      *
-     * @param totalWs Total discharge power in watt-seconds.
+     * @param totalWs Total discharge energy in watt-seconds.
      * @param capacity Capacity value.
      * @return The calculated LEVL capacity offset percent.
      */
-    private int calculateLevlCapacityOffsetPercentFromDischargePowerWs(long totalWs, int capacity) {
+    private int calculateLevlCapacityOffsetPercentFromDischargeEnergyWs(long totalWs, int capacity) {
         return Percent.calculatePercentOfTotal(Units.convertWsToWh(totalWs), capacity);
     }
 

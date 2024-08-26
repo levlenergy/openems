@@ -20,6 +20,7 @@ public class LevlControlRequest extends JsonrpcRequest {
     private int levlSocLowerBoundPercent;
     private int levlSocUpperBoundPercent;
     private BigDecimal efficiencyPercent;
+    private boolean influenceSellToGrid;
     private final JsonObject params;
 
     /**
@@ -74,6 +75,7 @@ public class LevlControlRequest extends JsonrpcRequest {
         this.sellToGridLimitW = params.get("sellToGridLimitW").getAsInt();
         this.buyFromGridLimitW = params.get("buyFromGridLimitW").getAsInt();
         this.efficiencyPercent = params.get("efficiencyPercent").getAsBigDecimal();
+        this.influenceSellToGrid = params.get("influenceSellToGrid").getAsBoolean();
     }
 
     /**
@@ -97,6 +99,7 @@ public class LevlControlRequest extends JsonrpcRequest {
                 this.levlRequestTimestamp,
                 this.levlRequestId,
                 this.levlPowerW,
+                this.influenceSellToGrid,
                 this.levlChargeDelaySec,
                 this.levlChargeDurationSec
         );

@@ -24,12 +24,14 @@ public class WorkflowStorageConfig implements Config {
     private String currentRequestRemainingDischargeEnergyWs;
     private String totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
     private String totalRealizedDischargeEnergyWs;
+    private boolean nextInfluenceSellToGrid;
     private boolean nextDischargeRequestActive;
     private String nextDischargeRequestDeadline;
     private String nextDischargeRequestStart;
     private String nextDischargeRequestEnergyWs;
     private String nextDischargeRequestTimestamp;
     private String nextDischargeRequestId;
+    private boolean currentInfluenceSellToGrid;
     private boolean currentDischargeRequestActive;
     private String currentDischargeRequestDeadline;
     private String currentDischargeRequestStart;
@@ -198,6 +200,16 @@ public class WorkflowStorageConfig implements Config {
     public int actual_levl_power_w() {
         return this.actualLevlPowerW;
     }
+    
+    @Override
+	public boolean next_influence_sell_to_grid() {
+		return this.nextInfluenceSellToGrid;
+	}
+	
+    @Override
+	public boolean current_influence_sell_to_grid() {
+		return this.currentInfluenceSellToGrid;
+	}
 
     @Override
     public String webconsole_configurationFactory_nameHint() {
@@ -344,4 +356,12 @@ public class WorkflowStorageConfig implements Config {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+	public void setCurrentInfluenceSellToGrid(boolean currentInfluenceSellToGrid) {
+		this.currentInfluenceSellToGrid = currentInfluenceSellToGrid;
+	}
+
+	public void setNextInfluenceSellToGrid(boolean nextInfluenceSellToGrid) {
+		this.nextInfluenceSellToGrid = nextInfluenceSellToGrid;
+	}
 }
