@@ -34,45 +34,45 @@ public class SocConstraint {
     }
 
     /**
-     * Determines the SoC constraint with a capacity offset.
+     * Determines the SoC constraint with the levl soc.
      *
      * @param soc the current SoC.
-     * @param levlCapacityPercentDischarged the percentage of the LEVL capacity that has been discharged.
+     * @param levlSocPercentDischarged the percentage of the battery capacity that levl has discharged.
      * @return a Limit object representing the SoC constraint.
      */
-    public Limit determineSocConstraintWithCapacityOffsetPercent(int soc, int levlCapacityPercentDischarged) {
-        var lowerLimit = this.shouldNotCharge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MIN_VALUE;
-        var upperLimit = this.shouldNotDischarge(soc, levlCapacityPercentDischarged) ? 0 : Integer.MAX_VALUE;
+    public Limit determineSocConstraintWithLevlSocPercent(int soc, int levlSocPercentDischarged) {
+        var lowerLimit = this.shouldNotCharge(soc, levlSocPercentDischarged) ? 0 : Integer.MIN_VALUE;
+        var upperLimit = this.shouldNotDischarge(soc, levlSocPercentDischarged) ? 0 : Integer.MAX_VALUE;
         return new Limit(lowerLimit, upperLimit);
     }
 
-    private boolean shouldNotDischarge(Integer soc, Integer levlCapacityPercentDischarged) {
-        return soc <= this.getLowerSocLimitPercent(levlCapacityPercentDischarged);
+    private boolean shouldNotDischarge(Integer soc, Integer levlSocPercentDischarged) {
+        return soc <= this.getLowerSocLimitPercent(levlSocPercentDischarged);
     }
 
-    private boolean shouldNotCharge(Integer soc, Integer levlCapacityPercentDischarged) {
-        return soc >= this.getUpperSocLimitPercent(levlCapacityPercentDischarged);
+    private boolean shouldNotCharge(Integer soc, Integer levlSocPercentDischarged) {
+        return soc >= this.getUpperSocLimitPercent(levlSocPercentDischarged);
     }
 
-    private int getUpperSocLimitPercent(int levlCapacityPercentDischarged) {
-        if (this.hasLevlOverallDischarged(levlCapacityPercentDischarged)) {
-            return this.socUpperBoundPercent - levlCapacityPercentDischarged;
+    private int getUpperSocLimitPercent(int levlSocPercentDischarged) {
+        if (this.hasLevlOverallDischarged(levlSocPercentDischarged)) {
+            return this.socUpperBoundPercent - levlSocPercentDischarged;
         }
         return this.socUpperBoundPercent;
     }
 
-    private int getLowerSocLimitPercent(int levlCapacityPercentDischarged) {
-        if (this.hasLevlOverallCharged(levlCapacityPercentDischarged)) {
-            return this.socLowerBoundPercent - levlCapacityPercentDischarged;
+    private int getLowerSocLimitPercent(int levlSocPercentDischarged) {
+        if (this.hasLevlOverallCharged(levlSocPercentDischarged)) {
+            return this.socLowerBoundPercent - levlSocPercentDischarged;
         }
         return this.socLowerBoundPercent;
     }
 
-    private boolean hasLevlOverallDischarged(int levlCapacityPercentDischarged) {
-        return levlCapacityPercentDischarged > 0;
+    private boolean hasLevlOverallDischarged(int levlSocPercentDischarged) {
+        return levlSocPercentDischarged > 0;
     }
 
-    private boolean hasLevlOverallCharged(int levlCapacityPercentDischarged) {
-        return levlCapacityPercentDischarged < 0;
+    private boolean hasLevlOverallCharged(int levlSocPercentDischarged) {
+        return levlSocPercentDischarged < 0;
     }
 }

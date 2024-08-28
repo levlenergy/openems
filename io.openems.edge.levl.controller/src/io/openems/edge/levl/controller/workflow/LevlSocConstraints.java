@@ -77,9 +77,9 @@ public class LevlSocConstraints {
             this.log.debug("soc or capacity not defined");
             return Limit.unconstrained();
         }
-        var levlCapacityPercentDischarged = this.calculateLevlCapacityOffsetPercentFromDischargeEnergyWs(totalDischargeEnergyWs, capacity.get());
-        this.log.debug("levlCapacityPercentDischarged: " + levlCapacityPercentDischarged);
-        return this.physicalSocConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), levlCapacityPercentDischarged);
+        var levlSocPercentDischarged = this.calculateLevlSocPercent(totalDischargeEnergyWs, capacity.get());
+        this.log.debug("levlSocPercentDischarged: " + levlSocPercentDischarged);
+        return this.physicalSocConstraint.determineSocConstraintWithLevlSocPercent(soc.get(), levlSocPercentDischarged);
     }
 
 
@@ -93,7 +93,7 @@ public class LevlSocConstraints {
         if (!soc.isDefined()) {
             return Limit.unconstrained();
         }
-        return this.socConstraint.determineSocConstraintWithCapacityOffsetPercent(soc.get(), 0);
+        return this.socConstraint.determineSocConstraintWithLevlSocPercent(soc.get(), 0);
     }
 
     /**
@@ -103,7 +103,7 @@ public class LevlSocConstraints {
      * @param capacity Capacity value.
      * @return The calculated LEVL capacity offset percent.
      */
-    private int calculateLevlCapacityOffsetPercentFromDischargeEnergyWs(long totalWs, int capacity) {
+    private int calculateLevlSocPercent(long totalWs, int capacity) {
         return Percent.calculatePercentOfTotal(Units.convertWsToWh(totalWs), capacity);
     }
 
