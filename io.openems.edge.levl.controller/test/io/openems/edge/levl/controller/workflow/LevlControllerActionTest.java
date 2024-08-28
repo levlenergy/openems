@@ -134,7 +134,7 @@ public class LevlControllerActionTest {
                         .withInfluenceSellToGrid(true)
                         .withMeterActivePowerW(0)
                         .asArguments(),
-               Scenario.of("discharge, grid constraint lower bound, influence not allowed -> Levl is limited by sell to grid limit")
+               Scenario.of("discharge, grid constraint lower bound, influence not allowed -> levl is limited by sell to grid limit")
                         .withOriginalUnconstrainedActivePowerW(1000)
                         .withPucConstraints(-500, 500)
                         .withNextDischargePowerW(600)
@@ -144,7 +144,7 @@ public class LevlControllerActionTest {
                         .withInfluenceSellToGrid(false)
                         .withMeterActivePowerW(450) // previous cycle
                         .asArguments(),
-              Scenario.of("discharge, grid constraint lower bound, sell to grid, levl does nothing")
+              Scenario.of("discharge, grid constraint lower bound, influence not allowed, sell to grid -> levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(1000)
                         .withPucConstraints(-500, 500)
                         .withNextDischargePowerW(600)
@@ -156,7 +156,6 @@ public class LevlControllerActionTest {
                         .asArguments()
 
         );
-        // todo: extend with test cases for influenceSellToGrid(false)
     }
 
     private static Stream<Arguments> applyLevlUsecaseOnlyIncreaseAbsolutePowerScenarios() {

@@ -40,9 +40,9 @@ public interface LevlWorkflowReference {
 	boolean isInfluenceSellToGridAllowed();
 
 	/**
-	 * Gets the Active Power in [W]. Negative values for Consumption (power that is
-	 * 'leaving the system', e.g. feed-to-grid); positive for Production (power that
-	 * is 'entering the system').
+	 * Gets the Active Power in [W]. Negative values for power that is
+	 * 'leaving the system', e.g. feed-to-grid/sell-to-grid); positive for power that
+	 * is 'entering the system', e.g. buy-from-grid).
 	 * 
 	 * @return the active power in watts
 	 */
