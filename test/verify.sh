@@ -157,28 +157,10 @@ function suiteCi() {
 }
 
 function suite() {
-  check balancing_charge_capacity_reserved_primary_use_case_should_not_charge
-  check balancing_charge_capacity_reserved_levl_discharges_further_primary_use_case_should_not_charge
-  check balancing_charge_capacity_reserved_levl_use_case_may_charge
-  check balancing_charge_capacity_reserved_primary_use_case_may_charge
-  check balancing_discharge_capacity_reserved_levl_charges_further_primary_use_case_should_not_discharge
-  check balancing_discharge_capacity_reserved_primary_use_case_should_not_discharge
-  check balancing_discharge_capacity_reserved_levl_use_case_may_discharge
-  check balancing_discharge_capacity_reserved_primary_use_case_may_discharge
-
-  check balancing_discharge_request ../levlDischargeRequest.json
-  check balancing_charge_request ../levlChargeRequest.json
-  check balancing_avoid_integer_overflow_with_large_discharge_request ../levlLargeDischargeRequest.json
-
-  check balancing_respect_grid_limits_levldischarge
-  check balancing_respect_levl_lower_soc_limit_levlcharge
-  check balancing_respect_levl_lower_soc_limit_levldischarge
-  check balancing_respect_levl_upper_soc_limit_levlcharge
-  check balancing_respect_levl_upper_soc_limit_levldischarge
-  check symm_peakshaving_peakshaving_levlcharge
-  check symm_peakshaving_peakshaving_levldischarge
-  check symm_peakshaving_recharge_levlcharge
-  check symm_peakshaving_recharge_levldischarge
+  check symm_peakshaving_charge_request_forbid_influence_sell_to_grid ../levlChargeRequestPeakshavingForbidInfluenceSellToGrid.json
+  check symm_peakshaving_discharge_request_forbid_influence_sell_to_grid ../levlDischargeRequestPeakshavingForbidInfluenceSellToGrid.json
+  check balancing_charge_request_forbid_influence_sell_to_grid ../levlChargeRequestForbidInfluenceSellToGrid.json
+  check balancing_discharge_request_forbid_influence_sell_to_grid ../levlDischargeRequestForbidInfluenceSellToGrid.json
 
   echo "###############"
   echo "TOTAL: $TOTAL_COUNT"

@@ -1,5 +1,12 @@
 # Created by https://www.gitignore.io/api/java,maven,gradle,angular,eclipse,node
 
+############### Levl specifica ###############
+/test/*/run_config
+/test/*/full.out
+/test/*/levl.out
+
+############### OpenEMS specifica ###############
+
 ### Angular ###
 ## Angular ##
 # compiled output

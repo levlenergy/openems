@@ -1,0 +1,22 @@
+{
+  "method": "componentJsonApi",
+  "params": {
+    "componentId": "levlWorkflow0",
+    "payload": {
+      "method": "sendLevlControlRequest",
+      "params": {
+        "levlPowerW": 1000,
+        "levlChargeDelaySec": 0,
+        "levlChargeDurationSec": 890,
+        "levlRequestId": "req-2023-01-02 15:00:00 +0000 UTC",
+        "levlRequestTimestamp": "2023-01-02 15:00:00 +0000 UTC",
+        "levlSocLowerBoundPercent": 5,
+        "levlSocUpperBoundPercent": 90,
+        "buyFromGridLimitW": 10500,
+        "sellToGridLimitW": 0,
+        "efficiencyPercent": 92.5,
+		"influenceSellToGrid": false
+      }
+    }
+  }
+}

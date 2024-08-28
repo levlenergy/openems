@@ -14,7 +14,8 @@
         "levlSocUpperBoundPercent": 90,
         "buyFromGridLimitW": 100000,
         "sellToGridLimitW": -100000,
-        "efficiencyPercent": 90
+        "efficiencyPercent": 90,
+		"influenceSellToGrid": true
       }
     }
   }
