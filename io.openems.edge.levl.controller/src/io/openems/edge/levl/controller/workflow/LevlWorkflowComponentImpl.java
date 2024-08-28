@@ -110,6 +110,7 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 		switch (event.getTopic()) {
 		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_CONTROLLERS -> this.levlState.determineNextDischargePower();
 		case EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE -> {
+			// actual power: positive = discharge
 			Optional<Integer> actualPowerW = this.ess.getDebugSetActivePowerChannel().getNextValue().asOptional();
 			this.levlState.checkActualDischargePower(actualPowerW);
 			this.updateChannels(actualPowerW);

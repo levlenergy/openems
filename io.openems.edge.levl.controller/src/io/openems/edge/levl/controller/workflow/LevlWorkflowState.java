@@ -19,6 +19,7 @@ public class LevlWorkflowState {
     protected Limit gridPowerLimitW = new Limit(0, 0);
     protected int primaryUseCaseActivePowerW;
     protected int nextDischargePowerW;
+    // positive = discharge
     protected int actualLevlPowerW;
     
     private final Logger log = LoggerFactory.getLogger(LevlWorkflowState.class);
@@ -104,7 +105,7 @@ public class LevlWorkflowState {
      * Determines the levlPowerW by subtracting the calculated primaryUseCaseActivePowerW from the overall realized power (actualPowerW).
      * Updating the discharge state with the calculated levl power.
      *
-     * @param actualPowerW the actual power in watts
+     * @param actualPowerW the actual power in watts (positive = discharge)
      */
     void checkActualDischargePower(Optional<Integer> actualPowerW) {
         this.actualLevlPowerW = this.calculator.determineActualLevlPowerW(actualPowerW, this.primaryUseCaseActivePowerW);

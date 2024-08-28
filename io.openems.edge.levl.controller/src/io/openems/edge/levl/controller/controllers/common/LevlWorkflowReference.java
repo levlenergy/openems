@@ -12,7 +12,7 @@ public interface LevlWorkflowReference {
     Limit getLevlUseCaseConstraints();
 
     /**
-     * Determines the primary use case constraints.
+     * Determines the primary use case constraints which are physical soc bounds and levl soc (reserved energy).
      *
      * @return The primary use case constraints.
      */
