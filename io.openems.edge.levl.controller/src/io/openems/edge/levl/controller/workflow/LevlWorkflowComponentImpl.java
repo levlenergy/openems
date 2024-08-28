@@ -149,15 +149,6 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	
 	@Override
 	public Value<Integer> getMeterActivePowerW() {
-		/**
-		 * Meaning of positive and negative values for Power and Current depends on the
-		 * {@link MeterType} (via {@link #getMeterType()}):
-		 * <ul>
-		 * <li>{@link MeterType#GRID}
-		 * <ul>
-		 * <li>positive: buy-from-grid
-		 * <li>negative: feed-to-grid
-		 */
 		this.log.debug("meter type: " + this.meter);
 		this.log.debug("meterActivePower: " + this.meter.getActivePower().orElse(1234567));
 		return this.meter.getActivePower();
