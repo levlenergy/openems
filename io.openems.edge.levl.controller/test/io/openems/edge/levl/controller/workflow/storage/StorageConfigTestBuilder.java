@@ -30,12 +30,14 @@ public final class StorageConfigTestBuilder {
     private final String nextDischargeRequestEnergyWs = "6";
     private final String nextDischargeRequestTimestamp = "2024-02-15 15:15:00Z";
     private final String nextDischargeRequestId = "id1";
+    private final boolean nextInfluenceSellToGrid = true;
     private final boolean currentDischargeRequestActive = true;
     private String currentDischargeRequestDeadline = "2021-01-01T00:00:11";
     private String currentDischargeRequestStart = "2021-01-01T00:00:10";
     private final String currentDischargeRequestEnergyWs = "9";
     private final String currentDischargeRequestTimestamp = "2024-02-15 15:00:00Z";
     private final String currentDischargeRequestId = "id0";
+    private final boolean currentInfluenceSellToGrid = true;
     private final boolean enabled = true;
 
 
@@ -124,12 +126,14 @@ public final class StorageConfigTestBuilder {
         workflowStorageConfig.setNextDischargeRequestEnergyWs(this.nextDischargeRequestEnergyWs);
         workflowStorageConfig.setNextDischargeRequestTimestamp(this.nextDischargeRequestTimestamp);
         workflowStorageConfig.setNextDischargeRequestId(this.nextDischargeRequestId);
+        workflowStorageConfig.setNextInfluenceSellToGrid(this.nextInfluenceSellToGrid);
         workflowStorageConfig.setCurrentDischargeRequestActive(this.currentDischargeRequestActive);
         workflowStorageConfig.setCurrentDischargeRequestDeadline(this.currentDischargeRequestDeadline);
         workflowStorageConfig.setCurrentDischargeRequestStart(this.currentDischargeRequestStart);
         workflowStorageConfig.setCurrentDischargeRequestEnergyWs(this.currentDischargeRequestEnergyWs);
         workflowStorageConfig.setCurrentDischargeRequestTimestamp(this.currentDischargeRequestTimestamp);
         workflowStorageConfig.setCurrentDischargeRequestId(this.currentDischargeRequestId);
+        workflowStorageConfig.setCurrentInfluenceSellToGrid(this.currentInfluenceSellToGrid);
         workflowStorageConfig.setEnabled(this.enabled);
         return workflowStorageConfig;
     }

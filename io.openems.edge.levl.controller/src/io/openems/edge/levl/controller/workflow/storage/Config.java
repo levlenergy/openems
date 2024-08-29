@@ -37,7 +37,7 @@ public @interface Config {
     boolean current_discharge_request_active() default false;
     
     @AttributeDefinition(name = "Current-Influence-Sell-To-Grid", description = "Is it allowed to influence the sell to grid (current request)?")
-    boolean current_influence_sell_to_grid() default false;    
+    boolean current_influence_sell_to_grid() default true;    
 
     @AttributeDefinition(name = "Next-Discharge-Request-Id", description = "Id of the next discharge request")
     String next_discharge_request_id() default "";
@@ -58,7 +58,7 @@ public @interface Config {
     boolean next_discharge_request_active() default false;
 
     @AttributeDefinition(name = "Next-Influence-Sell-To-Grid", description = "Is it allowed to influence the sell to grid (next request)?")
-    boolean next_influence_sell_to_grid() default false;   
+    boolean next_influence_sell_to_grid() default true;   
     
     @AttributeDefinition(name = "Total-Realized-Discharge-Energy--Ws", description = "Total realized discharge energy in Ws")
     String total_realized_discharge_energy_ws() default "0";
