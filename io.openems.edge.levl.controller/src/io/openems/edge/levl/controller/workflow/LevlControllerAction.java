@@ -47,18 +47,10 @@ public class LevlControllerAction {
 
 	private void applyStrategy(int originalUnconstrainedActivePower, PowerStrategy powerStrategy)
 			throws OpenemsError.OpenemsNamedException {
-		int originalActivePower = this.determinePrimaryUseCasePower(originalUnconstrainedActivePower);
-		int overallPower = this.calculateOverallPower(originalActivePower, powerStrategy);
+		var originalActivePower = this.determinePrimaryUseCasePower(originalUnconstrainedActivePower);
+		var overallPower = this.calculateOverallPower(originalActivePower, powerStrategy);
 		this.logPowerValues(originalActivePower, overallPower);
 		this.applyPowerSettings(overallPower);
-	}
-
-	private boolean levlUseCaseAllowed() {
-		Integer meterActivePowerW = this.levlWorkflow.getMeterActivePowerW().orElse(0);
-		if (!this.levlWorkflow.isInfluenceSellToGridAllowed() && meterActivePowerW < 0) {
-			return false;
-		}
-		return true;
 	}
 
 	private int calculateOverallPower(int originalActivePower, PowerStrategy powerStrategy)
@@ -66,17 +58,13 @@ public class LevlControllerAction {
 		Limit levlUseCaseConstraints = this.levlWorkflow.getLevlUseCaseConstraints();
 		this.log.debug("levlUseCaseConstraints: " + levlUseCaseConstraints);
 
-		int levlNextDischargePowerW = this.levlWorkflow.getNextDischargePowerW();
-		int gridConstrainedLevlNextDischargePowerW = levlUseCaseConstraints.apply(levlNextDischargePowerW);
+		var levlNextDischargePowerUnconstrainedW = this.levlWorkflow.getNextDischargePowerW();
+		var levlNextDischargePowerW = levlUseCaseConstraints.apply(levlNextDischargePowerUnconstrainedW);
 
-		if (!this.levlUseCaseAllowed()) {
-			gridConstrainedLevlNextDischargePowerW = 0;
-		}
-
-		this.log.debug("gridConstrainedLevlNextDischargePowerW: " + gridConstrainedLevlNextDischargePowerW);
+		this.log.debug("constrained levlNextDischargePowerW: " + levlNextDischargePowerW);
 
 		return powerStrategy.combinePrimaryUseCaseAndLevlDischargePowerW(originalActivePower,
-				gridConstrainedLevlNextDischargePowerW);
+				levlNextDischargePowerW);
 	}
 
 	private void logPowerValues(int originalActivePower, int overallPower) {

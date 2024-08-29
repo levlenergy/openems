@@ -69,10 +69,6 @@ public class LevlWorkflowState {
     public int getNextDischargePowerW() {
         return this.nextDischargePowerW;
     }
-    
-    public boolean isInfluenceSellToGridAllowed() {
-    	return this.dischargeState.isInfluenceSellToGridAllowed();
-    }
 
     /**
      * Determines the constraints for the Levl use case.
@@ -82,10 +78,33 @@ public class LevlWorkflowState {
      * @return the constraints
      */
     public Limit getLevlUseCaseConstraints(Value<Integer> meterActivePowerW, Value<Integer> essSoc) {
-        var gridConstraints = this.determineShiftedGridConstraints(meterActivePowerW);
-        var socConstraints = this.levlSocConstraints.determineLevlUseCaseSocConstraints(essSoc);
-        return gridConstraints.intersect(socConstraints);
+    	if (this.levlUseCaseAllowed(meterActivePowerW)) {
+	        var gridConstraints = this.determineShiftedGridConstraints(meterActivePowerW);
+	        var socConstraints = this.levlSocConstraints.determineLevlUseCaseSocConstraints(essSoc);
+	        return gridConstraints.intersect(socConstraints);
+    	}
+    	return new Limit(0, 0);
     }
+    
+	private boolean levlUseCaseAllowed(Value<Integer> meterActivePowerW) {
+		this.log.debug("isInfluenceSellToGridAllowed: " + this.dischargeState.isInfluenceSellToGridAllowed());	
+		if (this.dischargeState.isInfluenceSellToGridAllowed()) {
+			return true;
+		}
+		
+		if (!meterActivePowerW.isDefined()) {
+			this.log.warn("meterActivePowerW not defined");
+			return false;
+		}
+		
+	    int meterPowerW = meterActivePowerW.get();
+		this.log.debug("meterActivePowerW: " + meterPowerW);
+		if (meterPowerW < 0) {
+			return false;
+		}
+		
+		return true;
+	}
 
     /**
      * Determines the shifted grid constraints.
@@ -157,7 +176,9 @@ public class LevlWorkflowState {
     public void handleRequest(LevlControlRequest request, int physicalSocLowerPercent, int physicalSocUpperPercent) {
         this.gridPowerLimitW = request.createGridPowerLimitW();
         this.levlSocConstraints = request.createLevlSocConstraints(physicalSocLowerPercent, physicalSocUpperPercent);
-        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), request.createDischargeRequest(LocalDateTime.now(this.clock)));
+
+        var dischargeRequest = request.createDischargeRequest(LocalDateTime.now(this.clock));
+        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), dischargeRequest);
     }
 
     /**

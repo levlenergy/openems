@@ -143,11 +143,6 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	}
 
 	@Override
-	public boolean isInfluenceSellToGridAllowed() {
-		return this.levlState.isInfluenceSellToGridAllowed();
-	}
-	
-	@Override
 	public Value<Integer> getMeterActivePowerW() {
 		this.log.debug("meter type: " + this.meter);
 		this.log.debug("meterActivePower: " + this.meter.getActivePower().orElse(1234567));
