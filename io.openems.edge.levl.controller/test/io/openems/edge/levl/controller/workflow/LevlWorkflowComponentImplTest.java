@@ -99,6 +99,7 @@ public class LevlWorkflowComponentImplTest {
 		this.underTest.levlState.actualLevlPowerW = 200;
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
 				.thenReturn(new Limit(-500, 1500));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
 		var expected = new Limit(-500, 1500);
 
 		var result = this.underTest.getLevlUseCaseConstraints();
@@ -113,6 +114,8 @@ public class LevlWorkflowComponentImplTest {
 		this.underTest.levlState.actualLevlPowerW = 200;
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
 				.thenReturn(new Limit(-2700, 3300));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
+
 		var expected = new Limit(-700, 2300);
 
 		var result = this.underTest.getLevlUseCaseConstraints();
@@ -127,7 +130,30 @@ public class LevlWorkflowComponentImplTest {
 		this.underTest.levlState.actualLevlPowerW = 200;
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
 				.thenReturn(new Limit(-1000, 2000));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
 		var expected = new Limit(-1000, 2000);
+
+		var result = this.underTest.getLevlUseCaseConstraints();
+
+		assertThat(result).isEqualTo(expected);
+	}
+	
+	@Test
+	public void getLevlUseCaseConstraints_LevlUsecaseNotAllowed() {
+		when(this.meter.getActivePower()).thenReturn(DummyValues.of(-100));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(false);
+		var expected = new Limit(0, 0);
+
+		var result = this.underTest.getLevlUseCaseConstraints();
+
+		assertThat(result).isEqualTo(expected);
+	}
+	
+	@Test
+	public void getLevlUseCaseConstraints_influenceSellToGridForbidden_MeterActivePowerNotDefined() {
+		when(this.meter.getActivePower()).thenReturn(DummyValues.of(null));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(false);
+		var expected = new Limit(0, 0);
 
 		var result = this.underTest.getLevlUseCaseConstraints();
 

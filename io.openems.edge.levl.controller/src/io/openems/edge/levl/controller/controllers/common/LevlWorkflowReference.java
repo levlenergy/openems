@@ -33,13 +33,6 @@ public interface LevlWorkflowReference {
     int getNextDischargePowerW();
 
 	/**
-     * Indicates whether or not it is allowed to influence the sell to grid.
-     * 
-     * @return true if it allowed, false if not.
-	 */
-	boolean isInfluenceSellToGridAllowed();
-
-	/**
 	 * Gets the Active Power in [W]. Negative values for power that is
 	 * 'leaving the system', e.g. feed-to-grid/sell-to-grid); positive for power that
 	 * is 'entering the system', e.g. buy-from-grid).

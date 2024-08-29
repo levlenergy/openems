@@ -31,8 +31,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is below puc constraint bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -41,8 +39,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is below bounds, levl discharges")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -51,8 +47,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-400)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl charges")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -61,8 +55,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(400)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -71,8 +63,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl discharges")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -81,8 +71,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl charges")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -91,8 +79,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -101,8 +87,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl discharges")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -111,8 +95,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-400)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                 Scenario.of("charge, grid constraint lower bound")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -121,8 +103,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-450, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-950)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
                Scenario.of("discharge, grid constraint lower bound")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -131,28 +111,14 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 450)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(950)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(0)
                         .asArguments(),
-               Scenario.of("discharge, grid constraint lower bound, influence not allowed -> levl is limited by sell to grid limit")
+              Scenario.of("discharge, influence sell to grid not allowed, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(1000)
                         .withPucConstraints(-500, 500)
                         .withNextDischargePowerW(600)
-                        .withLevlConstraints(-1500, 450)
-                        .expectResultingOriginalPowerW(500)
-                        .expectActivePowerW(950)
-                        .withInfluenceSellToGrid(false)
-                        .withMeterActivePowerW(450) // previous cycle
-                        .asArguments(),
-              Scenario.of("discharge, grid constraint lower bound, influence not allowed, sell to grid -> levl does nothing")
-                        .withOriginalUnconstrainedActivePowerW(1000)
-                        .withPucConstraints(-500, 500)
-                        .withNextDischargePowerW(600)
-                        .withLevlConstraints(-500, 450)
+                        .withLevlConstraints(0, 0)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(500)
-                        .withInfluenceSellToGrid(false)
-                        .withMeterActivePowerW(-50)
                         .asArguments()
 
         );
@@ -167,8 +133,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is below bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -177,8 +141,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is below bounds, levl discharges, is ignored")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -187,8 +149,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl charges, is ignored")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -197,8 +157,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -207,8 +165,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is above bounds, levl discharges")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -217,8 +173,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl charges")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -227,8 +181,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-600)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -237,8 +189,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("Original charge power is within bounds, levl discharges, is ignored")
                         .withOriginalUnconstrainedActivePowerW(-500)
@@ -247,8 +197,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-500)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("charge, grid constraint lower bound")
                         .withOriginalUnconstrainedActivePowerW(-1000)
@@ -257,8 +205,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-450, 1500)
                         .expectResultingOriginalPowerW(-500)
                         .expectActivePowerW(-950)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
                 Scenario.of("discharge, grid constraint lower bound")
                         .withOriginalUnconstrainedActivePowerW(1000)
@@ -267,28 +213,14 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 450)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(950)
-                        .withInfluenceSellToGrid(true)
-                        .withMeterActivePowerW(1)
                         .asArguments(),
-               Scenario.of("discharge, grid constraint lower bound, influence not allowed -> Levl is limited by sell to grid limit")
+              Scenario.of("discharge, influence sell to grid not allowed, levl does nothing")
                         .withOriginalUnconstrainedActivePowerW(1000)
                         .withPucConstraints(-500, 500)
                         .withNextDischargePowerW(600)
-                        .withLevlConstraints(-1500, 450)
-                        .expectResultingOriginalPowerW(500)
-                        .expectActivePowerW(950)
-                        .withInfluenceSellToGrid(false)
-                        .withMeterActivePowerW(50)
-                        .asArguments(),
-              Scenario.of("discharge, grid constraint lower bound, sell to grid, levl does nothing")
-                        .withOriginalUnconstrainedActivePowerW(1000)
-                        .withPucConstraints(-500, 500)
-                        .withNextDischargePowerW(600)
-                        .withLevlConstraints(-500, 450)
+                        .withLevlConstraints(0, 0)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(500)
-                        .withInfluenceSellToGrid(false)
-                        .withMeterActivePowerW(-50)
                         .asArguments()
         );
     }
@@ -313,8 +245,6 @@ public class LevlControllerActionTest {
         when(this.levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.pucConstraints);
         when(this.levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
         when(this.levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.levlConstraints);
-        when(this.levlWorkflow.isInfluenceSellToGridAllowed()).thenReturn(scenario.influenceSellToGrid);
-        when(this.levlWorkflow.getMeterActivePowerW()).thenReturn(new Value<Integer>(null, scenario.meterActivePowerW));
 
         this.underTest.addPowers(scenario.originalUnconstrainedActivePowerW);
 
@@ -336,8 +266,6 @@ public class LevlControllerActionTest {
         when(this.levlWorkflow.determinePrimaryUseCaseConstraints()).thenReturn(scenario.pucConstraints);
         when(this.levlWorkflow.getNextDischargePowerW()).thenReturn(scenario.nextDischargePowerW);
         when(this.levlWorkflow.getLevlUseCaseConstraints()).thenReturn(scenario.levlConstraints);
-        when(this.levlWorkflow.isInfluenceSellToGridAllowed()).thenReturn(scenario.influenceSellToGrid);
-        when(this.levlWorkflow.getMeterActivePowerW()).thenReturn(new Value<Integer>(null, scenario.meterActivePowerW));
 
         this.underTest.onlyIncreaseAbsolutePower(scenario.originalUnconstrainedActivePowerW);
 
