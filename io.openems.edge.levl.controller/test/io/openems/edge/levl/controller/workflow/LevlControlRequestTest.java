@@ -109,6 +109,7 @@ class LevlControlRequestTest {
         assertThat(underTest.createGridPowerLimitW()).isEqualTo(expectedGridPowerLimitW);
         assertThat(underTest.createLevlSocConstraints(0, 100)).usingRecursiveComparison().isEqualTo(expectedSocConstraints);
         assertThat(underTest.getEfficiencyPercent()).isEqualTo(new BigDecimal("90"));
+        
     }
 
     @Test
@@ -145,5 +146,15 @@ class LevlControlRequestTest {
         assertThatThrownBy(() -> LevlControlRequest.from(request))
                 .isInstanceOf(OpenemsError.OpenemsNamedException.class)
                 .hasMessageContaining("efficiencyPercent must be <= 100");
+    }
+    
+    @Test
+    public void influenceSellToGridIsNotSet() throws OpenemsError.OpenemsNamedException {
+        var json = VALID_JSON.replace("       \"influenceSellToGrid\": false,\n", "");
+        var request = GenericJsonrpcRequest.from(json);
+        
+        LevlControlRequest underTest = LevlControlRequest.from(request);
+        
+        assertThat(underTest.createDischargeRequest(NOW).isInfluenceSellToGridAllowed() == true);
     }
 }

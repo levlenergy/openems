@@ -74,7 +74,7 @@ public class DischargeRequest {
 	 * @return a new inactive DischargeRequest instance
 	 */
 	public static DischargeRequest inactiveRequest() {
-		return new DischargeRequest("", "", 0, false, LocalDateTime.MAX, LocalDateTime.MAX, false);
+		return new DischargeRequest("", "", 0, true, LocalDateTime.MAX, LocalDateTime.MAX, false);
 	}
 
 	/**
