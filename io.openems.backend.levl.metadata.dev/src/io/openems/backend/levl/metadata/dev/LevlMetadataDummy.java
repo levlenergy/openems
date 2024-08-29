@@ -41,6 +41,7 @@ import io.openems.backend.common.metadata.AppCenterMetadata;
 import io.openems.backend.common.metadata.Edge;
 import io.openems.backend.common.metadata.EdgeHandler;
 import io.openems.backend.common.metadata.Metadata;
+import io.openems.backend.common.metadata.MetadataUtils;
 import io.openems.backend.common.metadata.SimpleEdgeHandler;
 import io.openems.backend.common.metadata.User;
 import io.openems.common.channel.Level;
@@ -88,10 +89,19 @@ public class LevlMetadataDummy extends AbstractMetadata
 	private JsonObject settings = new JsonObject();
 
 	@Activate
-	public LevlMetadataDummy(@Reference EventAdmin eventadmin) {
+	public LevlMetadataDummy(@Reference EventAdmin eventadmin, Config config) {
 		super("Levl.Metadata.Dev");
 		this.eventAdmin = eventadmin;
 		this.logInfo(this.log, "Activate");
+
+		// Prefill
+		this.logInfo(this.log, "Prefilling Edges [" //
+				+ String.format(config.edgeIdTemplate(), 0) + "..."
+				+ String.format(config.edgeIdTemplate(), config.edgeIdMax()) + "]");
+		for (var i = 0; i < config.edgeIdMax() + 1; i++) {
+			this.createEdge(config.edgeIdTemplate(), i);
+		}
+		this.nextEdgeId.set(config.edgeIdMax() + 1);
 
 		// Allow the services some time to settle
 		this.executor.schedule(() -> {
@@ -212,7 +222,18 @@ public class LevlMetadataDummy extends AbstractMetadata
 		var edge = new MyEdge(this, edgeId, apikey, setupPassword, "OpenEMS Edge #" + id, "", "");
 		this.edges.put(edgeId, edge);
 		return Optional.ofNullable(edgeId);
+	}
 
+	/**
+	 * Creates and adds a {@link MyEdge}.
+	 *
+	 * @param edgeIdTemplate the Edge-ID template
+	 * @param i              value to be filled in the template
+	 */
+	private void createEdge(String edgeIdTemplate, int i) {
+		var edgeId = String.format(edgeIdTemplate, i);
+		var edge = new MyEdge(this, edgeId, edgeId, edgeId, "OpenEMS Edge #" + i, "", "");
+		this.edges.put(edgeId, edge);
 	}
 
 	@Override
@@ -307,9 +328,9 @@ public class LevlMetadataDummy extends AbstractMetadata
 		var reader = new EventReader(event);
 
 		switch (event.getTopic()) {
-		case Edge.Events.ON_SET_CONFIG:
-			this.edgeHandler.setEdgeConfigFromEvent(reader);
-			break;
+			case Edge.Events.ON_SET_CONFIG:
+				this.edgeHandler.setEdgeConfigFromEvent(reader);
+				break;
 		}
 	}
 
@@ -321,6 +342,11 @@ public class LevlMetadataDummy extends AbstractMetadata
 	@Override
 	public Optional<String> getSerialNumberForEdge(Edge edge) {
 		throw new UnsupportedOperationException("DummyMetadata.getSerialNumberForEdge() is not implemented");
+	}
+
+	@Override
+	public Optional<String> getEmsTypeForEdge(String edgeId) {
+		return Optional.of("OpenEMS");
 	}
 
 	@Override
@@ -351,43 +377,7 @@ public class LevlMetadataDummy extends AbstractMetadata
 	@Override
 	public List<EdgeMetadata> getPageDevice(User user, PaginationOptions paginationOptions)
 			throws OpenemsNamedException {
-		var pagesStream = this.edges.values().stream();
-		final var query = paginationOptions.getQuery();
-		if (query != null) {
-			pagesStream = pagesStream.filter(//
-					edge -> StringUtils.containsWithNullCheck(edge.getId(), query) //
-							|| StringUtils.containsWithNullCheck(edge.getComment(), query) //
-							|| StringUtils.containsWithNullCheck(edge.getProducttype(), query) //
-			);
-		}
-		final var searchParams = paginationOptions.getSearchParams();
-		if (searchParams != null) {
-			if (searchParams.searchIsOnline()) {
-				pagesStream = pagesStream.filter(edge -> edge.isOnline() == searchParams.isOnline());
-			}
-			if (searchParams.productTypes() != null && !searchParams.productTypes().isEmpty()) {
-				pagesStream = pagesStream.filter(edge -> searchParams.productTypes().contains(edge.getProducttype()));
-			}
-			// TODO sum state filter
-		}
-
-		return pagesStream //
-				.sorted((s1, s2) -> s1.getId().compareTo(s2.getId())) //
-				.skip(paginationOptions.getPage() * paginationOptions.getLimit()) //
-				.limit(paginationOptions.getLimit()) //
-				.peek(t -> user.setRole(t.getId(), Role.ADMIN)) //
-				.map(myEdge -> {
-					return new EdgeMetadata(//
-							myEdge.getId(), //
-							myEdge.getComment(), //
-							myEdge.getProducttype(), //
-							myEdge.getVersion(), //
-							Role.ADMIN, //
-							myEdge.isOnline(), //
-							myEdge.getLastmessage(), //
-							null, // firstSetupProtocol
-							Level.OK);
-				}).toList();
+		return MetadataUtils.getPageDevice(user, this.edges.values(), paginationOptions);
 	}
 
 	@Override
@@ -442,7 +432,7 @@ public class LevlMetadataDummy extends AbstractMetadata
 
 	@Override
 	public void sendAddInstallAppInstanceHistory(String key, String edgeId, String appId, UUID instanceId,
-			String userId) throws OpenemsNamedException {
+												 String userId) throws OpenemsNamedException {
 
 	}
 
