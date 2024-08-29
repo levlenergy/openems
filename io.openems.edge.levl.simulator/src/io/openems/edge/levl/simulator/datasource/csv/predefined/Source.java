@@ -7,6 +7,7 @@ public enum Source {
 	H0_HOUSEHOLD_SUMMER_WEEKDAY_NON_REGULATED_CONSUMPTION("h0-summer-weekday-non-regulated-consumption.csv"), //
 	H0_HOUSEHOLD_SUMMER_WEEKDAY_PV_PRODUCTION2("h0-summer-weekday-pv-production2.csv"),
 
+	ONE_WEEK_CONSUMPTION_PEAK_SHAVING("one-week-consumption-peak-shaving.csv"),
 	FEMS_KW36_CONSUMPTION("fems-kw36-consumption.csv"),
 	FEMS_KW36_PRODUCTION("fems-kw36-production.csv"),
 	FEMS_KW38_CONSUMPTION("fems-kw38-consumption.csv"),
