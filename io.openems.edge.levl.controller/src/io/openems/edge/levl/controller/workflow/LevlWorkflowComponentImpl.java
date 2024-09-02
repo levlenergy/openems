@@ -141,13 +141,6 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	public Limit getLevlUseCaseConstraints() {
 		return this.levlState.getLevlUseCaseConstraints(this.meter.getActivePower(), this.ess.getSoc());
 	}
-
-	@Override
-	public Value<Integer> getMeterActivePowerW() {
-		this.log.debug("meter type: " + this.meter);
-		this.log.debug("meterActivePower: " + this.meter.getActivePower().orElse(1234567));
-		return this.meter.getActivePower();
-	}
 	
 	@Override
 	public Limit determinePrimaryUseCaseConstraints() {

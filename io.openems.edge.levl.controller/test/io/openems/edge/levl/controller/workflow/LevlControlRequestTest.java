@@ -109,7 +109,6 @@ class LevlControlRequestTest {
         assertThat(underTest.createGridPowerLimitW()).isEqualTo(expectedGridPowerLimitW);
         assertThat(underTest.createLevlSocConstraints(0, 100)).usingRecursiveComparison().isEqualTo(expectedSocConstraints);
         assertThat(underTest.getEfficiencyPercent()).isEqualTo(new BigDecimal("90"));
-        
     }
 
     @Test
