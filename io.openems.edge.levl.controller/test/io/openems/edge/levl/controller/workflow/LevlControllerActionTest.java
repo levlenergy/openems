@@ -111,16 +111,7 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 450)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(950)
-                        .asArguments(),
-              Scenario.of("discharge, influence sell to grid not allowed, levl does nothing")
-                        .withOriginalUnconstrainedActivePowerW(1000)
-                        .withPucConstraints(-500, 500)
-                        .withNextDischargePowerW(600)
-                        .withLevlConstraints(0, 0)
-                        .expectResultingOriginalPowerW(500)
-                        .expectActivePowerW(500)
                         .asArguments()
-
         );
     }
 
@@ -213,14 +204,6 @@ public class LevlControllerActionTest {
                         .withLevlConstraints(-1500, 450)
                         .expectResultingOriginalPowerW(500)
                         .expectActivePowerW(950)
-                        .asArguments(),
-              Scenario.of("discharge, influence sell to grid not allowed, levl does nothing")
-                        .withOriginalUnconstrainedActivePowerW(1000)
-                        .withPucConstraints(-500, 500)
-                        .withNextDischargePowerW(600)
-                        .withLevlConstraints(0, 0)
-                        .expectResultingOriginalPowerW(500)
-                        .expectActivePowerW(500)
                         .asArguments()
         );
     }
@@ -284,9 +267,6 @@ public class LevlControllerActionTest {
         private Limit levlConstraints;
         private int expectedResultingOriginalPowerW;
         private int expectedActivePowerW;
-        private boolean influenceSellToGrid;
-        // meterActivePowerW is only in use if influenceSellToGrid is false
-        private int meterActivePowerW;
 
         public static Scenario of(String decription) {
             return new Scenario(decription);
@@ -313,16 +293,6 @@ public class LevlControllerActionTest {
 
         public Scenario withLevlConstraints(int lower, int upper) {
         	this.levlConstraints = new Limit(lower, upper);
-            return this;
-        }
-
-        public Scenario withInfluenceSellToGrid(boolean influenceSellToGrid) {
-        	this.influenceSellToGrid = influenceSellToGrid;
-            return this;
-        }
-        
-        public Scenario withMeterActivePowerW(int meterActivePowerW) {
-        	this.meterActivePowerW = meterActivePowerW;
             return this;
         }
 

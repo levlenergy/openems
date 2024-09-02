@@ -31,13 +31,4 @@ public interface LevlWorkflowReference {
      * @return The next discharge power in watts.
      */
     int getNextDischargePowerW();
-
-	/**
-	 * Gets the Active Power in [W]. Negative values for power that is
-	 * 'leaving the system', e.g. feed-to-grid/sell-to-grid); positive for power that
-	 * is 'entering the system', e.g. buy-from-grid).
-	 * 
-	 * @return the active power in watts
-	 */
-	Value<Integer> getMeterActivePowerW();
 }
