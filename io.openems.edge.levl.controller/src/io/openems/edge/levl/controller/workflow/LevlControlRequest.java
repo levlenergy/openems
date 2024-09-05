@@ -75,11 +75,9 @@ public class LevlControlRequest extends JsonrpcRequest {
         this.sellToGridLimitW = params.get("sellToGridLimitW").getAsInt();
         this.buyFromGridLimitW = params.get("buyFromGridLimitW").getAsInt();
         this.efficiencyPercent = params.get("efficiencyPercent").getAsBigDecimal();
-        if (params.get("influenceSellToGrid") == null) {
-        	this.influenceSellToGrid = true;
-        } else {
-        	this.influenceSellToGrid = params.get("influenceSellToGrid").getAsBoolean();        	
-        }
+        this.influenceSellToGrid = params.has("influenceSellToGrid") 
+                ? params.get("influenceSellToGrid").getAsBoolean() 
+                : true;
     }
 
     /**

@@ -150,7 +150,7 @@ public class LevlWorkflowComponentImplTest {
 	}
 	
 	@Test
-	public void getLevlUseCaseConstraints_influenceSellToGridForbidden_MeterActivePowerNotDefined() {
+	public void getLevlUseCaseConstraints_influenceSellToGridNotAllowed_MeterActivePowerNotDefined() {
 		when(this.meter.getActivePower()).thenReturn(DummyValues.of(null));
 		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(false);
 		var expected = new Limit(0, 0);
