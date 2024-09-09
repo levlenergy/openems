@@ -1,7 +1,5 @@
 package io.openems.edge.levl.controller.controllers.common;
 
-import io.openems.edge.common.channel.value.Value;
-
 public interface LevlWorkflowReference {
 
     /**
