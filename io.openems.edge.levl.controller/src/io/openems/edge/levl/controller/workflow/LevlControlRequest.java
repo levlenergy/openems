@@ -17,6 +17,7 @@ public class LevlControlRequest extends JsonrpcRequest {
     private int levlPowerW;
     private int levlChargeDelaySec;
     private int levlChargeDurationSec;
+    private int levlSocWh;
     private int levlSocLowerBoundPercent;
     private int levlSocUpperBoundPercent;
     private BigDecimal efficiencyPercent;
@@ -70,6 +71,7 @@ public class LevlControlRequest extends JsonrpcRequest {
         this.levlPowerW = params.get("levlPowerW").getAsInt();
         this.levlChargeDelaySec = params.get("levlChargeDelaySec").getAsInt();
         this.levlChargeDurationSec = params.get("levlChargeDurationSec").getAsInt();
+        this.levlSocWh = params.get("levlSocWh").getAsInt();
         this.levlSocLowerBoundPercent = params.get("levlSocLowerBoundPercent").getAsInt();
         this.levlSocUpperBoundPercent = params.get("levlSocUpperBoundPercent").getAsInt();
         this.sellToGridLimitW = params.get("sellToGridLimitW").getAsInt();
