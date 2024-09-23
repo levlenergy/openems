@@ -45,8 +45,6 @@ public class LevlWorkflowStateConverter {
 
 	private List<UpdateComponentConfigRequest.Property> asProperties(DischargeState.DischargeStateMemento memento) {
 		var properties = List.of(
-				ConfigAttributes.TOTAL_REALIZED_DISCHARGE_ENERGY_WS
-						.asProperty(memento.totalRealizedDischargeEnergyWs()),
 				ConfigAttributes.TOTAL_DISCHARGE_ENERGY_WS_AT_BATTERY_SCALED_WITH_EFFICIENCY
 						.asProperty(memento.totalDischargeEnergyWsAtBatteryScaledWithEfficiency()),
 				ConfigAttributes.CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS
@@ -115,8 +113,7 @@ public class LevlWorkflowStateConverter {
 	}
 
 	private DischargeState.DischargeStateMemento dischargeStateFromConfig(Config config) {
-		return new DischargeState.DischargeStateMemento(Long.parseLong(config.total_realized_discharge_energy_ws()),
-				Long.parseLong(config.total_discharge_energy_ws_at_battery_scaled_with_efficiency()),
+		return new DischargeState.DischargeStateMemento(Long.parseLong(config.total_discharge_energy_ws_at_battery_scaled_with_efficiency()),
 				Long.parseLong(config.current_request_remaining_discharge_energy_ws()),
 				Long.parseLong(config.current_request_realized_discharge_energy_ws()),
 				Long.parseLong(config.last_request_realized_discharge_energy_ws()),

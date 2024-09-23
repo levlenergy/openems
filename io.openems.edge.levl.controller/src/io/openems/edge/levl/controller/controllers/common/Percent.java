@@ -26,8 +26,8 @@ public class Percent {
      * @param percentage The percentage to be applied.
      * @return The result of applying the percentage to the value, rounded to the nearest integer.
      */
-    public static int applyPercentage(int value, BigDecimal percentage) {
-        return new BigDecimal(value).multiply(percentage).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).intValue();
+    public static long applyPercentage(int value, BigDecimal percentage) {
+        return new BigDecimal(value).multiply(percentage).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).longValue();
     }
 
     /**
@@ -37,7 +37,7 @@ public class Percent {
      * @param percentage The percentage to be undone.
      * @return The original value before the percentage was applied, rounded to the nearest integer.
      */
-    public static int undoPercentage(int value, BigDecimal percentage) {
-        return new BigDecimal(value * 100).divide(percentage, RoundingMode.HALF_UP).intValue();
+    public static long undoPercentage(int value, BigDecimal percentage) {
+        return new BigDecimal(value * 100).divide(percentage, RoundingMode.HALF_UP).longValue();
     }
 }

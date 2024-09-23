@@ -33,6 +33,6 @@ public class TestObjects {
         var now = LocalDateTime.of(2021, 1, 1, 0, 0);
         var currentRequest = new DischargeRequest.DischargeRequestMemento("id0", "2024-02-15T15:00:00Z", 9, true, now.plusSeconds(10), now.plusSeconds(11), true);
         var nextRequest = new DischargeRequest.DischargeRequestMemento("id1", "2024-03-13T18:00:00Z", 6, true, now.plusSeconds(7), now.plusSeconds(8), false);
-        return new DischargeState.DischargeStateMemento(1, 2, 3, 4, 5, new BigDecimal("99.03"), new BigDecimal("95.44"), "2024-02-15T12:00:00Z", currentRequest, nextRequest);
+        return new DischargeState.DischargeStateMemento(2, 3, 4, 5, new BigDecimal("99.03"), new BigDecimal("95.44"), "2024-02-15T12:00:00Z", currentRequest, nextRequest);
     }
 }

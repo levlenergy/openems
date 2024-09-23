@@ -124,7 +124,7 @@ public class LevlControlRequest extends JsonrpcRequest {
                 this.levlSocUpperBoundPercent
         );
     }
-    
+       
 
     public String getLevlRequestId() {
         return this.levlRequestId;
@@ -132,6 +132,10 @@ public class LevlControlRequest extends JsonrpcRequest {
 
     public BigDecimal getEfficiencyPercent() {
         return this.efficiencyPercent;
+    }
+    
+    public int getLevlSocWh() {
+    	return this.levlSocWh;
     }
     
     @Override
