@@ -71,7 +71,7 @@ public class LevlWorkflowState {
     }
 
     /**
-     * Determines the constraints for the Levl use case.
+     * Determines the constraints for the levl use case.
      *
      * @param meterActivePowerW the active power of the meter in watts
      * @param essSoc the state of charge of the energy storage system
@@ -113,12 +113,18 @@ public class LevlWorkflowState {
      * @return the shifted grid constraints
      */
     private Limit determineShiftedGridConstraints(Value<Integer> meterActivePowerW) {
+    	// invert because values are switched in openems
         Limit gridConstraints = this.gridPowerLimitW.invert();
         if (meterActivePowerW.isDefined()) {
-            return gridConstraints.shiftBy(meterActivePowerW.get() + this.actualLevlPowerW).ensureValidLimitWithZero();
+            return gridConstraints.shiftBy(calculatePucMeterActivePowerW(meterActivePowerW)).ensureValidLimitWithZero();
         }
         return gridConstraints;
     }
+
+	private int calculatePucMeterActivePowerW(Value<Integer> meterActivePowerW) {
+		// actualLevlPowerW is included in meterActivePowerW. Due to the opposite signs we have to add the values to extract the actualLevlPower from meterActivePower.
+		return meterActivePowerW.get() + this.actualLevlPowerW;
+	}
 
     /**
      * Determines the levlPowerW by subtracting the calculated primaryUseCaseActivePowerW from the overall realized power (actualPowerW).

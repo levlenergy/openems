@@ -65,7 +65,7 @@ public class LevlSocConstraints {
     }
     
     /**
-     * Determines the limit based on the physical SoC constraint and the levl SoC offset.
+     * Determines the limit based on the physical SoC constraint and the levl SoC.
      *
      * @param totalDischargeEnergyWs Total discharge energy in watt-seconds.
      * @param soc State of Charge value.
@@ -77,7 +77,7 @@ public class LevlSocConstraints {
             this.log.debug("soc or capacity not defined");
             return Limit.unconstrained();
         }
-        var levlSocPercentDischarged = this.calculateLevlSocPercent(totalDischargeEnergyWs, capacity.get());
+        var levlSocPercentDischarged = this.calculateLevlSocPercentDischarged(totalDischargeEnergyWs, capacity.get());
         this.log.debug("levlSocPercentDischarged: " + levlSocPercentDischarged);
         return this.physicalSocConstraint.determineSocConstraintWithLevlSocPercent(soc.get(), levlSocPercentDischarged);
     }
@@ -98,12 +98,14 @@ public class LevlSocConstraints {
 
     /**
      * Calculates the levl SoC in percent.
+     * Positive values means levl has discharged the amount of energy
+     * Negative values means levl has charged the amount of energy
      *
      * @param totalWs Total discharge energy in watt-seconds.
      * @param capacity Capacity value.
-     * @return The calculated LEVL capacity offset percent.
+     * @return The calculated levl soc discharged in percent.
      */
-    private int calculateLevlSocPercent(long totalWs, int capacity) {
+    private int calculateLevlSocPercentDischarged(long totalWs, int capacity) {
         return Percent.calculatePercentOfTotal(Units.convertWsToWh(totalWs), capacity);
     }
 

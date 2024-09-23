@@ -22,32 +22,28 @@ public class LevlControllerAction {
 	}
 
 	/**
-	 * Adds the powers of the original unconstrained active power.
+	 * Calculates the absolute power based on levl and primary use case (puc) power.
 	 *
-	 * @param originalUnconstrainedActivePower the original unconstrained active
-	 *                                         power
+	 * @param pucTargetPower the unconstrained target power of the primary use case (puc)
 	 * @throws OpenemsError.OpenemsNamedException if an error occurs
 	 */
-	public void addPowers(int originalUnconstrainedActivePower) throws OpenemsError.OpenemsNamedException {
-		this.applyStrategy(originalUnconstrainedActivePower, new AddPowerStrategy());
+	public void addPowers(int pucTargetPower) throws OpenemsError.OpenemsNamedException {
+		this.applyStrategy(pucTargetPower, new AddPowerStrategy());
 	}
 
 	/**
-	 * Increases the absolute power of the original unconstrained active power.
+	 * Increases the absolute power based on levl and primary use case (puc) power.
 	 *
-	 * @param originalUnconstrainedActivePower the original unconstrained active
-	 *                                         power. Negative values for Charge;
-	 *                                         positive for Discharge.
+	 * @param pucTargetPower the unconstrained target power of the primary use case (puc)
 	 * @throws OpenemsError.OpenemsNamedException if an error occurs
 	 */
-	public void onlyIncreaseAbsolutePower(Integer originalUnconstrainedActivePower)
+	public void onlyIncreaseAbsolutePower(Integer pucTargetPower)
 			throws OpenemsError.OpenemsNamedException {
-		this.applyStrategy(originalUnconstrainedActivePower, new OnlyIncreaseAbsolutePowerStrategy());
+		this.applyStrategy(pucTargetPower, new OnlyIncreaseAbsolutePowerStrategy());
 	}
 
-	private void applyStrategy(int originalUnconstrainedActivePower, PowerStrategy powerStrategy)
-			throws OpenemsError.OpenemsNamedException {
-		var pucPowerW = this.determinePrimaryUseCasePower(originalUnconstrainedActivePower);
+	private void applyStrategy(int pucTargetPower, PowerStrategy powerStrategy) throws OpenemsError.OpenemsNamedException {
+		var pucPowerW = this.determinePrimaryUseCasePower(pucTargetPower);
 		var levlPowerW = this.calculateLevlPower();
 		var overallPowerW = powerStrategy.combinePrimaryUseCaseAndLevlDischargePowerW(pucPowerW, levlPowerW);
 		this.logPowerValues(pucPowerW, overallPowerW);
@@ -79,19 +75,21 @@ public class LevlControllerAction {
 	}
 
 	/**
-	 * Calculates the PUC active power considering the levl SoC.
+	 * Calculates the puc active power considering the levl SoC.
 	 * 
-	 * @param originalUnconstrainedActivePower the unconstrained active power of the primary use case
-	 * @return the PUC active power in watts
+	 * @param pucTargetPower the unconstrained puc power of the primary use case
+	 * @return the puc power within all limits in watts
 	 */
-	private int determinePrimaryUseCasePower(int originalUnconstrainedActivePower) {
-		this.log.debug("original unconstrained controller power: {}", originalUnconstrainedActivePower);
-		this.log.debug("originalUnconstrainedActivePower: " + originalUnconstrainedActivePower);
+	private int determinePrimaryUseCasePower(int pucTargetPower) {
+		this.log.debug("puc target power unconstrained: " + pucTargetPower);
+		
 		var constraints = this.levlWorkflow.determinePrimaryUseCaseConstraints();
-		this.log.debug("PUC constraints: " + constraints);
-		var originalActivePower = constraints.apply(originalUnconstrainedActivePower);
-		this.log.debug("originalActivePower: " + originalActivePower);
-		this.levlWorkflow.setPrimaryUseCaseActivePowerW(originalActivePower);
-		return originalActivePower;
+		this.log.debug("puc constraints: " + constraints);
+		
+		var pucTargetPowerConstrained = constraints.apply(pucTargetPower);
+		this.log.debug("puc target power constrained: " + pucTargetPowerConstrained);
+		
+		this.levlWorkflow.setPrimaryUseCaseActivePowerW(pucTargetPowerConstrained);
+		return pucTargetPowerConstrained;
 	}
 }
