@@ -113,10 +113,10 @@ public class LevlWorkflowState {
      * @return the shifted grid constraints
      */
     private Limit determineShiftedGridConstraints(Value<Integer> meterActivePowerW) {
-    	// invert because values are switched in openems
+        // invert because values are switched in openems
         Limit gridConstraints = this.gridPowerLimitW.invert();
         if (meterActivePowerW.isDefined()) {
-            return gridConstraints.shiftBy(calculatePucMeterActivePowerW(meterActivePowerW)).ensureValidLimitWithZero();
+            return gridConstraints.shiftBy(this.calculatePucMeterActivePowerW(meterActivePowerW)).ensureValidLimitWithZero();
         }
         return gridConstraints;
     }
