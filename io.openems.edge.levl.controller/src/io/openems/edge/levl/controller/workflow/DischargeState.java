@@ -117,18 +117,10 @@ public class DischargeState {
 	 * @param efficiencyPercent the efficiency of the received request
 	 * @param receivedRequest the received request
 	 */
-	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest) {
+	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest, long newLevlSocWs) {
 		this.log.info("Received new levl request: {}", receivedRequest);
 		this.nextRequestEfficiencyPercent = efficiencyPercent;
 		this.nextRequest = receivedRequest;
-	}
-	
-	/**
-	 * Updates the levl soc (with efficiency applied).
-	 * 
-	 * @param newLevlSocWh - the updated levl soc that should be used
-	 */
-	protected void updateLevlSoc(long newLevlSocWs) {
 		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency = newLevlSocWs;
 	}
 	

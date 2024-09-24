@@ -39,9 +39,9 @@ class DischargeStateTest {
 	void registerNewRequest_FirstRequest() {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(FIRST_REQUEST).build();
+				.withNextRequest(FIRST_REQUEST).withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(10_000).build();
 
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST, 10_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -50,10 +50,10 @@ class DischargeStateTest {
 	void registerNewRequest_SecondRequestOverwritesFirstRequest() {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(SECOND_REQUEST).build();
+				.withNextRequest(SECOND_REQUEST).withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 
-		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST);
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, SECOND_REQUEST);
+		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST, 10_000);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, SECOND_REQUEST, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -63,10 +63,11 @@ class DischargeStateTest {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(FIRST_REQUEST_WITH_OTHER_VALUES).build();
+				.withNextRequest(FIRST_REQUEST_WITH_OTHER_VALUES)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 
-		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST);
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST_WITH_OTHER_VALUES);
+		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST, 10_000);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST_WITH_OTHER_VALUES, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(expected);
 	}
@@ -75,10 +76,11 @@ class DischargeStateTest {
 	void registerNewRequest_FirstRequestIsActive_SecondRequestIsQueued() {
 		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).withRequest(FIRST_REQUEST)
-				.withNextRequest(NEW_REQUEST).build();
+				.withNextRequest(NEW_REQUEST)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST).build();
 
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(expected);
 	}
@@ -426,25 +428,5 @@ class DischargeStateTest {
 		final long actual = this.underTest.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
 		
 		assertThat(actual).isEqualTo(500);
-	}
-	
-	@Test
-	void updateLevlSoc_sameSign() {
-		this.underTest = DischargeStateTestBuilder.defaultInstance().withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(80_000).build();
-		this.expected = DischargeStateTestBuilder.defaultInstance().withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(95_000).build();
-		
-		this.underTest.updateLevlSoc(95_000);
-		
-		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
-	}
-	
-	@Test
-	void updateLevlSoc_otherSign() {
-		this.underTest = DischargeStateTestBuilder.defaultInstance().withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(80_000).build();
-		this.expected = DischargeStateTestBuilder.defaultInstance().withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(-10_000).build();
-		
-		this.underTest.updateLevlSoc(-10_000);
-		
-		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
 }

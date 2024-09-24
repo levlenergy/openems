@@ -180,23 +180,15 @@ public class LevlWorkflowState {
      * @param physicalSocUpperPercent the upper limit for the physical state of charge in percent
      */
     public void handleRequest(LevlControlRequest request, int physicalSocLowerPercent, int physicalSocUpperPercent) {
-    	this.overwriteLevlSoc(request.getLevlSocWh());
+    	var currentCycleRealizedDischargeEnergyWs = this.dischargeState.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
+    	var levlSocWs = request.getLevlSocWh() * 3600;
+    	var levlSocIncludingCurrentCycleRealizedWs = (long) levlSocWs + currentCycleRealizedDischargeEnergyWs;
     	
         this.gridPowerLimitW = request.createGridPowerLimitW();
         this.levlSocConstraints = request.createLevlSocConstraints(physicalSocLowerPercent, physicalSocUpperPercent);
 
         var dischargeRequest = request.createDischargeRequest(LocalDateTime.now(this.clock));
-        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), dischargeRequest);
-    }
-    
-    /**
-     * Overwrites the current levl soc with the soc transmitted by levl plus the energy that has already been discharged in that cycle.
-     * 
-     * @param levlSocWh - the levl soc at the beginning of the current request
-     */
-    private void overwriteLevlSoc(int levlSocWh) {
-    	var currentCycleRealizedDischargeEnergyWs = this.dischargeState.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
-    	this.dischargeState.updateLevlSoc((long) levlSocWh*3600 + currentCycleRealizedDischargeEnergyWs);
+        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), dischargeRequest, levlSocIncludingCurrentCycleRealizedWs);
     }
 
     /**
