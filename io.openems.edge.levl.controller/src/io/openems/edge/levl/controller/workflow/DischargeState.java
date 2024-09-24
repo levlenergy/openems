@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class DischargeState {
 	private final Logger log = LoggerFactory.getLogger(DischargeState.class);
 
-	private long totalRealizedDischargeEnergyWs = 0;
 	private long totalDischargeEnergyWsAtBatteryScaledWithEfficiency = 0;
 	private long currentRequestRemainingDischargeEnergyWs = 0;
 	private long currentRequestRealizedDischargeEnergyWs = 0;
@@ -25,8 +24,7 @@ public class DischargeState {
 
 	private DischargeRequest nextRequest = DischargeRequest.inactiveRequest();
 
-	record DischargeStateMemento(long totalRealizedDischargeEnergyWs,
-			long totalDischargeEnergyWsAtBatteryScaledWithEfficiency, long currentRequestRemainingDischargeEnergyWs,
+	record DischargeStateMemento(long totalDischargeEnergyWsAtBatteryScaledWithEfficiency, long currentRequestRemainingDischargeEnergyWs,
 			long currentRequestRealizedDischargeEnergyWs, long lastRequestRealizedDischargeEnergyWs,
 			BigDecimal currentRequestEfficiencyPercent, BigDecimal nextRequestEfficiencyPercent,
 			String lastDischargeRequestTimestamp, DischargeRequest.DischargeRequestMemento request, 
@@ -36,12 +34,11 @@ public class DischargeState {
 	public DischargeState() {
 	}
 
-	DischargeState(long totalRealizedDischargeEnergyWs, long totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
-			long currentRequestRemainingDischargeEnergyWs, long currentRequestRealizedDischargeEnergyWs,
-			long lastCompletedRequestRealizedDischargeEnergyWs, BigDecimal currentEfficiencyPercent,
-			BigDecimal nextRequestEfficiencyPercent, String lastCompletedRequestTimestamp,
-			DischargeRequest request, DischargeRequest nextRequest) {
-		this.totalRealizedDischargeEnergyWs = totalRealizedDischargeEnergyWs;
+	DischargeState(long totalDischargeEnergyWsAtBatteryScaledWithEfficiency, long currentRequestRemainingDischargeEnergyWs,
+			long currentRequestRealizedDischargeEnergyWs, long lastCompletedRequestRealizedDischargeEnergyWs,
+			BigDecimal currentEfficiencyPercent, BigDecimal nextRequestEfficiencyPercent,
+			String lastCompletedRequestTimestamp, DischargeRequest request,
+			DischargeRequest nextRequest) {
 		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency = totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
 		this.currentRequestRemainingDischargeEnergyWs = currentRequestRemainingDischargeEnergyWs;
 		this.currentRequestRealizedDischargeEnergyWs = currentRequestRealizedDischargeEnergyWs;
@@ -59,8 +56,7 @@ public class DischargeState {
 	 * @return a new DischargeStateMemento containing the current state
 	 */
 	public DischargeStateMemento save() {
-		return new DischargeStateMemento(this.totalRealizedDischargeEnergyWs,
-				this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency, this.currentRequestRemainingDischargeEnergyWs,
+		return new DischargeStateMemento(this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency, this.currentRequestRemainingDischargeEnergyWs,
 				this.currentRequestRealizedDischargeEnergyWs, this.lastCompletedRequestRealizedDischargeEnergyWs,
 				this.currentEfficiencyPercent, this.nextRequestEfficiencyPercent, this.lastCompletedRequestTimestamp, 
 				this.request.save(), this.nextRequest.save());
@@ -73,12 +69,12 @@ public class DischargeState {
 	 * @return a new DischargeState with the state restored from the memento
 	 */
 	public static DischargeState restore(DischargeStateMemento memento) {
-		return new DischargeState(memento.totalRealizedDischargeEnergyWs,
-				memento.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
-				memento.currentRequestRemainingDischargeEnergyWs, memento.currentRequestRealizedDischargeEnergyWs,
-				memento.lastRequestRealizedDischargeEnergyWs, memento.currentRequestEfficiencyPercent,
-				memento.nextRequestEfficiencyPercent, memento.lastDischargeRequestTimestamp,
-				DischargeRequest.restore(memento.request), DischargeRequest.restore(memento.nextRequest));
+		return new DischargeState(memento.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
+				memento.currentRequestRemainingDischargeEnergyWs,
+				memento.currentRequestRealizedDischargeEnergyWs, memento.lastRequestRealizedDischargeEnergyWs,
+				memento.currentRequestEfficiencyPercent, memento.nextRequestEfficiencyPercent,
+				memento.lastDischargeRequestTimestamp, DischargeRequest.restore(memento.request),
+				DischargeRequest.restore(memento.nextRequest));
 	}
 
 	public String getLastCompletedRequestTimestamp() {
@@ -100,6 +96,20 @@ public class DischargeState {
 	public boolean isInfluenceSellToGridAllowed() {
 		return this.request.isInfluenceSellToGridAllowed();
 	}
+	
+	/**
+	 * Returns the realized discharge energy of the current levl cycle in Ws with efficiency applied.
+	 * 
+	 * @return currentRequestRealizedDischargeEnergyWs with efficiency applied
+	 */
+	protected long getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs() {
+		if (this.currentRequestRealizedDischargeEnergyWs >= 0) {
+			return Percent.undoPercentage(Math.toIntExact(currentRequestRealizedDischargeEnergyWs),
+					this.currentEfficiencyPercent);
+		}
+		return Percent.applyPercentage(Math.toIntExact(currentRequestRealizedDischargeEnergyWs),
+					this.currentEfficiencyPercent);
+	}
 
 	/**
 	 * Handles a received request and updates the next request and its efficiency.
@@ -107,12 +117,13 @@ public class DischargeState {
 	 * @param efficiencyPercent the efficiency of the received request
 	 * @param receivedRequest the received request
 	 */
-	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest) {
+	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest, long newLevlSocWs) {
 		this.log.info("Received new levl request: {}", receivedRequest);
 		this.nextRequestEfficiencyPercent = efficiencyPercent;
 		this.nextRequest = receivedRequest;
+		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency = newLevlSocWs;
 	}
-
+	
 	/**
 	 * Initializes the state after it has been restored.
 	 *
@@ -161,7 +172,6 @@ public class DischargeState {
 		// newRealizedPowerW for one Second -> W becomes Ws
 		this.currentRequestRealizedDischargeEnergyWs += newRealizedPowerW;
 
-		this.totalRealizedDischargeEnergyWs += newRealizedPowerW;
 		if (newRealizedPowerW >= 0) {
 			this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency += Percent.undoPercentage(newRealizedPowerW,
 					this.currentEfficiencyPercent);

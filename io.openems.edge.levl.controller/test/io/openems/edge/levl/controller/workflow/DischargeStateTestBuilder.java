@@ -3,7 +3,6 @@ package io.openems.edge.levl.controller.workflow;
 import java.math.BigDecimal;
 
 public final class DischargeStateTestBuilder {
-    private long totalRealizedDischargeEnergyWs;
     private long totalDischargeEnergyWsAtBatteryScaledWithEfficiency;
     private long currentRequestRemainingDischargeEnergyWs;
     private long currentRequestRealizedDischargeEnergyWs;
@@ -33,7 +32,6 @@ public final class DischargeStateTestBuilder {
      */
     public static DischargeStateTestBuilder defaultInstance() {
         return DischargeStateTestBuilder.aDischargeState()
-                .withTotalRealizedDischargeEnergyWs(10000)
                 .withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(9000)
                 .withCurrentRequestRemainingDischargeEnergyWs(-500)
                 .withCurrentRequestRealizedDischargeEnergyWs(-400)
@@ -43,17 +41,6 @@ public final class DischargeStateTestBuilder {
                 .withLastCompletedRequestTimestamp("DEFAULT")
                 .withRequest(DischargeRequest.inactiveRequest())
                 .withNextRequest(DischargeRequest.inactiveRequest());
-    }
-
-    /**
-     * Sets the total realized discharge energy in watt-seconds.
-     *
-     * @param totalRealizedDischargeEnergyWs the total realized discharge energy in watt-seconds
-     * @return this DischargeStateTestBuilder
-     */
-    public DischargeStateTestBuilder withTotalRealizedDischargeEnergyWs(long totalRealizedDischargeEnergyWs) {
-        this.totalRealizedDischargeEnergyWs = totalRealizedDischargeEnergyWs;
-        return this;
     }
 
     /**
@@ -161,8 +148,7 @@ public final class DischargeStateTestBuilder {
      * @return a new instance of DischargeState
      */
     public DischargeState build() {
-        return new DischargeState(this.totalRealizedDischargeEnergyWs,
-                this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
+        return new DischargeState(this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency,
                 this.currentRequestRemainingDischargeEnergyWs,
                 this.currentRequestRealizedDischargeEnergyWs,
                 this.lastCompletedRequestRealizedDischargeEnergyWs,

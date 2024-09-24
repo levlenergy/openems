@@ -1,22 +1,17 @@
 package io.openems.edge.levl.controller.workflow;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,19 +19,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import org.osgi.service.event.Event;
 
-import io.openems.common.exceptions.OpenemsError;
-import io.openems.common.jsonrpc.base.GenericJsonrpcRequest;
-import io.openems.common.jsonrpc.request.UpdateComponentConfigRequest;
+
 import io.openems.edge.common.channel.IntegerReadChannel;
 import io.openems.edge.common.channel.value.Value;
 import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.event.EdgeEventConstants;
 import io.openems.edge.common.test.DummyComponentContext;
 import io.openems.edge.common.test.DummyConfigurationAdmin;
-import io.openems.edge.common.user.User;
 import io.openems.edge.ess.api.ManagedSymmetricEss;
 import io.openems.edge.ess.power.api.Phase;
 import io.openems.edge.ess.power.api.Power;
@@ -165,14 +156,14 @@ public class LevlWorkflowComponentImplTest {
 		this.setupClock();
 		this.underTest.levlState.dischargeState = new DischargeState();
 		var oldConfig = this.underTest.levlState.save();
-		assertThat(oldConfig.state().totalRealizedDischargeEnergyWs()).isZero();
+		assertThat(oldConfig.state().totalDischargeEnergyWsAtBatteryScaledWithEfficiency()).isZero();
 
 		this.setupConfigWithChargeRequestsWithOffsets(-100, 100);
 
 		this.underTest.tryToRestoreStateIfRequired();
 
 		var updatedConfig = this.underTest.levlState.save();
-		assertThat(updatedConfig.state().totalRealizedDischargeEnergyWs()).isEqualTo(1);
+		assertThat(updatedConfig.state().totalDischargeEnergyWsAtBatteryScaledWithEfficiency()).isEqualTo(2);
 		assertThat(updatedConfig.state().request().dischargeEnergyWs()).isEqualTo(0);
 	}
 

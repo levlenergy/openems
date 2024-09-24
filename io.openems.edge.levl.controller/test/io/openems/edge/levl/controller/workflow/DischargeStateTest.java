@@ -30,7 +30,6 @@ class DischargeStateTest {
 	private static final DischargeRequest NEW_REQUEST = DischargeRequest.of(NOW, NEW_REQUEST_TIMESTAMP, "Req03", 2002,
 			INFLUENCE_SELL_TO_GRID, SECOND_DELAY_START_SECONDS + 10, DURATION_SECONDS);
 	private static final BigDecimal DEFAULT_EFFICIENCY_PERCENT = BigDecimal.valueOf(100);
-	private static final int TOTAL_REALISED_DISCHARGE_ENERGY = 10000;
 	private static final int TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY = 9000;
 
 	private DischargeState expected;
@@ -40,9 +39,9 @@ class DischargeStateTest {
 	void registerNewRequest_FirstRequest() {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(FIRST_REQUEST).build();
+				.withNextRequest(FIRST_REQUEST).withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(10_000).build();
 
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST, 10_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -51,10 +50,10 @@ class DischargeStateTest {
 	void registerNewRequest_SecondRequestOverwritesFirstRequest() {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		this.expected = DischargeStateTestBuilder.defaultInstance().withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(SECOND_REQUEST).build();
+				.withNextRequest(SECOND_REQUEST).withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 
-		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST);
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, SECOND_REQUEST);
+		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST, 10_000);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, SECOND_REQUEST, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -64,10 +63,11 @@ class DischargeStateTest {
 		this.underTest = DischargeStateTestBuilder.defaultInstance().build();
 		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT)
-				.withNextRequest(FIRST_REQUEST_WITH_OTHER_VALUES).build();
+				.withNextRequest(FIRST_REQUEST_WITH_OTHER_VALUES)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 
-		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST);
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST_WITH_OTHER_VALUES);
+		this.underTest.handleReceivedRequest(BigDecimal.TEN, FIRST_REQUEST, 10_000);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, FIRST_REQUEST_WITH_OTHER_VALUES, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(expected);
 	}
@@ -76,10 +76,11 @@ class DischargeStateTest {
 	void registerNewRequest_FirstRequestIsActive_SecondRequestIsQueued() {
 		DischargeState expected = DischargeStateTestBuilder.defaultInstance()
 				.withNextRequestEfficiencyPercent(NEXT_REQUEST_EFFICIENTY_PERCENT).withRequest(FIRST_REQUEST)
-				.withNextRequest(NEW_REQUEST).build();
+				.withNextRequest(NEW_REQUEST)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(20_000).build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST).build();
 
-		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST);
+		this.underTest.handleReceivedRequest(NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST, 20_000);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(expected);
 	}
@@ -219,47 +220,47 @@ class DischargeStateTest {
 	@Test
 	void handleDischargePowerWs_shouldAdjustFieldValuesCorrectly_batteryIsBeingDischarged() {
 		int currentRequestRemainingDischargeEnergyWs = 600;
-		int newRealizedPowerW = 201;
+		int newRealizedEnergyWs = 201;
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(
-						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
+						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.withCurrentRequestRemainingDischargeEnergyWs(
-						currentRequestRemainingDischargeEnergyWs - newRealizedPowerW)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
+						currentRequestRemainingDischargeEnergyWs - newRealizedEnergyWs)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs/CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()*100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
-								+ newRealizedPowerW / CURRENT_REQUEST_EFFICIENCY))
+								+ newRealizedEnergyWs / CURRENT_REQUEST_EFFICIENCY))
 				.build();
 
 		this.underTest = DischargeStateTestBuilder.defaultInstance()
 				.withCurrentRequestRemainingDischargeEnergyWs(currentRequestRemainingDischargeEnergyWs)
 				.withRequest(FIRST_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
-		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
+		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedEnergyWs);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
 
 	@Test
 	void handleDischargePowerWs_shouldAdjustFieldValuesCorrectly_batteryIsBeingCharged() {
-		int newRealizedPowerW = -300;
+		int newRealizedEnergyWs = -300;
 		this.expected = DischargeStateTestBuilder.defaultInstance()
 				.withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(
-						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
+						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.withCurrentRequestRemainingDischargeEnergyWs(
-						CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - newRealizedPowerW)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
+						CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - newRealizedEnergyWs)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs*CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()/100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
-								+ CURRENT_REQUEST_EFFICIENCY * newRealizedPowerW))
+								+ CURRENT_REQUEST_EFFICIENCY * newRealizedEnergyWs))
 				.build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
-		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
+		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedEnergyWs);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -270,7 +271,7 @@ class DischargeStateTest {
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + 390)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - 390)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + 390)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + 560)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + 560)
 				.build();
@@ -286,44 +287,44 @@ class DischargeStateTest {
 
 	@Test
 	void handleDischargePowerWs_requestShouldCompleteIfSignChanged_Discharge() {
-		int newRealizedPowerW = 601;
+		int newRealizedEnergyWs = 601;
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs/CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()*100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
-								+ newRealizedPowerW / CURRENT_REQUEST_EFFICIENCY + 1))
+								+ newRealizedEnergyWs / CURRENT_REQUEST_EFFICIENCY + 1))
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
-						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
+						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withCurrentRequestRemainingDischargeEnergyWs(600)
 				.withRequest(FIRST_REQUEST).withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
-		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
+		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedEnergyWs);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
 
 	@Test
 	void handleDischargePowerWs_requestShouldCompleteIfSignChanged_Charge() {
-		int newRealizedPowerW = -501;
+		int newRealizedEnergyWs = -501;
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
+				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs*CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()/100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
-								+ CURRENT_REQUEST_EFFICIENCY * newRealizedPowerW))
+								+ CURRENT_REQUEST_EFFICIENCY * newRealizedEnergyWs))
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
-						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
+						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
-		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
+		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedEnergyWs);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
 	}
@@ -340,22 +341,21 @@ class DischargeStateTest {
 
 	@Test
 	void handleDischargePowerWs_doesNotGoBeyondZero() {
-		int newRealizedPowerW = -600;
+		int newRealizedEnergyWs = -600;
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY + newRealizedPowerW)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
-								+ CURRENT_REQUEST_EFFICIENCY * newRealizedPowerW))
+								+ CURRENT_REQUEST_EFFICIENCY * newRealizedEnergyWs))
 				.withLastCompletedRequestTimestamp(FIRST_REQUEST_TIMESTAMP)
 				.withLastCompletedRequestRealizedDischargeEnergyWs(
-						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedPowerW)
+						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.build();
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT).build();
 
-		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedPowerW);
+		this.underTest.handleRealizedDischargePowerWForOneSecond(newRealizedEnergyWs);
 		this.underTest.handleRealizedDischargePowerWForOneSecond(100);
 
 		assertThat(this.underTest).usingRecursiveComparison().isEqualTo(this.expected);
@@ -364,14 +364,13 @@ class DischargeStateTest {
 	@Test
 	void save() {
 		DischargeState.DischargeStateMemento expected = new DischargeState.DischargeStateMemento(
-				TOTAL_REALISED_DISCHARGE_ENERGY, TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY,
+				TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY,
 				CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS, CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS, 100,
 				CURRENT_REQUEST_EFFICIENTY_PERCENT, NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST_TIMESTAMP, 
 				FIRST_REQUEST.save(), SECOND_REQUEST.save());
 		this.underTest = DischargeStateTestBuilder.defaultInstance().withRequest(FIRST_REQUEST).withNextRequest(SECOND_REQUEST)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
@@ -387,7 +386,7 @@ class DischargeStateTest {
 	@Test
 	void restore() {
 		DischargeState.DischargeStateMemento memento = new DischargeState.DischargeStateMemento(
-				TOTAL_REALISED_DISCHARGE_ENERGY, TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY,
+				TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY,
 				CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS, CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS, 100,
 				CURRENT_REQUEST_EFFICIENTY_PERCENT, NEXT_REQUEST_EFFICIENTY_PERCENT, NEW_REQUEST_TIMESTAMP,
 				FIRST_REQUEST.save(), SECOND_REQUEST.save());
@@ -395,7 +394,6 @@ class DischargeStateTest {
 				.withNextRequest(SECOND_REQUEST)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS)
-				.withTotalRealizedDischargeEnergyWs(TOTAL_REALISED_DISCHARGE_ENERGY)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY)
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
@@ -406,5 +404,29 @@ class DischargeStateTest {
 		var actual = DischargeState.restore(memento);
 
 		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+	}
+	
+	@Test
+	void getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs_charge() {
+		this.underTest = DischargeStateTestBuilder.defaultInstance()
+				.withCurrentRequestRealizedDischargeEnergyWs(-400)
+				.withCurrentEfficiencyPercent(BigDecimal.valueOf(80))
+				.build();
+		
+		final long actual = this.underTest.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
+		
+		assertThat(actual).isEqualTo(-320);
+	}
+	
+	@Test
+	void getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs_discharge() {
+		this.underTest = DischargeStateTestBuilder.defaultInstance()
+				.withCurrentRequestRealizedDischargeEnergyWs(400)
+				.withCurrentEfficiencyPercent(BigDecimal.valueOf(80))
+				.build();
+		
+		final long actual = this.underTest.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
+		
+		assertThat(actual).isEqualTo(500);
 	}
 }
