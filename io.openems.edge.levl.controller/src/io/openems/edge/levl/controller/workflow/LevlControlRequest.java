@@ -124,7 +124,6 @@ public class LevlControlRequest extends JsonrpcRequest {
                 this.levlSocUpperBoundPercent
         );
     }
-       
 
     public String getLevlRequestId() {
         return this.levlRequestId;

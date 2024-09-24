@@ -104,10 +104,10 @@ public class DischargeState {
 	 */
 	protected long getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs() {
 		if (this.currentRequestRealizedDischargeEnergyWs >= 0) {
-			return Percent.undoPercentage(Math.toIntExact(currentRequestRealizedDischargeEnergyWs),
+			return Percent.undoPercentage(Math.toIntExact(this.currentRequestRealizedDischargeEnergyWs),
 					this.currentEfficiencyPercent);
 		}
-		return Percent.applyPercentage(Math.toIntExact(currentRequestRealizedDischargeEnergyWs),
+		return Percent.applyPercentage(Math.toIntExact(this.currentRequestRealizedDischargeEnergyWs),
 					this.currentEfficiencyPercent);
 	}
 
@@ -116,6 +116,7 @@ public class DischargeState {
 	 *
 	 * @param efficiencyPercent the efficiency of the received request
 	 * @param receivedRequest the received request
+	 * @param newLevlSocWs the updated levl soc which should be used from now on
 	 */
 	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest, long newLevlSocWs) {
 		this.log.info("Received new levl request: {}", receivedRequest);
