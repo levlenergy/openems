@@ -227,7 +227,6 @@ class DischargeStateTest {
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.withCurrentRequestRemainingDischargeEnergyWs(
 						currentRequestRemainingDischargeEnergyWs - newRealizedEnergyWs)
-				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs/CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()*100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
 								+ newRealizedEnergyWs / CURRENT_REQUEST_EFFICIENCY))
@@ -252,7 +251,6 @@ class DischargeStateTest {
 						CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + newRealizedEnergyWs)
 				.withCurrentRequestRemainingDischargeEnergyWs(
 						CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - newRealizedEnergyWs)
-				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs*CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()/100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
 								+ CURRENT_REQUEST_EFFICIENCY * newRealizedEnergyWs))
@@ -271,7 +269,6 @@ class DischargeStateTest {
 				.withCurrentEfficiencyPercent(CURRENT_REQUEST_EFFICIENTY_PERCENT)
 				.withCurrentRequestRealizedDischargeEnergyWs(CURRENT_REQUEST_REALIZED_DISCHARGE_ENERGY_WS + 390)
 				.withCurrentRequestRemainingDischargeEnergyWs(CURRENT_REQUEST_REMAINING_DISCHARGE_ENERGY_WS - 390)
-				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + 560)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + 560)
 				.build();
@@ -291,7 +288,6 @@ class DischargeStateTest {
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
-				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs/CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()*100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
 								+ newRealizedEnergyWs / CURRENT_REQUEST_EFFICIENCY + 1))
@@ -313,7 +309,6 @@ class DischargeStateTest {
 		this.expected = DischargeStateTestBuilder.defaultInstance().withRequest(DischargeRequest.inactiveRequest())
 				.withCurrentEfficiencyPercent(DEFAULT_EFFICIENCY_PERCENT).withCurrentRequestRealizedDischargeEnergyWs(0)
 				.withCurrentRequestRemainingDischargeEnergyWs(0)
-				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY + newRealizedEnergyWs*CURRENT_REQUEST_EFFICIENTY_PERCENT.longValue()/100)
 				.withTotalDischargeEnergyWsAtBatteryScaledWithEfficiency(
 						(long) (TOTAL_REALISED_DISCHARGE_ENERGY_WITH_EFFICIENCY
 								+ CURRENT_REQUEST_EFFICIENCY * newRealizedEnergyWs))
