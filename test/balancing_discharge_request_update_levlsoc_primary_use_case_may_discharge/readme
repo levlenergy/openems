@@ -1,0 +1,31 @@
+Description:
+
+This test ensures that the Levl SoC is overwritten by the Levl request
+(while adding the energy already realized within the current request cycle).
+
+Config setup:
+
+Battery capacity: 10kWh
+Current soc: 10% --> 1kWh
+Max grid power: 10kW
+
+Production: 1000W
+Consumption: 8000W
+--> Consumption surplus: 7000W
+
+Current cycle discharge energy: 36000Ws (=10Wh)
+Current cycle realized discharge energy: 2600Ws (=1Wh)
+Current cycle remaining discharge energy: 32400Ws (=9Wh)
+
+Total realized discharge energy (inverted Levl SoC): -1.000Wh
+--> Levl  has charged 1.000Wh on balance, thus all the energy in the battery is reserved for Levl, PUC must not use this energy
+
+Request setup:
+
+New Levl SoC: 900Wh (total realized discharge energy: -900Wh)
+
+Desired behaviour:
+
+At first, Levl charges the battery. Thus, total realized energy decreases.
+Primary use case cannot discharge because all energy is reserved for Levl.
+After request is received, levl Soc is updated to a lower value. As a result, the primary use case can discharge now.

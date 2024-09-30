@@ -5,18 +5,18 @@
     "payload": {
       "method": "sendLevlControlRequest",
       "params": {
-        "levlPowerW": 1000,
-        "levlChargeDelaySec": 0,
+        "levlPowerW": 12345,
+        "levlChargeDelaySec": 850,
         "levlChargeDurationSec": 890,
-        "levlSocWh": 0,
+        "levlSocWh": -900,
         "levlRequestId": "req-2023-01-02 15:00:00 +0000 UTC",
         "levlRequestTimestamp": "2023-01-02 15:00:00 +0000 UTC",
         "levlSocLowerBoundPercent": 5,
         "levlSocUpperBoundPercent": 90,
-        "buyFromGridLimitW": 1000,
-        "sellToGridLimitW": 0,
+        "buyFromGridLimitW": 10000,
+        "sellToGridLimitW": -10000,
         "efficiencyPercent": 92.5,
-		"influenceSellToGrid": false
+		"influenceSellToGrid": true
       }
     }
   }
