@@ -187,14 +187,14 @@ public class LevlWorkflowState {
      */
     public void handleRequest(LevlControlRequest request, int physicalSocLowerPercent, int physicalSocUpperPercent) {
     	var currentCycleRealizedDischargeEnergyWs = this.dischargeState.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
-    	var levlSocWs = request.getLevlSocWh() * 3600;
-    	var levlSocIncludingCurrentCycleRealizedWs = (long) levlSocWs + currentCycleRealizedDischargeEnergyWs;
+    	var totalRealizedDischargeEnergyWs = request.getTotalRealizedDischargeEnergyWh() * 3600;
+    	var totalRealizedDischargeEnergyIncludingCurrentCycleWs = (long) totalRealizedDischargeEnergyWs + currentCycleRealizedDischargeEnergyWs;
     	
         this.gridPowerLimitW = request.createGridPowerLimitW();
         this.levlSocConstraints = request.createLevlSocConstraints(physicalSocLowerPercent, physicalSocUpperPercent);
 
         var dischargeRequest = request.createDischargeRequest(LocalDateTime.now(this.clock));
-        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), dischargeRequest, levlSocIncludingCurrentCycleRealizedWs);
+        this.dischargeState.handleReceivedRequest(request.getEfficiencyPercent(), dischargeRequest, totalRealizedDischargeEnergyIncludingCurrentCycleWs);
     }
 
     /**
