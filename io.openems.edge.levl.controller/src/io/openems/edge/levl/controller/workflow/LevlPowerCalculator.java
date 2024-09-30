@@ -18,7 +18,6 @@ public class LevlPowerCalculator {
      * @return the next discharge power in watts
      */
     public int determineNextDischargePowerW(long remainingRequestDischargeEnergyWs) {
-        this.log.info("*********** remaining discharge energy Ws {}", remainingRequestDischargeEnergyWs);
         // remainingRequestDischargeEnergyWs realized in one Second -> Ws becomes W
         if (remainingRequestDischargeEnergyWs > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;

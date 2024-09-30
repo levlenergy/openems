@@ -141,7 +141,13 @@ public class LevlWorkflowState {
      * Determines the next discharge power.
      */
     void determineNextDischargePower() {
-        this.nextDischargePowerW = this.calculator.determineNextDischargePowerW(this.dischargeState.getCurrentRequestRemainingDischargePowerWs());
+    	var remainingRequestDischargeEnergyWs = this.dischargeState.getCurrentRequestRemainingDischargePowerWs();
+    	var levlSocWs = this.dischargeState.getTotalDischargeEnergyWsAtBatteryScaledWithEfficiency();
+    	
+    	this.log.info("*********** remaining discharge energy Ws {}", remainingRequestDischargeEnergyWs);
+    	this.log.info("*********** levl soc Ws {}", levlSocWs);
+    	
+        this.nextDischargePowerW = this.calculator.determineNextDischargePowerW(remainingRequestDischargeEnergyWs);
         this.log.debug("Next discharge power W " + this.nextDischargePowerW);
     }
 

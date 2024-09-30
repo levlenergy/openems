@@ -30,7 +30,7 @@ function run() {
   timeout $OPENEMS_EXECUTION_TIME_SECONDS java -Dfelix.cm.dir=$(pwd)/$configDir -jar ../../build/openems-edge.jar >$FULL_OUTPUT_NAME &
   pid=$!
   wait $pid
-  cat $FULL_OUTPUT_NAME | grep -a levlWorkflow0 | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' >$LEVL_OUTPUT_NAME
+  cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow|levl soc' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' -e 's/.*\(remaining.*\).*/\1/' -e 's/.*\(levl soc.*\).*/\1/' > $LEVL_OUTPUT_NAME
   sleep 2
 }
 
@@ -45,7 +45,7 @@ function runWithRequest() {
   curl --location --connect-timeout 15 --request POST "$OPENEMS_URL" --header 'Authorization: Basic YWRtaW46YWRtaW4=' --header 'Content-Type: application/json' -d @$levlRequest
   echo
   wait $pid
-  cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' | sed -e 's/.*\(remaining.*\).*/\1/' > $LEVL_OUTPUT_NAME
+  cat $FULL_OUTPUT_NAME | grep -Ea 'remaining|levlWorkflow|levl soc' | sed -e 's/.*\(levlWorkflow0.*\).*/\1/' -e 's/.*\(remaining.*\).*/\1/' -e 's/.*\(levl soc.*\).*/\1/' > $LEVL_OUTPUT_NAME
   sleep 2
 }
 
@@ -174,6 +174,7 @@ function suite() {
     check symm_peakshaving_discharge_request_forbid_influence_sell_to_grid ../levlDischargeRequestPeakshavingForbidInfluenceSellToGrid.json
     check balancing_charge_request_forbid_influence_sell_to_grid ../levlChargeRequestForbidInfluenceSellToGrid.json
     check balancing_discharge_request_forbid_influence_sell_to_grid ../levlDischargeRequestForbidInfluenceSellToGrid.json
+    check balancing_discharge_request_update_levlsoc_primary_use_case_may_discharge ../levlDischargeRequestUpdatedLevlSoc.json
 
     check balancing_respect_grid_limits_levldischarge
     check balancing_respect_levl_lower_soc_limit_levlcharge
@@ -207,6 +208,9 @@ case $1 in
   ;;
 "check")
   check $2
+  ;;
+"checkWithRequest")
+  check $2 $3
   ;;
 "run")
   runAndLogOutput $2
