@@ -8,7 +8,7 @@
         "levlPowerW": 12345,
         "levlChargeDelaySec": 850,
         "levlChargeDurationSec": 890,
-        "levlSocWh": 900,
+        "levlSocWh": -900,
         "levlRequestId": "req-2023-01-02 15:00:00 +0000 UTC",
         "levlRequestTimestamp": "2023-01-02 15:00:00 +0000 UTC",
         "levlSocLowerBoundPercent": 5,
