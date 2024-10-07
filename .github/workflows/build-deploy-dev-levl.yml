@@ -99,7 +99,7 @@ jobs:
           key: ${{ secrets.IONOS_CLOUD_GITHUB_PRIVATE_KEY }}
           source: "*"
           target: "/opt/containers/levl/infrastructure/dev/openems"
-      - name: Deploy OpenEMS
+      - name: Update local levl repository and deploy OpenEMS
         uses: appleboy/ssh-action@v1.0.0
         env:
           PASSWORD: ${{ secrets.IONOS_CLOUD_GITHUB_PASSWORD }}
@@ -112,4 +112,5 @@ jobs:
           script: |
             printf '%s\n' "$PASSWORD" | sudo -p "" -S echo login
             cd /opt/containers/levl/infrastructure/dev/openems
+            git pull
             sudo bash redeploy.sh
