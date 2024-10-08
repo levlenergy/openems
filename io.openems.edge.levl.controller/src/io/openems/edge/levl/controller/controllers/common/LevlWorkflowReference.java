@@ -5,9 +5,10 @@ public interface LevlWorkflowReference {
     /**
      * Gets the levl use case constraints.
      *
+     * @param nextPucBatteryPowerW The puc battery power for the next cycle
      * @return The levl use case constraints.
      */
-    Limit getLevlUseCaseConstraints();
+    Limit getLevlUseCaseConstraints(int nextPucBatteryPowerW);
 
     /**
      * Determines the primary use case constraints which are physical soc bounds and levl soc (reserved energy).
