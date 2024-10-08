@@ -73,33 +73,43 @@ public class LevlWorkflowState {
     /**
      * Determines the constraints for the levl use case.
      *
-     * @param meterActivePowerW the active power of the meter in watts
      * @param essSoc the state of charge of the energy storage system
+     * @param essActivePowerW current battery power
+     * @param meterActivePowerW current grid meter power
+     * @param nextPucBatteryPowerW the puc battery power for the next cycle
      * @return the constraints
      */
-    public Limit getLevlUseCaseConstraints(Value<Integer> meterActivePowerW, Value<Integer> essSoc) {
-    	if (this.levlUseCaseAllowed(meterActivePowerW)) {
-	        var gridConstraints = this.determineShiftedGridConstraints(meterActivePowerW);
+    public Limit getLevlUseCaseConstraints(Value<Integer> essSoc, Value<Integer> essActivePowerW, Value<Integer> meterActivePowerW, int nextPucBatteryPowerW) {
+    	if (!essActivePowerW.isDefined() || !meterActivePowerW.isDefined()) {
+			this.log.warn("essActivePowerW or meterActivePowerW not defined");
+    		return new Limit(0, 0);
+		}
+    	
+    	var nextPucGridPowerW = this.calculatePucGridPowerForNextCycle(meterActivePowerW.get(), essActivePowerW.get(), nextPucBatteryPowerW);
+    	
+    	if (this.levlUseCaseAllowed(nextPucGridPowerW)) {
+	        var gridConstraints = this.determineShiftedGridConstraints(nextPucGridPowerW);
 	        var socConstraints = this.levlSocConstraints.determineLevlUseCaseSocConstraints(essSoc);
 	        return gridConstraints.intersect(socConstraints);
     	}
     	return new Limit(0, 0);
     }
     
-	private boolean levlUseCaseAllowed(Value<Integer> meterActivePowerW) {
+    private int calculatePucGridPowerForNextCycle(int meterActivePowerW, int essActivePowerW, int nextPucBatteryPowerW) {
+    	// Calculate 'real' grid-power (without current ESS charge/discharge)
+    	int realGridPower = meterActivePowerW + essActivePowerW;
+    	
+    	return realGridPower - nextPucBatteryPowerW;
+    }
+    
+	private boolean levlUseCaseAllowed(int nextPucGridPowerW) {
 		this.log.debug("isInfluenceSellToGridAllowed: " + this.dischargeState.isInfluenceSellToGridAllowed());	
 		if (this.dischargeState.isInfluenceSellToGridAllowed()) {
 			return true;
 		}
 		
-		if (!meterActivePowerW.isDefined()) {
-			this.log.warn("meterActivePowerW not defined");
-			return false;
-		}
-		
-	    int meterPowerW = meterActivePowerW.get();
-		this.log.debug("meterActivePowerW: " + meterPowerW);
-		if (meterPowerW < 0) {
+		this.log.debug("nextPucGridPowerW: " + nextPucGridPowerW);
+		if (nextPucGridPowerW < 0) {
 			return false;
 		}
 		
@@ -109,22 +119,14 @@ public class LevlWorkflowState {
     /**
      * Determines the shifted grid constraints.
      *
-     * @param meterActivePowerW the active power of the meter in watts
+     * @param nextPucGridPowerW the puc grid power for the next cycle
      * @return the shifted grid constraints
      */
-    private Limit determineShiftedGridConstraints(Value<Integer> meterActivePowerW) {
+    private Limit determineShiftedGridConstraints(int nextPucGridPowerW) {
         // invert because values are switched in openems
         Limit gridConstraints = this.gridPowerLimitW.invert();
-        if (meterActivePowerW.isDefined()) {
-            return gridConstraints.shiftBy(this.calculatePucMeterActivePowerW(meterActivePowerW)).ensureValidLimitWithZero();
-        }
-        return gridConstraints;
+        return gridConstraints.shiftBy(nextPucGridPowerW).ensureValidLimitWithZero();
     }
-
-	private int calculatePucMeterActivePowerW(Value<Integer> meterActivePowerW) {
-		// actualLevlPowerW is included in meterActivePowerW. Due to the opposite signs we have to add the values to extract the actualLevlPower from meterActivePower.
-		return meterActivePowerW.get() + this.actualLevlPowerW;
-	}
 
     /**
      * Determines the levlPowerW by subtracting the calculated primaryUseCaseActivePowerW from the overall realized power (actualPowerW).
