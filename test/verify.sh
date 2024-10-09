@@ -104,7 +104,7 @@ function check {
     expectedFileMatched=true
 
     # expected file Zeile für Zeile einlesen
-    while read -r line; do
+    while read -r line || [ -n "$line" ]; do
       # leere Zeilen überspringen
       if [ -z "$line" ]; then
         continue
