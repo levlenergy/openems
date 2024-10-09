@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # listen to ctrl-c
-trap 'kill -INT -$pid' INT
+trap ctrl_c INT
 
 TOTAL_COUNT=0
 SUCCESS_COUNT=0
@@ -16,6 +16,11 @@ LEVL_OUTPUT_NAME="levl.out"
 
 OPENEMS_URL=http://localhost:8085/jsonrpc
 OPENEMS_WAIT_BEFORE_CURL_SECONDS=8
+
+function ctrl_c {
+  kill -INT -$pid
+  exit
+}
 
 function cleanup {
   find -name "$FULL_OUTPUT_NAME" | xargs rm
