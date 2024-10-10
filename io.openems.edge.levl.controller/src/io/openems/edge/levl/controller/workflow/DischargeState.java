@@ -120,6 +120,7 @@ public class DischargeState {
 	 */
 	public void handleReceivedRequest(BigDecimal efficiencyPercent, DischargeRequest receivedRequest, long newTotalRealizedDischargeEnergyWs) {
 		this.log.info("Received new levl request: {}", receivedRequest);
+		this.log.info("Received new totalDischargeEnergyWsAtBatteryScaledWithEfficiency: " + newTotalRealizedDischargeEnergyWs);
 		this.nextRequestEfficiencyPercent = efficiencyPercent;
 		this.nextRequest = receivedRequest;
 		this.totalDischargeEnergyWsAtBatteryScaledWithEfficiency = newTotalRealizedDischargeEnergyWs;
