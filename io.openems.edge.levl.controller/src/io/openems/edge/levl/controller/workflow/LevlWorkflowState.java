@@ -189,8 +189,9 @@ public class LevlWorkflowState {
     	var currentCycleRealizedDischargeEnergyWs = this.dischargeState.getCurrentRequestRealizedDischargeEnergyWithEfficiencyWs();
     	this.log.info("########## Received Request ##########");
     	this.log.info("totalRealizedDischargeEnergyWh: {}", request.getTotalRealizedDischargeEnergyWh());   	
-    	long totalRealizedDischargeEnergyWs = request.getTotalRealizedDischargeEnergyWh() * 3600;
-    	this.log.info("totalRealizedDischargeEnergyWs: {}", totalRealizedDischargeEnergyWs);   	
+    	var totalRealizedDischargeEnergyWs = (long) request.getTotalRealizedDischargeEnergyWh() * 3600;
+    	this.log.info("totalRealizedDischargeEnergyWs: {}", totalRealizedDischargeEnergyWs); 
+    	this.log.info("currentCycleRealizedDischargeEnergyWs: {}", currentCycleRealizedDischargeEnergyWs);
     	var totalRealizedDischargeEnergyIncludingCurrentCycleWs = totalRealizedDischargeEnergyWs + currentCycleRealizedDischargeEnergyWs;
     	this.log.info("totalRealizedDischargeEnergyIncludingCurrentCycleWs: {}", totalRealizedDischargeEnergyIncludingCurrentCycleWs);   	    	
     	
