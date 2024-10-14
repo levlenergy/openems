@@ -35,7 +35,7 @@ public class LevlSocConstraintsTest {
                 Arguments.of(50, Limit.unconstrained(), "unconstrained"),
                 Arguments.of(10, Limit.upperBound(0), "lower bound reached"),
                 Arguments.of(90, Limit.lowerBound(0), "upper bound reached"),
-                Arguments.of(null, Limit.unconstrained(), "no value, unconstrained")
+                Arguments.of(null, new Limit(0, 0), "soc not defined, empty limit")
         );
     }
 

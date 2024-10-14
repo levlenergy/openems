@@ -86,14 +86,14 @@ public class LevlWorkflowComponentImplTest {
 	@Test
 	public void getLevlUseCaseConstraints_SoCConstraintsStricter() {
 		this.underTest.levlState.gridPowerLimitW = new Limit(-2000, 1000);
-		when(this.meter.getActivePower()).thenReturn(DummyValues.of(100));
-		this.underTest.levlState.actualLevlPowerW = 200;
+		when(this.meter.getActivePower()).thenReturn(DummyValues.of(300));
+		when(this.ess.getActivePower()).thenReturn(DummyValues.of(100));
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
-				.thenReturn(new Limit(-500, 1500));
+				.thenReturn(new Limit(-300, 1500));
 		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
-		var expected = new Limit(-500, 1500);
+		var expected = new Limit(-300, 1500);
 
-		var result = this.underTest.getLevlUseCaseConstraints();
+		var result = this.underTest.getLevlUseCaseConstraints(-200);
 
 		assertThat(result).isEqualTo(expected);
 	}
@@ -101,15 +101,30 @@ public class LevlWorkflowComponentImplTest {
 	@Test
 	public void getLevlUseCaseConstraints_GridConstraintsStricter() {
 		this.underTest.levlState.gridPowerLimitW = new Limit(-2000, 1000);
-		when(this.meter.getActivePower()).thenReturn(DummyValues.of(100));
-		this.underTest.levlState.actualLevlPowerW = 200;
+		when(this.meter.getActivePower()).thenReturn(DummyValues.of(300));
+		when(this.ess.getActivePower()).thenReturn(DummyValues.of(100));
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
 				.thenReturn(new Limit(-2700, 3300));
 		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
 
-		var expected = new Limit(-700, 2300);
+		var expected = new Limit(-400, 2600);
 
-		var result = this.underTest.getLevlUseCaseConstraints();
+		var result = this.underTest.getLevlUseCaseConstraints(-200);
+
+		assertThat(result).isEqualTo(expected);
+	}
+
+	@Test
+	public void getLevlUseCaseConstraints_EssActivePowerNotDefined() {
+		this.underTest.levlState.gridPowerLimitW = new Limit(-2000, 1000);
+		when(this.ess.getActivePower()).thenReturn(DummyValues.of(null));
+		when(this.meter.getActivePower()).thenReturn(DummyValues.of(100));
+		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
+				.thenReturn(new Limit(-1000, 2000));
+		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
+		var expected = new Limit(0, 0);
+
+		var result = this.underTest.getLevlUseCaseConstraints(-200);
 
 		assertThat(result).isEqualTo(expected);
 	}
@@ -118,13 +133,13 @@ public class LevlWorkflowComponentImplTest {
 	public void getLevlUseCaseConstraints_MeterActivePowerNotDefined() {
 		this.underTest.levlState.gridPowerLimitW = new Limit(-2000, 1000);
 		when(this.meter.getActivePower()).thenReturn(DummyValues.of(null));
-		this.underTest.levlState.actualLevlPowerW = 200;
+		when(this.ess.getActivePower()).thenReturn(DummyValues.of(100));
 		when(this.levlSocConstraints.determineLevlUseCaseSocConstraints(this.ess.getSoc()))
 				.thenReturn(new Limit(-1000, 2000));
 		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(true);
-		var expected = new Limit(-1000, 2000);
+		var expected = new Limit(0, 0);
 
-		var result = this.underTest.getLevlUseCaseConstraints();
+		var result = this.underTest.getLevlUseCaseConstraints(-200);
 
 		assertThat(result).isEqualTo(expected);
 	}
@@ -132,21 +147,11 @@ public class LevlWorkflowComponentImplTest {
 	@Test
 	public void getLevlUseCaseConstraints_LevlUsecaseNotAllowed() {
 		when(this.meter.getActivePower()).thenReturn(DummyValues.of(-100));
+		when(this.ess.getActivePower()).thenReturn(DummyValues.of(100));
 		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(false);
 		var expected = new Limit(0, 0);
 
-		var result = this.underTest.getLevlUseCaseConstraints();
-
-		assertThat(result).isEqualTo(expected);
-	}
-	
-	@Test
-	public void getLevlUseCaseConstraints_influenceSellToGridNotAllowed_MeterActivePowerNotDefined() {
-		when(this.meter.getActivePower()).thenReturn(DummyValues.of(null));
-		when(this.dischargeState.isInfluenceSellToGridAllowed()).thenReturn(false);
-		var expected = new Limit(0, 0);
-
-		var result = this.underTest.getLevlUseCaseConstraints();
+		var result = this.underTest.getLevlUseCaseConstraints(200);
 
 		assertThat(result).isEqualTo(expected);
 	}
