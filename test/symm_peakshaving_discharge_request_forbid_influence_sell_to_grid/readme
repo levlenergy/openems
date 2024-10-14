@@ -1,3 +1,0 @@
-In case of peak shaving we never influence sell to grid if the levl use case is charging.
-
-Contains five different types of expected files, as it depends on the load of the machine at what point in the simulation the request is made.
