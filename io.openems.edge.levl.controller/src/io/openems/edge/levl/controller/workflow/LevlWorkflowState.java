@@ -96,10 +96,8 @@ public class LevlWorkflowState {
     }
     
     private int calculatePucGridPowerForNextCycle(int meterActivePowerW, int essActivePowerW, int nextPucBatteryPowerW) {
-    	// Calculate 'real' grid-power (without current ESS charge/discharge)
-    	int realGridPower = meterActivePowerW + essActivePowerW;
-    	
-    	return realGridPower - nextPucBatteryPowerW;
+    	int gridPowerWithoutEss = meterActivePowerW + essActivePowerW;
+    	return gridPowerWithoutEss - nextPucBatteryPowerW;
     }
     
 	private boolean levlUseCaseAllowed(int nextPucGridPowerW) {
