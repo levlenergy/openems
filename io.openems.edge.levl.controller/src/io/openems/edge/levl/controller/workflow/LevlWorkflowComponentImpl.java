@@ -137,8 +137,8 @@ public class LevlWorkflowComponentImpl extends AbstractOpenemsComponent
 	}
 	
 	@Override
-	public Limit getLevlUseCaseConstraints() {
-		return this.levlState.getLevlUseCaseConstraints(this.meter.getActivePower(), this.ess.getSoc());
+	public Limit getLevlUseCaseConstraints(int nextPucBatteryPowerW) {
+		return this.levlState.getLevlUseCaseConstraints(this.ess.getSoc(), this.ess.getActivePower(), this.meter.getActivePower(), nextPucBatteryPowerW);
 	}
 	
 	@Override

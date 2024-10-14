@@ -43,15 +43,15 @@ public class LevlControllerAction {
 	}
 
 	private void applyStrategy(int pucTargetPower, PowerStrategy powerStrategy) throws OpenemsError.OpenemsNamedException {
-		var pucPowerW = this.determinePrimaryUseCasePower(pucTargetPower);
-		var levlPowerW = this.calculateLevlPower();
-		var overallPowerW = powerStrategy.combinePrimaryUseCaseAndLevlDischargePowerW(pucPowerW, levlPowerW);
-		this.logPowerValues(pucPowerW, overallPowerW);
+		var nextPucBatteryPowerW = this.determinePrimaryUseCasePower(pucTargetPower);
+		var levlPowerW = this.calculateLevlPower(nextPucBatteryPowerW);
+		var overallPowerW = powerStrategy.combinePrimaryUseCaseAndLevlDischargePowerW(nextPucBatteryPowerW, levlPowerW);
+		this.logPowerValues(nextPucBatteryPowerW, overallPowerW);
 		this.applyPowerSettings(overallPowerW);
 	}
 
-	private int calculateLevlPower() throws OpenemsError.OpenemsNamedException {
-		Limit levlUseCaseConstraints = this.levlWorkflow.getLevlUseCaseConstraints();
+	private int calculateLevlPower(int nextPucBatteryPowerW) throws OpenemsError.OpenemsNamedException {
+		Limit levlUseCaseConstraints = this.levlWorkflow.getLevlUseCaseConstraints(nextPucBatteryPowerW);
 		this.log.debug("levlUseCaseConstraints: " + levlUseCaseConstraints);
 
 		var levlNextDischargePowerUnconstrainedW = this.levlWorkflow.getNextDischargePowerW();

@@ -75,7 +75,7 @@ public class LevlSocConstraints {
     public Limit determineLimitFromPhysicalSocConstraintAndLevlSocOffset(long totalDischargeEnergyWs, Value<Integer> soc, Value<Integer> capacity) {
         if (!soc.isDefined() || !capacity.isDefined()) {
             this.log.debug("soc or capacity not defined");
-            return Limit.unconstrained();
+			return Limit.unconstrained();
         }
         var levlSocPercentDischarged = this.calculateLevlSocPercentDischarged(totalDischargeEnergyWs, capacity.get());
         this.log.debug("levlSocPercentDischarged: " + levlSocPercentDischarged);
@@ -91,7 +91,8 @@ public class LevlSocConstraints {
      */
     public Limit determineLevlUseCaseSocConstraints(Value<Integer> soc) {
         if (!soc.isDefined()) {
-            return Limit.unconstrained();
+        	this.log.warn("essSoc not defined");
+    		return new Limit(0, 0);
         }
         return this.socConstraint.determineSocConstraintWithLevlSocPercent(soc.get(), 0);
     }
