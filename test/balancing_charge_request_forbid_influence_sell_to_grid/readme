@@ -1,0 +1,7 @@
+Simulates and tests the behaviour of an incoming jsonrpc charge request by levl.
+Set influence sell to grid to false.
+
+Note that both the primary use case and the levl use case decide what to do based on the current active cycle,
+because they can't know what will actually happen in the next cycle.
+
+Contains five different types of expected files, as it depends on the load of the machine at what point in the simulation the request is made.

@@ -1,0 +1,109 @@
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling Java Util Logging API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling SLF4J API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling Apache Commons Logging API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling JULI Logger API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling Avalon Logger API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling JBoss Logging API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling Log4J v1 API support.
+org.ops4j.pax.logging.pax-logging-api [org.ops4j.pax.logging.internal.Activator] INFO : Enabling Log4J v2 API support.
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Initializing Log4j2 using default configuration
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Scanning for classes in '/org/ops4j/pax/logging/log4j2/internal/bridges/' matching criteria annotated with @Plugin
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Scanning for classes in '/org/apache/logging/log4j/layout/template/json/' matching criteria annotated with @Plugin
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Scanning for classes in '/org/apache/logging/log4j/layout/template/json/resolver/' matching criteria annotated with @Plugin
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Scanning for classes in '/org/apache/logging/log4j/layout/template/json/util/' matching criteria annotated with @Plugin
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Log4J2 configured using default configuration.
+org.ops4j.pax.logging.pax-logging-log4j2 [org.ops4j.pax.logging.spi.support.EventAdminConfigurationNotifier] INFO : Sending Event Admin notification (configuration successful) to org/ops4j/pax/logging/Configuration
+org.ops4j.pax.logging.pax-logging-api [log4j2] INFO : Log4J2 configured using configuration from passed properties
+2024-08-28T18:42:30,224 [ogging])] INFO  [ventAdminConfigurationNotifier] Sending Event Admin notification (configuration successful) to org/ops4j/pax/logging/Configuration
+2024-08-28T18:42:30,224 [artLevel] INFO  [enems.edge.application.EdgeApp] ==================================
+2024-08-28T18:42:30,229 [artLevel] INFO  [enems.edge.application.EdgeApp] OpenEMS version [2024.8.0] started
+2024-08-28T18:42:30,230 [artLevel] INFO  [enems.edge.application.EdgeApp] ==================================
+2024-08-28T18:42:30,471 [artLevel] INFO  [onent.AbstractOpenemsComponent] [ctrlDebugLog0] Activate Controller.Debug.Log
+2024-08-28T18:42:30,666 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_power] Activate Ess.Power
+2024-08-28T18:42:30,687 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_evcsSlowPowerIncreaseFilter] Activate Evcs.SlowPowerIncreaseFilter
+2024-08-28T18:42:30,817 [artLevel] INFO  [onent.AbstractOpenemsComponent] [meterGrid] Activate Simulator.GridMeter.Reacting
+2024-08-28T18:42:30,963 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_host] Activate Core.Host
+2024-08-28T18:42:30,970 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_meta] Activate Core.Meta
+2024-08-28T18:42:31,030 [artLevel] INFO  [rg.eclipse.jetty.server.Server] jetty-11.0.22; built: 2024-06-27T16:27:26.756Z; git: e711d4c7040cb1e61aa68cb248fa7280b734a3bb; jvm 17.0.12+7-Ubuntu-1ubuntu222.04
+2024-08-28T18:42:31,067 [artLevel] INFO  [ession.DefaultSessionIdManager] Session workerName=node0
+2024-08-28T18:42:31,089 [artLevel] INFO  [.server.handler.ContextHandler] Started o.e.j.s.ServletContextHandler@7980856c{/,null,AVAILABLE}
+2024-08-28T18:42:31,092 [artLevel] INFO  [rg.eclipse.jetty.server.Server] Started Server@52ceabfa{STARTING}[11.0.22,sto=0] @4164ms
+2024-08-28T18:42:31,126 [artLevel] INFO  [jetty.server.AbstractConnector] Started ServerConnector@65ef248d{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
+2024-08-28T18:42:31,127 [artLevel] INFO  [org.apache.felix.http         ] Started Jetty 11.0.22 at port(s) HTTP:8080 on context path / [minThreads=8,maxThreads=200,acceptors=2,selectors=8]
+2024-08-28T18:42:31,178 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_componentManager] Activate Core.ComponentManager
+2024-08-28T18:42:31,366 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_appManager] Activate Core.AppManager
+2024-08-28T18:42:31,433 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_predictorManager] Activate Core.PredictorManager
+2024-08-28T18:42:31,458 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_sum] Activate Core.Sum
+2024-08-28T18:42:31,466 [artLevel] INFO  [onent.AbstractOpenemsComponent] [_cycle] Activate Core.Cycle
+2024-08-28T18:42:31,479 [artLevel] INFO  [onent.AbstractOpenemsComponent] [scheduler0] Activate Scheduler.AllAlphabetically
+2024-08-28T18:42:31,499 [artLevel] INFO  [andler.ComponentRequestHandler] Added '_host' to Component Apis.
+2024-08-28T18:42:31,534 [artLevel] INFO  [andler.ComponentRequestHandler] Added '_appManager' to Component Apis.
+2024-08-28T18:42:31,548 [artLevel] INFO  [onent.AbstractOpenemsComponent] [ctrlApiRest0] Activate Controller.Api.Rest.ReadWrite
+2024-08-28T18:42:31,557 [artLevel] INFO  [rg.eclipse.jetty.server.Server] jetty-11.0.22; built: 2024-06-27T16:27:26.756Z; git: e711d4c7040cb1e61aa68cb248fa7280b734a3bb; jvm 17.0.12+7-Ubuntu-1ubuntu222.04
+2024-08-28T18:42:31,564 [artLevel] INFO  [jetty.server.AbstractConnector] Started ServerConnector@8f3ed52{HTTP/1.1, (http/1.1)}{0.0.0.0:8085}
+2024-08-28T18:42:31,566 [artLevel] INFO  [rg.eclipse.jetty.server.Server] Started Server@208490bf{STARTING}[11.0.22,sto=0] @4638ms
+2024-08-28T18:42:31,568 [artLevel] INFO  [.ControllerApiRestReadOnlyImpl] [ctrlApiRest0] REST-Api Read-Write started on port [8085].
+2024-08-28T18:42:31,582 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _componentManager[Defective:null[Unsatisfied reference for $000 ((component.name=Validator.Checkable.CheckHome))] _sum[Unsatisfied reference for componentManager] ctrlApiRest0[Unsatisfied reference for componentManager] _cycle[Unsatisfied reference for componentManager,sumComponent] _appManager[Unsatisfied reference for componentUtil,csoAppManagerAppHelper] ess0[Unsatisfied reference for componentManager] datasourceProduction[Unsatisfied reference for componentManager] meterConsumption[Unsatisfied reference for datasource ((&(enabled=true)(!(service.pid=Simulator.NRCMeter.Acting.5fe739fc-e65e-4379-94b6-65a8a95f605f))(|(id=datasourceConsumption))))] meterProduction[Unsatisfied reference for datasource ((&(enabled=true)(!(service.pid=Simulator.ProductionMeter.Acting.0643464b-efb0-4449-b551-c3b3163c07ef))(|(id=datasourceProduction))))] ctrlLevlBalancing0[Missing Bundle] datasourceConsumption[Unsatisfied reference for componentManager] levlWorkflow0[Missing Bundle] levlWorkflowState0[Missing Bundle] _predictorManager[Unsatisfied reference for componentManager] scheduler0[Unsatisfied reference for componentManager]|State:FAULT: A configured OpenEMS Component was not activated] _sum[State:Fault] meterGrid[UNDEFINED]
+2024-08-28T18:42:31,589 [artLevel] INFO  [onent.AbstractOpenemsComponent] [datasourceConsumption] Activate Simulator.Datasource.CSV.Predefined
+2024-08-28T18:42:31,607 [artLevel] INFO  [onent.AbstractOpenemsComponent] [meterConsumption] Activate Simulator.NRCMeter.Acting
+2024-08-28T18:42:31,626 [artLevel] INFO  [onent.AbstractOpenemsComponent] [datasourceProduction] Activate Simulator.Datasource.Single.Direct
+2024-08-28T18:42:31,638 [artLevel] INFO  [onent.AbstractOpenemsComponent] [meterProduction] Activate Simulator.ProductionMeter.Acting
+2024-08-28T18:42:31,660 [artLevel] INFO  [onent.AbstractOpenemsComponent] [ess0] Activate Simulator.EssSymmetric.Reacting
+2024-08-28T18:42:31,686 [tManager] INFO  [onent.AbstractOpenemsComponent] [_energy] Activate Core.Energy
+2024-08-28T18:42:31,730 [artLevel] INFO  [andler.ComponentRequestHandler] Added '_energy' to Component Apis.
+2024-08-28T18:42:31,732 [.Energy)] INFO  [onent.AbstractOpenemsComponent] [_energy] Modified Core.Energy
+2024-08-28T18:42:31,733 [_energy ] INFO  [dge.energy.optimizer.Optimizer] # Start next run of Optimizer
+2024-08-28T18:42:31,735 [_energy ] INFO  [dge.energy.optimizer.Optimizer] # Stuck trying to get Params. TimeOfUseTariff is not available
+2024-08-28T18:42:31,740 [.Energy)] INFO  [andler.ComponentRequestHandler] Updated Component Api _energy
+2024-08-28T18:42:31,750 [artLevel] INFO  [andler.ComponentRequestHandler] Added '_componentManager' to Component Apis.
+2024-08-28T18:42:31,771 [artLevel] INFO  [org.apache.felix.webconsole   ] org.apache.felix.webconsole.internal.compendium.PreferencesConfigurationPrinter not enabled. Reason: Class org/osgi/service/prefs/BackingStoreException missing
+2024-08-28T18:42:31,797 [artLevel] INFO  [org.apache.felix.webconsole   ] Servlet 3 bridge enabled
+2024-08-28T18:42:31,851 [artLevel] INFO  [onent.AbstractOpenemsComponent] [levlWorkflow0] Activate Levl.Workflow
+2024-08-28T18:42:31,882 [artLevel] INFO  [onent.AbstractOpenemsComponent] [ctrlLevlBalancing0] Activate Controller.Levl.Symmetric.Balancing
+2024-08-28T18:42:31,888 [artLevel] INFO  [andler.ComponentRequestHandler] Added 'levlWorkflow0' to Component Apis.
+2024-08-28T18:42:31,891 [8ab82bc)] INFO  [onent.AbstractOpenemsComponent] [ctrlLevlBalancing0] Deactivate Controller.Levl.Symmetric.Balancing
+2024-08-28T18:42:31,895 [8ab82bc)] INFO  [andler.ComponentRequestHandler] Removed 'levlWorkflow0' from Component Apis.
+2024-08-28T18:42:31,896 [artLevel] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:31,896 [8ab82bc)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflow0] Deactivate Levl.Workflow
+2024-08-28T18:42:31,903 [8ab82bc)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflow0] Activate Levl.Workflow
+2024-08-28T18:42:31,907 [8ab82bc)] INFO  [onent.AbstractOpenemsComponent] [ctrlLevlBalancing0] Activate Controller.Levl.Symmetric.Balancing
+2024-08-28T18:42:31,909 [8ab82bc)] INFO  [andler.ComponentRequestHandler] Added 'levlWorkflow0' to Component Apis.
+2024-08-28T18:42:32,481 [_cycle  ] INFO  [flow.LevlWorkflowComponentImpl] ### restored state from config
+2024-08-28T18:42:32,487 [_cycle  ] INFO  [roller.workflow.DischargeState] Starting levl request: DischargeRequest{requestId='next-request', requestTimestamp=, dischargeEnergyWs=-900000, influenceSellToGrid=true, start=2020-12-31T23:59:59.999999999, deadline=2030-12-31T23:59:59.999999999, active=true}
+2024-08-28T18:42:32,488 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:32,494 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 % Grid:-137 W Production:1000 W Consumption:863 W] ess0[SoC:91 %|L:UNDEFINED|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[863 W] meterGrid[-137 W] meterProduction[1000 W]
+2024-08-28T18:42:32,495 [_cycle  ] WARN  [ms.edge.core.cycle.CycleWorker] [_cycle] Error in Controller [ctrlLevlBalancing0]: Value for Channel [ess0/ActivePower] is invalid.
+2024-08-28T18:42:32,539 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:32,543 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:33,472 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:33,475 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:0 W Grid:-231 W Production:1000 W Consumption:769 W] ctrlLevlBalancing0[State:FAULT: Running the Controller failed] ess0[SoC:91 %|L:0 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:0 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[769 W] meterGrid[-231 W] meterProduction[1000 W]
+2024-08-28T18:42:33,514 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:33,517 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:34,472 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:34,474 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Fault Ess SoC:91 %|L:-231 W Grid:-81 W Production:1000 W Consumption:688 W] ess0[SoC:91 %|L:-231 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-231 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-231 W|RealizedDischargePowerW:0 W] meterConsumption[688 W] meterGrid[-81 W] meterProduction[1000 W]
+2024-08-28T18:42:34,500 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:34,502 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:35,472 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:35,474 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-312 W Grid:-64 W Production:1000 W Consumption:624 W] ess0[SoC:91 %|L:-312 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-312 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-312 W|RealizedDischargePowerW:0 W] meterConsumption[624 W] meterGrid[-64 W] meterProduction[1000 W]
+2024-08-28T18:42:35,500 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:35,503 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:36,474 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:36,476 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-376 W Grid:-44 W Production:1000 W Consumption:580 W] ess0[SoC:91 %|L:-376 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-376 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-376 W|RealizedDischargePowerW:0 W] meterConsumption[580 W] meterGrid[-44 W] meterProduction[1000 W]
+2024-08-28T18:42:36,502 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:36,504 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:37,475 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:37,477 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-420 W Grid:-28 W Production:1000 W Consumption:552 W] ess0[SoC:91 %|L:-420 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-420 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-420 W|RealizedDischargePowerW:0 W] meterConsumption[552 W] meterGrid[-28 W] meterProduction[1000 W]
+2024-08-28T18:42:37,500 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:37,502 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:38,476 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:38,478 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-448 W Grid:-16 W Production:1000 W Consumption:536 W] ess0[SoC:91 %|L:-448 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-448 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-448 W|RealizedDischargePowerW:0 W] meterConsumption[536 W] meterGrid[-16 W] meterProduction[1000 W]
+2024-08-28T18:42:38,501 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:38,503 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:39,475 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:39,477 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-464 W Grid:-12 W Production:1000 W Consumption:524 W] ess0[SoC:91 %|L:-464 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-464 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-464 W|RealizedDischargePowerW:0 W] meterConsumption[524 W] meterGrid[-12 W] meterProduction[1000 W]
+2024-08-28T18:42:39,502 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:39,504 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State
+2024-08-28T18:42:40,475 [_cycle  ] INFO  [r.workflow.LevlPowerCalculator] *********** remaining discharge energy Ws -900000
+2024-08-28T18:42:40,477 [_cycle  ] INFO  [ebuglog.ControllerDebugLogImpl] [ctrlDebugLog0] _sum[State:Ok Ess SoC:91 %|L:-476 W Grid:-11 W Production:1000 W Consumption:513 W] ess0[SoC:91 %|L:-476 W|Allowed:-10000;10000 W] levlWorkflow0[ActualDischargePowerW:-476 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-476 W|RealizedDischargePowerW:0 W] meterConsumption[513 W] meterGrid[-11 W] meterProduction[1000 W]
+2024-08-28T18:42:40,502 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Deactivate Levl.Workflow.State
+2024-08-28T18:42:40,504 [f4d3eee)] INFO  [onent.AbstractOpenemsComponent] [levlWorkflowState0] Activate Levl.Workflow.State

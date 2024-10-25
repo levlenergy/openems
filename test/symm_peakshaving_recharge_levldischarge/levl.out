@@ -1,0 +1,15 @@
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[769 W] meterGrid[-4231 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4731 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4731 W|RealizedDischargePowerW:0 W] meterConsumption[688 W] meterGrid[419 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4812 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4812 W|RealizedDischargePowerW:0 W] meterConsumption[624 W] meterGrid[436 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4876 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4876 W|RealizedDischargePowerW:0 W] meterConsumption[580 W] meterGrid[456 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4920 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4920 W|RealizedDischargePowerW:0 W] meterConsumption[552 W] meterGrid[472 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4948 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4948 W|RealizedDischargePowerW:0 W] meterConsumption[536 W] meterGrid[484 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4964 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4964 W|RealizedDischargePowerW:0 W] meterConsumption[524 W] meterGrid[488 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4976 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4976 W|RealizedDischargePowerW:0 W] meterConsumption[513 W] meterGrid[489 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-4987 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-4987 W|RealizedDischargePowerW:0 W] meterConsumption[502 W] meterGrid[489 W] meterProduction[5000 W]

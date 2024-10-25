@@ -1,0 +1,16 @@
+levlWorkflow0[Missing Bundle] levlWorkflowState0[Missing Bundle] _predictorManager[Unsatisfied reference for componentManager] scheduler0[Unsatisfied reference for componentManager]|State:FAULT: A configured OpenEMS Component was not activated] _sum[State:Fault Ess SoC:10 % Grid:7000 W Production:1000 W Consumption:8000 W] ess0[SoC:10 %|L:UNDEFINED|Allowed:-10000;10000 W] meterConsumption[8000 W] meterGrid[7000 W] meterProduction[1000 W]
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[8000 W] meterGrid[7000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:10000 W|LevlDischargePowerW:10000 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[8000 W] meterGrid[-3000 W] meterProduction[1000 W]

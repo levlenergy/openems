@@ -1,0 +1,14 @@
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[769 W] meterGrid[-4231 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-9962 W|LevlDischargePowerW:-5231 W|PrimaryUseCaseDischargePowerW:-4731 W|RealizedDischargePowerW:0 W] meterConsumption[688 W] meterGrid[5650 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5393 W|LevlDischargePowerW:-581 W|PrimaryUseCaseDischargePowerW:-4812 W|RealizedDischargePowerW:0 W] meterConsumption[624 W] meterGrid[1017 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5440 W|LevlDischargePowerW:-564 W|PrimaryUseCaseDischargePowerW:-4876 W|RealizedDischargePowerW:0 W] meterConsumption[580 W] meterGrid[1020 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5464 W|LevlDischargePowerW:-544 W|PrimaryUseCaseDischargePowerW:-4920 W|RealizedDischargePowerW:0 W] meterConsumption[552 W] meterGrid[1016 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5476 W|LevlDischargePowerW:-528 W|PrimaryUseCaseDischargePowerW:-4948 W|RealizedDischargePowerW:0 W] meterConsumption[536 W] meterGrid[1012 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5480 W|LevlDischargePowerW:-516 W|PrimaryUseCaseDischargePowerW:-4964 W|RealizedDischargePowerW:0 W] meterConsumption[524 W] meterGrid[1004 W] meterProduction[5000 W]
+levlWorkflow0[ActualDischargePowerW:-5488 W|LevlDischargePowerW:-512 W|PrimaryUseCaseDischargePowerW:-4976 W|RealizedDischargePowerW:0 W] meterConsumption[513 W] meterGrid[1001 W] meterProduction[5000 W]

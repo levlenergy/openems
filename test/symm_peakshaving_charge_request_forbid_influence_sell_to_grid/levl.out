@@ -1,0 +1,25 @@
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+remaining discharge energy Ws 0
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[400 W] meterGrid[400 W] meterProduction[0 W]
+remaining discharge energy Ws 0
+levlWorkflow0[ActualDischargePowerW:-100 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:-100 W|RealizedDischargePowerW:0 W] meterConsumption[500 W] meterGrid[600 W] meterProduction[0 W]
+remaining discharge energy Ws 0
+levlWorkflow0[ActualDischargePowerW:0 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[900 W] meterGrid[900 W] meterProduction[0 W]
+levlWorkflow0","payload":{"method":"sendLev...
+remaining discharge energy Ws -900000
+levlWorkflow0[ActualDischargePowerW:0 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[1000 W] meterGrid[1000 W] meterProduction[0 W]
+remaining discharge energy Ws -900000
+levlWorkflow0[ActualDischargePowerW:0 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[1100 W] meterGrid[1100 W] meterProduction[0 W]
+remaining discharge energy Ws -900000
+levlWorkflow0[ActualDischargePowerW:100 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:100 W|RealizedDischargePowerW:0 W] meterConsumption[400 W] meterGrid[300 W] meterProduction[0 W]
+remaining discharge energy Ws -899300
+levlWorkflow0[ActualDischargePowerW:-800 W|LevlDischargePowerW:-700 W|PrimaryUseCaseDischargePowerW:-100 W|RealizedDischargePowerW:0 W] meterConsumption[500 W] meterGrid[1300 W] meterProduction[0 W]
+remaining discharge energy Ws -898900
+levlWorkflow0[ActualDischargePowerW:-400 W|LevlDischargePowerW:-400 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[900 W] meterGrid[1300 W] meterProduction[0 W]
+remaining discharge energy Ws -898800
+levlWorkflow0[ActualDischargePowerW:-100 W|LevlDischargePowerW:-100 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[1000 W] meterGrid[1100 W] meterProduction[0 W]

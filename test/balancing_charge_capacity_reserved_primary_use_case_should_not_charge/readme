@@ -1,0 +1,4 @@
+Battery: Capacity: 10 kWh, SoC: 90%
+Production: produces 8 kW
+Total Levl Discharge Energy: 1 kWh (1 kWh discharged) -> is reserved for charging
+-> upper 1 kWh/10% of the battery are reserved, primary use case must not charge

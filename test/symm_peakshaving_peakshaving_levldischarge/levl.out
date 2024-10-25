@@ -1,0 +1,15 @@
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[3454 W] meterGrid[2454 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:0 W|LevlDischargePowerW:0 W|PrimaryUseCaseDischargePowerW:0 W|RealizedDischargePowerW:0 W] meterConsumption[3078 W] meterGrid[2078 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:4156 W|LevlDischargePowerW:3078 W|PrimaryUseCaseDischargePowerW:1078 W|RealizedDischargePowerW:0 W] meterConsumption[2753 W] meterGrid[-2403 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2428 W|LevlDischargePowerW:1675 W|PrimaryUseCaseDischargePowerW:753 W|RealizedDischargePowerW:0 W] meterConsumption[2497 W] meterGrid[-931 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2241 W|LevlDischargePowerW:1744 W|PrimaryUseCaseDischargePowerW:497 W|RealizedDischargePowerW:0 W] meterConsumption[2321 W] meterGrid[-920 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2145 W|LevlDischargePowerW:1824 W|PrimaryUseCaseDischargePowerW:321 W|RealizedDischargePowerW:0 W] meterConsumption[2211 W] meterGrid[-934 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2101 W|LevlDischargePowerW:1890 W|PrimaryUseCaseDischargePowerW:211 W|RealizedDischargePowerW:0 W] meterConsumption[2144 W] meterGrid[-957 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2077 W|LevlDischargePowerW:1933 W|PrimaryUseCaseDischargePowerW:144 W|RealizedDischargePowerW:0 W] meterConsumption[2097 W] meterGrid[-980 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:2050 W|LevlDischargePowerW:1953 W|PrimaryUseCaseDischargePowerW:97 W|RealizedDischargePowerW:0 W] meterConsumption[2054 W] meterGrid[-996 W] meterProduction[1000 W]

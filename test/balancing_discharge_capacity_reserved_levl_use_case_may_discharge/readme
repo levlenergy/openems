@@ -1,0 +1,4 @@
+Battery: Capacity: 10 kWh, SoC: 10%
+Consumer: consumes 8 kW
+Total Levl Discharge Energy: -1 kWh (1 kWh charged) -> is reserved for discharging
+-> lower 1 kWh/10% of the battery are reserved, primary use case must not discharge

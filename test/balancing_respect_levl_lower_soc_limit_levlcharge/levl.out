@@ -1,0 +1,16 @@
+levlWorkflow0[Missing Bundle] levlWorkflowState0[Missing Bundle]|State:FAULT: A configured OpenEMS Component was not activated] _sum[State:Fault Ess SoC:10 % Grid:-137 W Production:1000 W Consumption:863 W] ess0[SoC:10 %|L:UNDEFINED|Allowed:-10000;10000 W] meterConsumption[863 W] meterGrid[-137 W] meterProduction[1000 W]
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0' from Component Apis.
+levlWorkflow0] Deactivate Levl.Workflow
+levlWorkflow0] Activate Levl.Workflow
+levlWorkflow0' to Component Apis.
+levlWorkflow0[ActualDischargePowerW:UNDEFINED|LevlDischargePowerW:UNDEFINED|PrimaryUseCaseDischargePowerW:UNDEFINED|RealizedDischargePowerW:UNDEFINED] meterConsumption[769 W] meterGrid[-231 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1462 W|LevlDischargePowerW:-1231 W|PrimaryUseCaseDischargePowerW:-231 W|RealizedDischargePowerW:0 W] meterConsumption[688 W] meterGrid[1150 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1393 W|LevlDischargePowerW:-1081 W|PrimaryUseCaseDischargePowerW:-312 W|RealizedDischargePowerW:0 W] meterConsumption[624 W] meterGrid[1017 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1440 W|LevlDischargePowerW:-1064 W|PrimaryUseCaseDischargePowerW:-376 W|RealizedDischargePowerW:0 W] meterConsumption[580 W] meterGrid[1020 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1464 W|LevlDischargePowerW:-1044 W|PrimaryUseCaseDischargePowerW:-420 W|RealizedDischargePowerW:0 W] meterConsumption[552 W] meterGrid[1016 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1476 W|LevlDischargePowerW:-1028 W|PrimaryUseCaseDischargePowerW:-448 W|RealizedDischargePowerW:0 W] meterConsumption[536 W] meterGrid[1012 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1480 W|LevlDischargePowerW:-1016 W|PrimaryUseCaseDischargePowerW:-464 W|RealizedDischargePowerW:0 W] meterConsumption[524 W] meterGrid[1004 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1488 W|LevlDischargePowerW:-1012 W|PrimaryUseCaseDischargePowerW:-476 W|RealizedDischargePowerW:0 W] meterConsumption[513 W] meterGrid[1001 W] meterProduction[1000 W]
+levlWorkflow0[ActualDischargePowerW:-1498 W|LevlDischargePowerW:-1011 W|PrimaryUseCaseDischargePowerW:-487 W|RealizedDischargePowerW:0 W] meterConsumption[502 W] meterGrid[1000 W] meterProduction[1000 W]
