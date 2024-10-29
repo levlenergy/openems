@@ -1,7 +1,7 @@
 {
   "method": "componentJsonApi",
   "params": {
-    "componentId": "levlWorkflow0",
+    "componentId": "ctrlLevlBalancing0",
     "payload": {
       "method": "sendLevlControlRequest",
       "params": {
