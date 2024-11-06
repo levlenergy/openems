@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -32,14 +32,18 @@ public class OneWeekDataContainerTest {
 
     @Before
     public void setUp() {
-        oneWeekDataContainer = new OneWeekDataContainer(IntStream.range(0, secondsOneWeek).mapToObj(i -> new Float[0]).toList());
+    	this.oneWeekDataContainer = new OneWeekDataContainer(IntStream.range(0, this.secondsOneWeek).mapToObj(i -> new Float[0]).toList());
     }
 
     @After
     public void tearDown() {
-        oneWeekDataContainer = null;
+    	this.oneWeekDataContainer = null;
     }
 
+    /**
+     * Provides test data.
+     * @return test data
+     */
     @Parameters
     public static Collection<Object[]> provideData() {
         return Arrays.asList(new Object[][]{
@@ -59,7 +63,7 @@ public class OneWeekDataContainerTest {
 
     @Test
     public void testSetIndexToCurrentValue() {
-        oneWeekDataContainer.setIndexToCurrentValue(now);
-        Assert.assertEquals(expectedIndex, oneWeekDataContainer.currentIndex);
+    	this.oneWeekDataContainer.setIndexToCurrentValue(this.now);
+        assertEquals(this.expectedIndex, this.oneWeekDataContainer.currentIndex);
     }
 }
