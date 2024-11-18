@@ -14,6 +14,7 @@ import org.osgi.service.event.EventHandler;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractOneWeekCsvDatasource extends AbstractOpenemsComponent
@@ -49,6 +50,20 @@ public abstract class AbstractOneWeekCsvDatasource extends AbstractOpenemsCompon
                 break;
         }
     }
+    
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> getValues(OpenemsType type, ChannelAddress channelAddress) {
+		// First: try full ChannelAddress
+		var values = this.data.getValues(channelAddress.toString());
+		if (values.isEmpty()) {
+			// Not found: try Channel-ID only (without Component-ID)
+			values = this.data.getValues(channelAddress.getChannelId());
+		}
+		return values.stream() //
+				.map(v -> (T) TypeUtils.getAsType(type, v)) //
+				.toList();
+	}
 
     @Override
     public <T> T getValue(OpenemsType type, ChannelAddress channelAddress) {
