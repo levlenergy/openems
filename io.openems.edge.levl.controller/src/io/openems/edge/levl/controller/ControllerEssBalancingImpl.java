@@ -125,7 +125,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 		/*
 		 * set result
 		 */
-		this.ess.setActivePowerEqualsWithPid(calculatedPower);
+		this.ess.setActivePowerEquals(calculatedPower);
 		this.ess.setReactivePowerEquals(0);
 	}
 
