@@ -758,7 +758,7 @@ export namespace HistoryUtils {
     /** Input Channels that need to be queried from the database */
     input: InputChannel[],
     /** Output Channels that will be shown in the chart */
-    output: (data: ChannelData, labels?: Date[]) => DisplayValue<HistoryUtils.CustomOptions>[],
+    output: (data: ChannelData, labels?: (string | Date)[]) => DisplayValue<HistoryUtils.CustomOptions>[],
     tooltip: {
       /** Format of Number displayed */
       formatNumber: string,
@@ -778,8 +778,12 @@ export namespace HistoryUtils {
     yAxisId: ChartAxis,
     /** YAxis title -> {@link https://www.chartjs.org/docs/latest/samples/scale-options/titles.html Chartjs Title} */
     customTitle?: string
-    /** Default: true */
-    displayGrid?: boolean
+    /** Default: true _> {@link https://www.chartjs.org/docs/latest/axes/styling.html#grid-line-configuration Chartjs Grid Display} */
+    displayGrid?: boolean,
+    scale?: {
+      /** Default: false, if true scale starts at minimum value of all datasets */
+      dynamicScale?: boolean,
+    }
   };
 
   export namespace ValueConverter {

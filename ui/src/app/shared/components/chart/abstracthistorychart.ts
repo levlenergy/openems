@@ -36,7 +36,7 @@ Chart.Chart.register(annotationPlugin);
 @Directive()
 export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
 
-  protected static readonly phaseColors: string[] = ["rgb(255,127,80)", "rgb(0,0,255)", "rgb(128,128,0)"];
+  protected static readonly phaseColors: string[] = ["rgb(255,127,80)", "rgb(91, 92, 214)", "rgb(128,128,0)"];
 
   /** Title for Chart, diplayed above the Chart */
   @Input() public chartTitle: string = "";
@@ -212,7 +212,7 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
    */
   public static getColors(color: string, chartType: "line" | "bar"): { backgroundColor: string, borderColor: string } {
     return {
-      backgroundColor: "rgba(" + (chartType == "bar" ? color.split("(").pop().split(")")[0] + ",0.4)" : color.split("(").pop().split(")")[0] + ",0.05)"),
+      backgroundColor: "rgba(" + (chartType == "bar" ? color.split("(").pop().split(")")[0] + ",0.7)" : color.split("(").pop().split(")")[0] + ",0.05)"),
       borderColor: "rgba(" + color.split("(").pop().split(")")[0] + ",1)",
     };
   }
@@ -361,7 +361,7 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
 
     let tooltipsLabel: string | null = null;
     let options: Chart.ChartOptions = Utils.deepCopy(<Chart.ChartOptions>Utils.deepCopy(AbstractHistoryChart.getDefaultOptions(chartOptionsType, service, labels)));
-    const displayValues: HistoryUtils.DisplayValue<HistoryUtils.CustomOptions>[] = chartObject.output(channelData.data);
+    const displayValues: HistoryUtils.DisplayValue<HistoryUtils.CustomOptions>[] = chartObject.output(channelData.data, labels);
 
     chartObject.yAxes.forEach((element) => {
       options = AbstractHistoryChart.getYAxisOptions(options, element, translate, chartType, locale, datasets, true);
@@ -399,12 +399,21 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
     };
 
     options.plugins.tooltip.callbacks.labelColor = (item: Chart.TooltipItem<any>) => {
+      let backgroundColor = item.dataset.backgroundColor;
+
+      if (Array.isArray(backgroundColor)) {
+        backgroundColor = backgroundColor[0];
+      }
+
+      if (!backgroundColor) {
+        backgroundColor = item.dataset.borderColor || "rgba(0, 0, 0, 0.5)";
+      }
+
       return {
-        borderColor: ColorUtils.changeOpacityFromRGBA(item.dataset.borderColor, 1),
-        backgroundColor: item.dataset.backgroundColor,
+        borderColor: ColorUtils.changeOpacityFromRGBA(backgroundColor, 1),
+        backgroundColor: ColorUtils.changeOpacityFromRGBA(backgroundColor, 1),
       };
     };
-
 
     options.plugins.legend.labels.generateLabels = function (chart: Chart.Chart) {
 
@@ -509,6 +518,7 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
     options.scales.x.ticks["source"] = "auto";
     options.scales.x.ticks.maxTicksLimit = 31;
     options.scales.x["bounds"] = "ticks";
+    options.scales.x.ticks.color = getComputedStyle(document.documentElement).getPropertyValue("--ion-color-chart-xAxis-ticks");
     options = AbstractHistoryChart.getExternalPluginFeatures(displayValues, options, chartType);
 
     return options;
@@ -583,7 +593,6 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
           max: 3,
           beginAtZero: true,
           ticks: {
-            ...baseConfig.ticks,
             stepSize: 1,
           },
         };
@@ -600,6 +609,7 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
           ...baseConfig,
           beginAtZero: false,
           ticks: {
+            ...baseConfig.ticks,
             source: "auto",
           },
         };
@@ -662,7 +672,8 @@ export abstract class AbstractHistoryChart implements OnInit, OnDestroy {
         return pipe.transform(value);
       }
       case YAxisType.CURRENCY: {
-        const currency = config.components["_meta"].properties.currency;
+        const meta: EdgeConfig.Component = config?.getComponent("_meta");
+        const currency: string = config?.getPropertyFromComponent<string>(meta, "currency");
         tooltipsLabel = Currency.getCurrencyLabelByCurrency(currency);
         break;
       }
