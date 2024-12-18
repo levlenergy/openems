@@ -18,39 +18,39 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractOneWeekCsvDatasource extends AbstractOpenemsComponent
-		implements SimulatorDatasource, EventHandler {
+        implements SimulatorDatasource, EventHandler {
 
-	private OneWeekDataContainer data;
+    private OneWeekDataContainer data;
 
-	protected abstract ComponentManager getComponentManager();
+    protected abstract ComponentManager getComponentManager();
 
-	protected abstract DataContainer getData() throws NumberFormatException, IOException;
+    protected abstract DataContainer getData() throws NumberFormatException, IOException;
 
-	protected AbstractOneWeekCsvDatasource(io.openems.edge.common.channel.ChannelId[] firstInitialChannelIds,
-			io.openems.edge.common.channel.ChannelId[]... furtherInitialChannelIds) {
-		super(firstInitialChannelIds, furtherInitialChannelIds);
-	}
+    protected AbstractOneWeekCsvDatasource(io.openems.edge.common.channel.ChannelId[] firstInitialChannelIds,
+                                           io.openems.edge.common.channel.ChannelId[]... furtherInitialChannelIds) {
+        super(firstInitialChannelIds, furtherInitialChannelIds);
+    }
 
-	protected void activateComponent(ComponentContext context, String id, String alias, boolean enabled)
-			throws NumberFormatException, IOException {
-		super.activate(context, id, alias, enabled);
-		this.data = OneWeekDataContainer.of(this.getData());
-		this.data.setIndexToCurrentValue(LocalDateTime.now());
-	}
+    protected void activateComponent(ComponentContext context, String id, String alias, boolean enabled)
+            throws NumberFormatException, IOException {
+        super.activate(context, id, alias, enabled);
+        this.data = OneWeekDataContainer.of(this.getData());
+        this.data.setIndexToCurrentValue(LocalDateTime.now());
+    }
 
-	@Override
-	public void handleEvent(Event event) {
-		if (!this.isEnabled()) {
-			return;
-		}
-		switch (event.getTopic()) {
-		case EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE:
-			var now = LocalDateTime.now(this.getComponentManager().getClock());
-			this.data.setIndexToCurrentValue(now);
-			break;
-		}
-	}
-
+    @Override
+    public void handleEvent(Event event) {
+        if (!this.isEnabled()) {
+            return;
+        }
+        switch (event.getTopic()) {
+            case EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE:
+                var now = LocalDateTime.now(this.getComponentManager().getClock());
+                this.data.setIndexToCurrentValue(now);
+                break;
+        }
+    }
+    
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> getValues(OpenemsType type, ChannelAddress channelAddress) {
@@ -65,24 +65,24 @@ public abstract class AbstractOneWeekCsvDatasource extends AbstractOpenemsCompon
 				.toList();
 	}
 
-	@Override
-	public <T> T getValue(OpenemsType type, ChannelAddress channelAddress) {
-		// First: try full ChannelAddress
-		var valueOpt = this.data.getValue(channelAddress.toString());
-		if (!valueOpt.isPresent()) {
-			// Not found: try Channel-ID only (without Component-ID)
-			valueOpt = this.data.getValue(channelAddress.getChannelId());
-		}
-		return TypeUtils.getAsType(type, valueOpt);
-	}
+    @Override
+    public <T> T getValue(OpenemsType type, ChannelAddress channelAddress) {
+        // First: try full ChannelAddress
+        var valueOpt = this.data.getValue(channelAddress.toString());
+        if (!valueOpt.isPresent()) {
+            // Not found: try Channel-ID only (without Component-ID)
+            valueOpt = this.data.getValue(channelAddress.getChannelId());
+        }
+        return TypeUtils.getAsType(type, valueOpt);
+    }
 
-	@Override
-	public Set<String> getKeys() {
-		return this.data.getKeys();
-	}
+    @Override
+    public Set<String> getKeys() {
+        return this.data.getKeys();
+    }
 
-	@Override
-	public int getTimeDelta() {
-		return 1; // 1 second between each entry
-	}
+    @Override
+    public int getTimeDelta() {
+        return 15 * 60;
+    }
 }
