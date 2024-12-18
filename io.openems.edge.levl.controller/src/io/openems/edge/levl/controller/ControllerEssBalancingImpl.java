@@ -1,7 +1,6 @@
 package io.openems.edge.levl.controller;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -25,12 +24,14 @@ import io.openems.common.jsonrpc.base.JsonrpcRequest;
 import io.openems.common.jsonrpc.base.JsonrpcResponse;
 import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
 import io.openems.edge.common.component.AbstractOpenemsComponent;
+import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.cycle.Cycle;
 import io.openems.edge.common.event.EdgeEventConstants;
 import io.openems.edge.common.jsonapi.Call;
 import io.openems.edge.common.jsonapi.ComponentJsonApi;
 import io.openems.edge.common.jsonapi.JsonApiBuilder;
+import io.openems.edge.common.type.TypeUtils;
 import io.openems.edge.controller.api.Controller;
 import io.openems.edge.ess.api.ManagedSymmetricEss;
 import io.openems.edge.ess.power.api.Phase;
@@ -40,11 +41,18 @@ import io.openems.edge.levl.controller.common.Efficiency;
 
 import static java.lang.Math.round;
 import static java.lang.Math.min;
-import static java.lang.Math.max;
 
 @Designate(ocd = Config.class, factory = true)
-@Component(name = "Controller.Levl.Symmetric.Balancing", immediate = true, configurationPolicy = ConfigurationPolicy.REQUIRE)
-@EventTopics({ EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE, EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE, })
+@Component(//
+		name = "Controller.Levl.Symmetric.Balancing", //
+		immediate = true, //
+		configurationPolicy = ConfigurationPolicy.REQUIRE //
+)
+
+@EventTopics({ //
+		EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE, //
+		EdgeEventConstants.TOPIC_CYCLE_AFTER_WRITE, //
+})
 
 public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 		implements Controller, OpenemsComponent, ControllerEssBalancing, ComponentJsonApi, EventHandler {
@@ -54,12 +62,13 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 	private static final double MILLISECONDS_PER_SECOND = 1000.0;
 	private static final String METHOD = "sendLevlControlRequest";
 
-	protected static Clock clock = Clock.systemDefaultZone();
-
 	private final Logger log = LoggerFactory.getLogger(ControllerEssBalancingImpl.class);
 
 	@Reference
 	private ConfigurationAdmin cm;
+
+	@Reference
+	protected ComponentManager componentManager;
 
 	@Reference
 	protected ManagedSymmetricEss ess;
@@ -251,8 +260,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 		this.log.debug("pucBatteryPower without limits: " + pucBatteryPower);
 
 		// apply ess power limits
-		pucBatteryPower = max(min(pucBatteryPower, maxEssPower), minEssPower);
-		pucBatteryPower = (int) this.applyBound(pucBatteryPower, minEssPower, maxEssPower);
+		pucBatteryPower = TypeUtils.fitWithin(minEssPower, maxEssPower, pucBatteryPower);
 		this.log.debug("pucBatteryPower with ess power limits: " + pucBatteryPower);
 
 		// apply soc bounds
@@ -287,7 +295,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 			powerUpperBound = 0;
 		}
 
-		return (int) this.applyBound(pucPower, powerLowerBound, powerUpperBound);
+		return (int) TypeUtils.fitWithin(powerLowerBound, powerUpperBound, pucPower);
 	}
 
 	/**
@@ -366,7 +374,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 			int maxEssPower) {
 		var levlPowerLowerBound = Long.valueOf(minEssPower) - pucBatteryPower;
 		var levlPowerUpperBound = Long.valueOf(maxEssPower) - pucBatteryPower;
-		return this.applyBound(levlPower, levlPowerLowerBound, levlPowerUpperBound);
+		return TypeUtils.fitWithin(levlPowerLowerBound, levlPowerUpperBound, levlPower);
 	}
 
 	/**
@@ -402,7 +410,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 		var levlPowerLowerBound = Efficiency.unapply(round(levlDischargeEnergyLowerBoundWs / cycleTimeS), efficiency);
 		var levlPowerUpperBound = Efficiency.unapply(round(levlDischargeEnergyUpperBoundWs / cycleTimeS), efficiency);
 
-		return this.applyBound(levlPower, levlPowerLowerBound, levlPowerUpperBound);
+		return TypeUtils.fitWithin(levlPowerLowerBound, levlPowerUpperBound, levlPower);
 	}
 
 	/**
@@ -418,7 +426,7 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 			long sellToGridLimit) {
 		var levlPowerLowerBound = -(buyFromGridLimit - pucGridPower);
 		var levlPowerUpperBound = -(sellToGridLimit - pucGridPower);
-		return this.applyBound(levlPower, levlPowerLowerBound, levlPowerUpperBound);
+		return TypeUtils.fitWithin(levlPowerLowerBound, levlPowerUpperBound, levlPower);
 	}
 
 	/**
@@ -458,7 +466,8 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 	 * @throws OpenemsNamedException on error
 	 */
 	protected JsonrpcResponse handleRequest(Call<JsonrpcRequest, JsonrpcResponse> call) throws OpenemsNamedException {
-		var request = LevlControlRequest.from(call.getRequest());
+		var now = Instant.now(this.componentManager.getClock());
+		var request = LevlControlRequest.from(call.getRequest(), now);
 		this.log.info("Received new levl request: {}", request);
 		this.nextRequest = request;
 		var realizedEnergyBatteryWs = this.getRealizedEnergyBattery().getOrError();
@@ -477,8 +486,8 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 		return response;
 	}
 
-	private static boolean isActive(LevlControlRequest request) {
-		LocalDateTime now = LocalDateTime.now(clock);
+	private boolean isActive(LevlControlRequest request) {
+		var now = Instant.now(this.componentManager.getClock());
 		return !(request == null || now.isBefore(request.start) || now.isAfter(request.deadline));
 	}
 
@@ -486,12 +495,12 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 	public void handleEvent(Event event) {
 		switch (event.getTopic()) {
 		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE -> {
-			if (isActive(this.nextRequest)) {
+			if (this.isActive(this.nextRequest)) {
 				if (this.currentRequest != null) {
 					this.finishRequest();
 				}
 				this.startNextRequest();
-			} else if (this.currentRequest != null && !isActive(this.currentRequest)) {
+			} else if (this.currentRequest != null && !this.isActive(this.currentRequest)) {
 				this.finishRequest();
 			}
 		}
@@ -585,9 +594,5 @@ public class ControllerEssBalancingImpl extends AbstractOpenemsComponent
 
 	private boolean hasSignChanged(long a, long b) {
 		return a < 0 && b > 0 || a > 0 && b < 0;
-	}
-
-	private long applyBound(long power, long lowerBound, long upperBound) {
-		return max(min(power, upperBound), lowerBound);
 	}
 }
