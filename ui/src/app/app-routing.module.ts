@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
-import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
+import { NoPreloading, RouterModule, Routes } from "@angular/router";
 import { environment } from "src/environments";
-import { ChangelogViewComponent } from "./changelog/view/view";
 import { EdgeComponent } from "./edge/edge.component";
 import { OverviewComponent as AutarchyChartOverviewComponent } from "./edge/history/common/autarchy/overview/overview";
 import { DetailsOverviewComponent as ConsumptionDetailsOverviewComponent } from "./edge/history/common/consumption/details/details.overview";
@@ -19,7 +18,6 @@ import { OverviewComponent as DigitalOutputChartOverviewComponent } from "./edge
 import { OverviewComponent as HeatingelementChartOverviewComponent } from "./edge/history/Controller/Io/heatingelement/overview/overview";
 import { OverviewComponent as ModbusTcpApiOverviewComponent } from "./edge/history/Controller/ModbusTcpApi/overview/overview";
 import { DelayedSellToGridChartOverviewComponent } from "./edge/history/delayedselltogrid/symmetricpeakshavingchartoverview/delayedselltogridchartoverview.component";
-import { HeatPumpChartOverviewComponent } from "./edge/history/heatpump/heatpumpchartoverview/heatpumpchartoverview.component";
 import { HistoryComponent as EdgeHistoryComponent } from "./edge/history/history.component";
 import { HistoryDataService } from "./edge/history/historydataservice";
 import { HistoryParentComponent } from "./edge/history/historyparent.component";
@@ -67,7 +65,7 @@ export const routes: Routes = [
   { path: "overview", component: OverViewComponent },
 
   { path: "user", component: UserComponent, data: { navbarTitleToBeTranslated: "Menu.user" } },
-  { path: "changelog", component: ChangelogViewComponent, data: { navbarTitleToBeTranslated: "Menu.changelog" } },
+  { path: "changelog", loadChildren: () => import("./changelog/changelog.module").then(m => m.ChangelogModule), data: { navbarTitleToBeTranslated: "Menu.changelog" } },
 
   // Edge Pages
   {
@@ -90,7 +88,7 @@ export const routes: Routes = [
           { path: ":componentId/delayedselltogridchart", component: DelayedSellToGridChartOverviewComponent },
           { path: ":componentId/gridOptimizedChargeChart", component: GridOptimizedChargeChartOverviewComponent },
           { path: ":componentId/heatingelementchart", component: HeatingelementChartOverviewComponent },
-          { path: ":componentId/heatpumpchart", component: HeatPumpChartOverviewComponent },
+          { path: ":componentId/heatpumpchart", loadChildren: () => import("./edge/history/Controller/Io/heatpump/heat-pump.module").then(m => m.HeatPumpModule) },
           { path: ":componentId/modbusTcpApi", component: ModbusTcpApiOverviewComponent },
           { path: ":componentId/scheduleChart", component: TimeOfUseTariffOverviewComponent },
           { path: ":componentId/symmetricpeakshavingchart", component: SymmetricPeakshavingChartOverviewComponent },
@@ -147,7 +145,7 @@ export const appRoutingProviders: any[] = [];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, paramsInheritanceStrategy: "always" }),
+    RouterModule.forRoot(routes, { preloadingStrategy: NoPreloading, paramsInheritanceStrategy: "always" }),
   ],
   exports: [RouterModule],
 })

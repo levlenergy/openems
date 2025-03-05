@@ -6,35 +6,35 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.function.BiConsumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 
 import io.jenetics.Genotype;
-import io.jenetics.IntegerChromosome;
-import io.jenetics.IntegerGene;
-import io.openems.edge.energy.api.EnergyScheduleHandler;
+import io.openems.edge.energy.api.handler.DifferentModes;
+import io.openems.edge.energy.api.handler.EnergyScheduleHandler;
 import io.openems.edge.energy.api.simulation.EnergyFlow;
-import io.openems.edge.energy.api.simulation.GlobalSimulationsContext;
-import io.openems.edge.energy.api.simulation.GlobalSimulationsContext.Period.Hour;
-import io.openems.edge.energy.api.simulation.GlobalSimulationsContext.Period.Quarter;
-import io.openems.edge.energy.optimizer.Simulator.EshToState;
+import io.openems.edge.energy.api.simulation.GlobalOptimizationContext;
+import io.openems.edge.energy.api.simulation.GlobalOptimizationContext.Period.Hour;
+import io.openems.edge.energy.api.simulation.GlobalOptimizationContext.Period.Quarter;
+import io.openems.edge.energy.optimizer.Simulator.EshToMode;
 
 public record SimulationResult(//
 		double cost, //
-		ImmutableMap<ZonedDateTime, Period> periods, //
+		ImmutableSortedMap<ZonedDateTime, Period> periods, //
 		ImmutableMap<//
-				? extends EnergyScheduleHandler.WithDifferentStates<?, ?>, //
-				ImmutableSortedMap<ZonedDateTime, EnergyScheduleHandler.WithDifferentStates.Period.Transition>> schedules) {
+				? extends EnergyScheduleHandler.WithDifferentModes, //
+				ImmutableSortedMap<ZonedDateTime, DifferentModes.Period.Transition>> schedules) {
 
 	/**
 	 * A Period in a {@link SimulationResult}. Duration of one period is always one
 	 * quarter.
 	 */
 	public record Period(//
-			GlobalSimulationsContext.Period context, //
+			GlobalOptimizationContext.Period period, //
 			EnergyFlow energyFlow, //
 			int essInitialEnergy //
 	) {
@@ -42,45 +42,46 @@ public record SimulationResult(//
 		/**
 		 * Constructor for {@link Period}.
 		 * 
-		 * @param context          the {@link GlobalSimulationsContext}
+		 * @param gocPeriod        the {@link GlobalOptimizationContext.Period}
 		 * @param energyFlow       the {@link EnergyFlow}
 		 * @param essInitialEnergy the initial ESS energy in the beginning of the period
 		 *                         in [Wh]
 		 * @return a {@link Period}
 		 */
-		public static Period from(GlobalSimulationsContext.Period context, EnergyFlow energyFlow,
+		public static Period from(GlobalOptimizationContext.Period gocPeriod, EnergyFlow energyFlow,
 				int essInitialEnergy) {
-			return new Period(context, energyFlow, essInitialEnergy);
+			return new Period(gocPeriod, energyFlow, essInitialEnergy);
 		}
 	}
 
 	/**
 	 * An empty {@link SimulationResult}.
 	 */
-	public static final SimulationResult EMPTY = new SimulationResult(0., ImmutableMap.of(), ImmutableMap.of());
+	public static final SimulationResult EMPTY_SIMULATION_RESULT = new SimulationResult(0., //
+			ImmutableSortedMap.of(), ImmutableMap.of());
 
 	/**
 	 * Re-Simulate a {@link Genotype} to create a {@link SimulationResult}.
 	 * 
-	 * @param cache the {@link GenotypeCache}
-	 * @param gsc   the {@link GlobalSimulationsContext}
-	 * @param gt    the {@link Genotype}
+	 * @param cache    the {@link GenotypeCache}
+	 * @param goc      the {@link GlobalOptimizationContext}
+	 * @param schedule the schedule as defined by {@link EshCodec}
 	 * @return the {@link SimulationResult}
 	 */
-	private static SimulationResult from(GlobalSimulationsContext gsc, Genotype<IntegerGene> gt) {
-		var allPeriods = ImmutableMap.<ZonedDateTime, Period>builder();
-		var allEshToStates = new ArrayList<EshToState>();
-		var cost = Simulator.simulate(gsc, gt, new Simulator.BestScheduleCollector(//
-				p -> allPeriods.put(p.context().time(), p), //
-				allEshToStates::add));
+	private static SimulationResult from(GlobalOptimizationContext goc, int[][] schedule) {
+		var allPeriods = ImmutableSortedMap.<ZonedDateTime, Period>naturalOrder();
+		var allEshToModes = new ArrayList<EshToMode>();
+		var cost = Simulator.simulate(goc, schedule, new Simulator.BestScheduleCollector(//
+				p -> allPeriods.put(p.period().time(), p), //
+				allEshToModes::add));
 
-		var schedules = allEshToStates.stream() //
-				.collect(toImmutableMap(EshToState::esh, //
-						eshToState -> ImmutableSortedMap.of(eshToState.period().context.time(),
-								new EnergyScheduleHandler.WithDifferentStates.Period.Transition(
-										eshToState.postProcessedStateIndex(), eshToState.period().context.price(),
-										eshToState.period().energyFlow, eshToState.period().essInitialEnergy)),
-						(a, b) -> ImmutableSortedMap.<ZonedDateTime, EnergyScheduleHandler.WithDifferentStates.Period.Transition>naturalOrder()
+		var schedules = allEshToModes.stream() //
+				.collect(toImmutableMap(EshToMode::esh, //
+						eshToMode -> ImmutableSortedMap.of(eshToMode.period().period.time(),
+								new DifferentModes.Period.Transition(eshToMode.postProcessedModeIndex(),
+										eshToMode.period().period.price(), eshToMode.period().energyFlow,
+										eshToMode.period().essInitialEnergy)),
+						(a, b) -> ImmutableSortedMap.<ZonedDateTime, DifferentModes.Period.Transition>naturalOrder()
 								.putAll(a).putAll(b).build()));
 
 		return new SimulationResult(cost, allPeriods.build(), schedules);
@@ -93,45 +94,48 @@ public record SimulationResult(//
 	 * This method re-simulates using the {@link Quarter} periods and not (only) the
 	 * {@link Hour} periods.
 	 * 
-	 * @param gsc the {@link GlobalSimulationsContext}
-	 * @param gt  the {@link Genotype}
+	 * @param goc      the {@link GlobalOptimizationContext}
+	 * @param schedule the schedule as defined by {@link EshCodec}
 	 * @return the {@link SimulationResult}
 	 */
-	public static SimulationResult fromQuarters(GlobalSimulationsContext gsc, Genotype<IntegerGene> gt) {
-		if (gsc == null || gt == null) {
-			return SimulationResult.EMPTY;
+	public static SimulationResult fromQuarters(GlobalOptimizationContext goc, int[][] schedule) {
+		if (goc == null || schedule.length == 0) {
+			return EMPTY_SIMULATION_RESULT;
 		}
 
 		// Convert to Quarters
-		final GlobalSimulationsContext quarterGsc;
-		final Genotype<IntegerGene> quarterGt;
-		{
-			final var quarterPeriods = ImmutableList.<GlobalSimulationsContext.Period>builder();
-			final var quarterGenes = gt.stream().map(ignore -> ImmutableList.<IntegerGene>builder()).toList();
-			final BiConsumer<Integer, GlobalSimulationsContext.Period.Quarter> add = (j, p) -> {
-				quarterPeriods.add(p);
-				for (var i = 0; i < quarterGenes.size(); i++) {
-					quarterGenes.get(i).add(gt.get(i).get(j));
-				}
-			};
-			for (var i = 0; i < gsc.periods().size(); i++) {
-				var p = gsc.periods().get(i);
-				if (p instanceof GlobalSimulationsContext.Period.Quarter pq) {
-					add.accept(i, pq);
-				} else if (p instanceof GlobalSimulationsContext.Period.Hour ph) {
-					for (var j = 0; j < ph.quarterPeriods().size(); j++) {
-						var pq = ph.quarterPeriods().get(j);
-						add.accept(i, pq);
-					}
-				}
-			}
-			quarterGsc = new GlobalSimulationsContext(gsc.clock(), gsc.startTime(), gsc.handlers(), gsc.grid(),
-					gsc.ess(), quarterPeriods.build());
-			quarterGt = Genotype.of(quarterGenes.stream() //
-					.map(gs -> IntegerChromosome.of(gs.build())) //
-					.toList());
-		}
-		return from(quarterGsc, quarterGt);
+		final var quarterPeriods = goc.periods().stream() //
+				.flatMap(period -> switch (period) {
+				case GlobalOptimizationContext.Period.Hour ph //
+					-> ph.quarterPeriods().stream();
+				case GlobalOptimizationContext.Period.Quarter pq //
+					-> Stream.of(period);
+				}) //
+				.collect(ImmutableList.<GlobalOptimizationContext.Period>toImmutableList());
+		final var quarterGoc = new GlobalOptimizationContext(goc.clock(), goc.riskLevel(), goc.startTime(), goc.eshs(),
+				goc.eshsWithDifferentModes(), goc.grid(), goc.ess(), quarterPeriods);
+		final var quarterSchedule = IntStream.range(0, goc.periods().size()) //
+				.flatMap(periodIndex -> switch (goc.periods().get(periodIndex)) {
+				case GlobalOptimizationContext.Period.Hour ph //
+					-> ph.quarterPeriods().stream().mapToInt(ignore -> periodIndex); // repeat
+				case GlobalOptimizationContext.Period.Quarter pq //
+					-> IntStream.of(periodIndex);
+				}) //
+				.mapToObj(periodIndex //
+				-> IntStream.range(0, goc.eshsWithDifferentModes().size()) //
+						.map(eshIndex -> {
+							if (periodIndex < schedule.length && eshIndex < schedule[periodIndex].length) {
+								return schedule[periodIndex][eshIndex];
+							}
+							if (periodIndex < goc.eshsWithDifferentModes().size()) {
+								return goc.eshsWithDifferentModes().get(periodIndex).getDefaultModeIndex();
+							}
+							return 0;
+						}) //
+						.toArray()) //
+				.toArray(int[][]::new);
+
+		return from(quarterGoc, quarterSchedule);
 	}
 
 	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
@@ -147,17 +151,17 @@ public record SimulationResult(//
 	 */
 	public String toLogString(String prefix) {
 		var b = new StringBuilder(prefix) //
-				.append("Time   Price Production Consumption   Ess   Grid ProdToCons ProdToGrid ProdToEss GridToCons GridToEss EssToCons EssInitial\n");
+				.append("Time   Price Production Consumption ManagedCons    Ess   Grid ProdToCons ProdToGrid ProdToEss GridToCons GridToEss EssToCons EssInitial\n");
 		this.periods.entrySet().forEach(e -> {
 			final var time = e.getKey();
 			final var p = e.getValue();
-			final var c = p.context;
 			final var ef = p.energyFlow;
 			log(b, "%s", prefix);
 			log(b, "%s ", time.format(TIME_FORMATTER));
-			log(b, "%6.2f ", c.price());
+			log(b, "%6.2f ", p.period.price());
 			log(b, "%10d ", ef.getProd());
-			log(b, "%10d ", ef.getCons());
+			log(b, "%11d ", ef.getCons());
+			log(b, "%11d ", ef.getManagedCons());
 			log(b, "%6d ", ef.getEss());
 			log(b, "%6d ", ef.getGrid());
 			log(b, "%10d ", ef.getProdToCons());
@@ -168,10 +172,11 @@ public record SimulationResult(//
 			log(b, "%9d ", ef.getEssToCons());
 			log(b, "%10d ", p.essInitialEnergy);
 			this.schedules.forEach((esh, schedule) -> {
-				log(b, "%-15s ", esh.toStateString(schedule.get(time).stateIndex()));
+				log(b, "%-15s ", esh.toModeString(schedule.get(time).modeIndex()));
 			});
 			b.append("\n");
 		});
+		b.append(prefix).append("cost=").append(this.cost);
 		return b.toString();
 	}
 }

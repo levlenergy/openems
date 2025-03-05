@@ -178,6 +178,21 @@ export namespace Converter {
       Formatter.FORMAT_AMPERE(value / 1000));
   };
 
+  /**
+   * Converts a formatted current value to the absolute value.
+   *
+   * Value -1000 -> "1.000 A".
+   * Value 1000 -> "1.000 A".
+   * Value null -> "-".
+   *
+   * @param value the current value
+   * @returns formatted value; '-' for null
+   */
+  export const CURRENT_IN_MILLIAMPERE_TO_ABSOLUTE_AMPERE: Converter = (raw) => {
+    return IF_NUMBER(raw, value =>
+      Formatter.FORMAT_AMPERE(Math.abs(value) / 1000));
+  };
+
   export const ONLY_POSITIVE_POWER_AND_NEGATIVE_AS_ZERO: Converter = (raw) => {
     return IF_NUMBER(raw, value =>
       value <= 0
@@ -257,6 +272,23 @@ export namespace Converter {
   export const ON_OFF = (translate: TranslateService) => {
     return (raw): string => {
       return translate.instant(raw == 1 ? "General.on" : "General.off");
+    };
+  };
+
+  export const HEAT_PUMP_STATES = (translate: TranslateService) => {
+    return (raw): string => {
+      switch (raw) {
+        case -1:
+          return translate.instant("Edge.Index.Widgets.HeatPump.undefined");
+        case 0:
+          return translate.instant("Edge.Index.Widgets.HeatPump.lock");
+        case 1:
+          return translate.instant("Edge.Index.Widgets.HeatPump.normalOperationShort");
+        case 2:
+          return translate.instant("Edge.Index.Widgets.HeatPump.switchOnRecShort");
+        case 3:
+          return translate.instant("Edge.Index.Widgets.HeatPump.switchOnComShort");
+      }
     };
   };
 

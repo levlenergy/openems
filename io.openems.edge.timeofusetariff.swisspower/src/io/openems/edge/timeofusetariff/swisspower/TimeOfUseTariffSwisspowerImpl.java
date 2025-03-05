@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
@@ -28,6 +27,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSortedMap;
 
 import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
 import io.openems.common.timedata.DurationUnit;
@@ -196,11 +197,13 @@ public class TimeOfUseTariffSwisspowerImpl extends AbstractOpenemsComponent
 	}
 
 	private void handleEndpointError(HttpError error) {
-		var httpStatusCode = (error instanceof HttpError.ResponseError re) ? re.status.code() : INTERNAL_ERROR;
-		var serverError = (httpStatusCode == SERVER_ERROR_CODE);
-		var badRequest = (httpStatusCode == BAD_REQUEST_ERROR_CODE);
-		var timeoutError = (error instanceof HttpError.UnknownError e
-				&& e.getCause() instanceof SocketTimeoutException);
+		var httpStatusCode = switch (error) {
+		case HttpError.ResponseError re -> re.status.code();
+		default -> INTERNAL_ERROR;
+		};
+		var serverError = httpStatusCode == SERVER_ERROR_CODE;
+		var badRequest = httpStatusCode == BAD_REQUEST_ERROR_CODE;
+		var timeoutError = error instanceof HttpError.UnknownError e && e.getCause() instanceof SocketTimeoutException;
 
 		this.setChannelValues(httpStatusCode, serverError, badRequest, timeoutError);
 		this.log.error("HTTP Error [{}]: {}", httpStatusCode, error.getMessage());
@@ -224,7 +227,7 @@ public class TimeOfUseTariffSwisspowerImpl extends AbstractOpenemsComponent
 	 *                               JSON data.
 	 */
 	protected static TimeOfUsePrices parsePrices(String jsonData, double exchangeRate) throws OpenemsNamedException {
-		var result = new TreeMap<ZonedDateTime, Double>();
+		var result = ImmutableSortedMap.<ZonedDateTime, Double>naturalOrder();
 		var data = parseToJsonObject(jsonData);
 		var prices = getAsJsonArray(data, "prices");
 
@@ -243,7 +246,7 @@ public class TimeOfUseTariffSwisspowerImpl extends AbstractOpenemsComponent
 			// Adding the values in the Map.
 			result.put(startTimeStamp, marketPrice);
 		}
-		return TimeOfUsePrices.from(result);
+		return TimeOfUsePrices.from(result.build());
 	}
 
 	/**

@@ -1,9 +1,9 @@
 package io.openems.edge.energy.api.simulation;
 
-import static io.openems.edge.controller.ess.timeofusetariff.TimeOfUseTariffControllerImpl.applyBalancing;
-import static io.openems.edge.controller.ess.timeofusetariff.TimeOfUseTariffControllerImpl.applyChargeGrid;
-import static io.openems.edge.controller.ess.timeofusetariff.TimeOfUseTariffControllerImpl.applyDelayDischarge;
-import static io.openems.edge.controller.ess.timeofusetariff.TimeOfUseTariffControllerImpl.applyDischargeGrid;
+import static io.openems.edge.controller.ess.timeofusetariff.EnergyScheduler.applyBalancing;
+import static io.openems.edge.controller.ess.timeofusetariff.EnergyScheduler.applyChargeGrid;
+import static io.openems.edge.controller.ess.timeofusetariff.EnergyScheduler.applyDelayDischarge;
+import static io.openems.edge.controller.ess.timeofusetariff.EnergyScheduler.applyDischargeGrid;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -18,11 +18,42 @@ public class EnergyFlowTest {
 	public void testBalancingAndCharge() {
 		var m = new EnergyFlow.Model(//
 				/* production */ 2500, //
-				/* consumption */ 500, //
+				/* consumption */ 200, //
 				/* essMaxCharge */ 5000, //
 				/* essMaxDischarge */ 0, //
 				/* gridMaxBuy */ 4000, //
 				/* gridMaxSell */ 10000);
+		m.addConsumption(300);
+		applyBalancing(m);
+		var ef = m.solve();
+
+		assertEquals(500, ef.getCons());
+		assertEquals(500, ef.getProdToCons());
+
+		assertEquals(2500, ef.getProd());
+		assertEquals(500, ef.getProdToCons());
+		assertEquals(2000, ef.getProdToEss());
+
+		assertEquals(-2000, ef.getEss());
+		assertEquals(2000, ef.getProdToEss());
+
+		assertEquals(0, ef.getGrid());
+		assertEquals(0, ef.getProdToGrid());
+		assertEquals(0, ef.getGridToCons());
+		assertEquals(0, ef.getEssToCons());
+		assertEquals(0, ef.getGridToEss());
+	}
+
+	@Test
+	public void testBalancingAndAddConsumption() {
+		var m = new EnergyFlow.Model(//
+				/* production */ 2500, //
+				/* consumption */ 200, //
+				/* essMaxCharge */ 5000, //
+				/* essMaxDischarge */ 0, //
+				/* gridMaxBuy */ 4000, //
+				/* gridMaxSell */ 10000);
+		m.addConsumption(300);
 		applyBalancing(m);
 		var ef = m.solve();
 

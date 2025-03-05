@@ -1,6 +1,7 @@
 package io.openems.edge.energy.optimizer.app;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static io.openems.edge.energy.api.EnergyUtils.filterEshsWithDifferentModes;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -15,9 +16,9 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableList;
 
 import io.openems.common.test.TimeLeapClock;
-import io.openems.edge.energy.api.EnergyScheduleHandler;
-import io.openems.edge.energy.api.simulation.GlobalSimulationsContext;
-import io.openems.edge.energy.api.simulation.GlobalSimulationsContext.Period;
+import io.openems.edge.energy.api.RiskLevel;
+import io.openems.edge.energy.api.handler.EnergyScheduleHandler;
+import io.openems.edge.energy.api.simulation.GlobalOptimizationContext;
 import io.openems.edge.energy.optimizer.SimulationResult;
 
 public class AppUtils {
@@ -26,29 +27,29 @@ public class AppUtils {
 	}
 
 	/**
-	 * Creates {@link GlobalSimulationsContext} from the log output of
+	 * Creates {@link GlobalOptimizationContext} from the log output of
 	 * {@link SimulationResult#toLogString()}.
 	 * 
 	 * @param log  the log output of {@link SimulationResult#toLogString()}
 	 * @param eshs the {@link EnergyScheduleHandler}s
-	 * @return a {@link GlobalSimulationsContext}
+	 * @return a {@link GlobalOptimizationContext}
 	 */
-	public static GlobalSimulationsContext parseGlobalSimulationsContextFromLogString(String log,
+	public static GlobalOptimizationContext parseGlobalOptimizationContextFromLogString(String log,
 			ImmutableList<EnergyScheduleHandler> eshs) throws IllegalArgumentException {
 		var headerMatcher = log.lines() //
-				.filter(l -> l.contains("OPTIMIZER ") && l.contains("GlobalSimulationsContext")) //
+				.filter(l -> l.contains("OPTIMIZER ") && l.contains("GlobalOptimizationContext")) //
 				.map(l -> applyPattern(HEADER_PATTERN, l)) //
 				.findFirst().get();
 		final var startDateTime = ZonedDateTime.parse(headerMatcher.group("startTime"));
 		final var clock = new TimeLeapClock(startDateTime.toInstant(), ZoneId.of("UTC"));
 
 		var gridMatcher = applyPattern(GRID_PATTERN, headerMatcher.group("grid"));
-		final var grid = new GlobalSimulationsContext.Grid(//
+		final var grid = new GlobalOptimizationContext.Grid(//
 				parseInt(gridMatcher.group("maxBuy")), //
 				parseInt(gridMatcher.group("maxSell")));
 
 		var essMatcher = applyPattern(ESS_PATTERN, headerMatcher.group("ess"));
-		final var ess = new GlobalSimulationsContext.Ess(//
+		final var ess = new GlobalOptimizationContext.Ess(//
 				parseInt(essMatcher.group("currentEnergy")), //
 				parseInt(essMatcher.group("totalEnergy")), //
 				parseInt(essMatcher.group("maxChargeEnergy")), //
@@ -56,7 +57,8 @@ public class AppUtils {
 
 		var nextTime = new AtomicReference<>(startDateTime);
 		var periods = log.lines() //
-				.filter(l -> l.contains("OPTIMIZER ") && !l.contains("GlobalSimulationsContext") && !l.contains("Time")) //
+				.filter(l -> l.contains("OPTIMIZER ") && !l.contains("GlobalOptimizationContext")
+						&& !l.contains("Time")) //
 				.map(l -> applyPattern(PERIOD_PATTERN, l)) //
 				.map(m -> {
 					var time = nextTime.get();
@@ -64,14 +66,16 @@ public class AppUtils {
 						throw new IllegalArgumentException("Times do not match: " + time);
 					}
 					nextTime.set(time.plusMinutes(15));
-					return (Period) new Period.Quarter(time, //
+					return (GlobalOptimizationContext.Period) new GlobalOptimizationContext.Period.Quarter(time, //
 							parseInt(m.group("production")), //
 							parseInt(m.group("consumption")), //
 							parseDouble(m.group("price")));
 				}) //
 				.collect(toImmutableList());
 
-		return new GlobalSimulationsContext(clock, startDateTime, eshs, grid, ess, periods);
+		return new GlobalOptimizationContext(clock, RiskLevel.MEDIUM, startDateTime, //
+				eshs, filterEshsWithDifferentModes(eshs).collect(toImmutableList()), //
+				grid, ess, periods);
 	}
 
 	private static Matcher applyPattern(Pattern pattern, String line) {
@@ -87,7 +91,9 @@ public class AppUtils {
 	private static final Pattern HEADER_PATTERN = Pattern.compile("" //
 			+ "startTime=(?<startTime>\\S*), " //
 			+ "Grid\\[(?<grid>.*)\\], " //
-			+ "Ess\\[(?<ess>.*)\\]");
+			+ "Ess\\[(?<ess>.*)\\], " //
+			+ "evcss=\\{(?<evcss>.*)\\}, " //
+			+ "eshs=\\[");
 
 	private static final Pattern GRID_PATTERN = Pattern.compile("" //
 			+ "maxBuy=(?<maxBuy>\\d+), " //

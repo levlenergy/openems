@@ -6,6 +6,7 @@ import static io.openems.edge.bridge.modbus.api.ElementToChannelConverter.SCALE_
 import static io.openems.edge.bridge.modbus.api.ElementToChannelConverter.SCALE_FACTOR_2;
 import static io.openems.edge.bridge.modbus.api.ElementToChannelConverter.SCALE_FACTOR_MINUS_2;
 import static io.openems.edge.bridge.modbus.api.ModbusUtils.readElementOnce;
+import static io.openems.edge.bridge.modbus.api.ModbusUtils.FunctionCode.FC3;
 
 import java.util.function.Supplier;
 
@@ -178,15 +179,16 @@ public class GoodWeGridMeterImpl extends AbstractOpenemsModbusComponent implemen
 								this.ignoreZeroAndScaleFactor1)));
 
 		// Handles different DSP versions
-		readElementOnce(protocol, ModbusUtils::retryOnNull, new UnsignedWordElement(35016)).thenAccept(dspVersion -> {
-			if (dspVersion >= 4 || dspVersion == 0) {
-				this.handleDspVersion4(protocol);
-			}
-		});
+		readElementOnce(FC3, protocol, ModbusUtils::retryOnNull, new UnsignedWordElement(35016))
+				.thenAccept(dspVersion -> {
+					if (dspVersion >= 4 || dspVersion == 0) {
+						this.handleDspVersion4(protocol);
+					}
+				});
 
 		switch (this.config.goodWeMeterCategory()) {
 		case COMMERCIAL_METER -> this.handleExternalMeter(protocol);
-		case SMART_METER -> {
+		case SMART_METER, INTEGRATED_METER -> {
 		}
 		}
 
@@ -238,7 +240,7 @@ public class GoodWeGridMeterImpl extends AbstractOpenemsModbusComponent implemen
 
 			switch (this.config.goodWeMeterCategory()) {
 			case COMMERCIAL_METER -> this.setExternalMeterValue();
-			case SMART_METER -> {
+			case SMART_METER, INTEGRATED_METER -> {
 			}
 			}
 		}
@@ -337,17 +339,12 @@ public class GoodWeGridMeterImpl extends AbstractOpenemsModbusComponent implemen
 	 * @return connection information of the given phase
 	 */
 	protected static Integer getPhaseConnectionValue(Phase phase, int value) {
-		switch (phase) {
-		case L1:
-			return value & 0xF;
-		case L2:
-			return value >> 4 & 0xF;
-		case L3:
-			return value >> 8 & 0xF;
-		case ALL:
-		default:
-			return null;
-		}
+		return switch (phase) {
+		case L1 -> value & 0xF;
+		case L2 -> value >> 4 & 0xF;
+		case L3 -> value >> 8 & 0xF;
+		case ALL -> null;
+		};
 	}
 
 	/**
@@ -426,6 +423,9 @@ public class GoodWeGridMeterImpl extends AbstractOpenemsModbusComponent implemen
 	protected static ElementToChannelConverter createAdjustCurrentSign(
 			Supplier<Value<Integer>> getActivePowerNextValue) {
 		return new ElementToChannelConverter(value -> {
+			if (value == null) {
+				return value;
+			}
 			var activePower = getActivePowerNextValue.get().orElse(0);
 			Integer intValue = TypeUtils.getAsType(INTEGER, value);
 			return Math.abs(intValue) * Integer.signum(activePower);

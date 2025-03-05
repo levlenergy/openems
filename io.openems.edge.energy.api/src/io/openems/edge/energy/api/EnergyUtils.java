@@ -1,12 +1,13 @@
 package io.openems.edge.energy.api;
 
 import static io.openems.edge.common.type.TypeUtils.multiply;
-import static io.openems.edge.common.type.TypeUtils.orElse;
 import static io.openems.edge.energy.api.EnergyConstants.PERIODS_PER_HOUR;
-import static java.util.Arrays.stream;
 
-import java.util.Objects;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableList;
+
+import io.openems.edge.energy.api.handler.EnergyScheduleHandler;
 
 public class EnergyUtils {
 
@@ -91,35 +92,17 @@ public class EnergyUtils {
 	}
 
 	/**
-	 * Interpolate an Array of {@link Integer}s.
+	 * From a list of {@link EnergyScheduleHandler}s, filters only the ones of type
+	 * {@link EnergyScheduleHandler.WithDifferentModes}.
 	 * 
-	 * <p>
-	 * Replaces nulls with previous value. If first entry is null, it is set to
-	 * first available value. If all values are null, all are set to 0.
-	 * 
-	 * @param values the values
-	 * @return values without nulls
+	 * @param eshs list of {@link EnergyScheduleHandler}s
+	 * @return new stream of {@link EnergyScheduleHandler.WithDifferentModes}s
 	 */
-	public static int[] interpolateArray(Integer[] values) {
-		var firstNonNull = stream(values) //
-				.filter(Objects::nonNull) //
-				.findFirst();
-		var lastNonNullIndex = IntStream.range(0, values.length) //
-				.filter(i -> values[i] != null) //
-				.reduce((first, second) -> second); //
-		if (lastNonNullIndex.isEmpty()) {
-			return new int[0];
-		}
-		var result = new int[lastNonNullIndex.getAsInt() + 1];
-		if (firstNonNull.isEmpty()) {
-			// all null
-			return result;
-		}
-		int last = firstNonNull.get();
-		for (var i = 0; i < result.length; i++) {
-			int value = orElse(values[i], last);
-			result[i] = last = value;
-		}
-		return result;
+	public static Stream<EnergyScheduleHandler.WithDifferentModes> filterEshsWithDifferentModes(
+			ImmutableList<EnergyScheduleHandler> eshs) {
+		return eshs.stream() //
+				.filter(EnergyScheduleHandler.WithDifferentModes.class::isInstance) //
+				.map(EnergyScheduleHandler.WithDifferentModes.class::cast);
+		// TODO only ESHs with actually more than one Mode
 	}
 }

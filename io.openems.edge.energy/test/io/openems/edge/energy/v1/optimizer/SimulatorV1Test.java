@@ -3,13 +3,13 @@ package io.openems.edge.energy.v1.optimizer;
 import static io.openems.edge.controller.ess.timeofusetariff.StateMachine.BALANCING;
 import static io.openems.edge.controller.ess.timeofusetariff.StateMachine.CHARGE_GRID;
 import static io.openems.edge.controller.ess.timeofusetariff.StateMachine.DELAY_DISCHARGE;
-import static io.openems.edge.energy.api.EnergyUtils.interpolateArray;
 import static io.openems.edge.energy.api.EnergyUtils.toEnergy;
 import static io.openems.edge.energy.v1.optimizer.SimulatorV1.getBestSchedule;
 import static io.openems.edge.energy.v1.optimizer.SimulatorV1.simulate;
 import static io.openems.edge.energy.v1.optimizer.TestDataV1.CONSUMPTION_888_20231106;
 import static io.openems.edge.energy.v1.optimizer.TestDataV1.PRICES_888_20231106;
 import static io.openems.edge.energy.v1.optimizer.TestDataV1.PRODUCTION_888_20231106;
+import static io.openems.edge.energy.v1.optimizer.UtilsV1.interpolateArray;
 import static io.openems.edge.energy.v1.optimizer.UtilsV1.interpolateDoubleArray;
 import static java.util.Arrays.stream;
 import static org.junit.Assert.assertArrayEquals;
@@ -157,7 +157,7 @@ public class SimulatorV1Test {
 				.setProductions(stream(interpolateArray(PRODUCTION_888_20231106)).map(v -> toEnergy(v)).toArray()) //
 				.setConsumptions(stream(interpolateArray(CONSUMPTION_888_20231106)).map(v -> toEnergy(v)).toArray()) //
 				.setPrices(hourlyToQuarterly(interpolateDoubleArray(PRICES_888_20231106))) //
-				.setStates(ControlMode.CHARGE_CONSUMPTION.states) //
+				.setStates(ControlMode.CHARGE_CONSUMPTION.modes) //
 				.setExistingSchedule(UtilsV1Test.prepareExistingSchedule(TIME, existingSchedule)) //
 				.build();
 		var s = getBestSchedule(p, //

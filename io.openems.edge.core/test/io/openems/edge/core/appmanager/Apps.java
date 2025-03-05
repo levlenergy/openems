@@ -8,12 +8,18 @@ import java.util.stream.Collectors;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.ComponentContext;
 
+import com.google.gson.JsonObject;
+
 import io.openems.edge.app.TestADependencyToC;
 import io.openems.edge.app.TestBDependencyToC;
 import io.openems.edge.app.TestC;
 import io.openems.edge.app.TestMultipleIds;
+import io.openems.edge.app.TestPermissions;
+import io.openems.edge.app.api.ModbusRtuApiReadOnly;
+import io.openems.edge.app.api.ModbusRtuApiReadWrite;
 import io.openems.edge.app.api.ModbusTcpApiReadOnly;
 import io.openems.edge.app.api.ModbusTcpApiReadWrite;
+import io.openems.edge.app.api.MqttApi;
 import io.openems.edge.app.api.RestJsonApiReadOnly;
 import io.openems.edge.app.api.RestJsonApiReadWrite;
 import io.openems.edge.app.api.TimedataInfluxDb;
@@ -23,24 +29,36 @@ import io.openems.edge.app.ess.Limiter14a;
 import io.openems.edge.app.ess.PowerPlantController;
 import io.openems.edge.app.ess.PrepareBatteryExtension;
 import io.openems.edge.app.evcs.AlpitronicEvcs;
+import io.openems.edge.app.evcs.DezonyEvcs;
 import io.openems.edge.app.evcs.EvcsCluster;
 import io.openems.edge.app.evcs.HardyBarthEvcs;
 import io.openems.edge.app.evcs.IesKeywattEvcs;
 import io.openems.edge.app.evcs.KebaEvcs;
 import io.openems.edge.app.evcs.WebastoNextEvcs;
 import io.openems.edge.app.evcs.WebastoUniteEvcs;
+import io.openems.edge.app.evcs.readonly.MennekesEvcsReadOnly;
+import io.openems.edge.app.hardware.IoGpio;
+import io.openems.edge.app.hardware.KMtronic8Channel;
 import io.openems.edge.app.heat.CombinedHeatAndPower;
 import io.openems.edge.app.heat.HeatPump;
 import io.openems.edge.app.heat.HeatingElement;
-import io.openems.edge.app.integratedsystem.FeneconHome;
+import io.openems.edge.app.integratedsystem.FeneconHome10;
+import io.openems.edge.app.integratedsystem.FeneconHome10Gen2;
+import io.openems.edge.app.integratedsystem.FeneconHome15;
 import io.openems.edge.app.integratedsystem.FeneconHome20;
 import io.openems.edge.app.integratedsystem.FeneconHome30;
+import io.openems.edge.app.integratedsystem.FeneconHome6;
+import io.openems.edge.app.integratedsystem.TestFeneconHome10;
+import io.openems.edge.app.integratedsystem.TestFeneconHome10Gen2;
+import io.openems.edge.app.integratedsystem.TestFeneconHome20;
+import io.openems.edge.app.integratedsystem.TestFeneconHome30;
 import io.openems.edge.app.integratedsystem.fenecon.commercial.FeneconCommercial92;
 import io.openems.edge.app.loadcontrol.ManualRelayControl;
 import io.openems.edge.app.loadcontrol.ThresholdControl;
 import io.openems.edge.app.meter.CarloGavazziMeter;
 import io.openems.edge.app.meter.DiscovergyMeter;
 import io.openems.edge.app.meter.JanitzaMeter;
+import io.openems.edge.app.meter.KdkMeter;
 import io.openems.edge.app.meter.MicrocareSdm630Meter;
 import io.openems.edge.app.meter.PhoenixContactMeter;
 import io.openems.edge.app.meter.PqPlusMeter;
@@ -70,6 +88,7 @@ import io.openems.edge.app.timeofusetariff.StromdaoCorrently;
 import io.openems.edge.app.timeofusetariff.Swisspower;
 import io.openems.edge.app.timeofusetariff.Tibber;
 import io.openems.edge.common.component.ComponentManager;
+import io.openems.edge.common.host.Host;
 
 public final class Apps {
 
@@ -95,13 +114,43 @@ public final class Apps {
 	// Integrated Systems
 
 	/**
-	 * Test method for creating a {@link FeneconHome}.
+	 * Test method for creating a {@link FeneconHome10}.
 	 * 
 	 * @param t the {@link AppManagerTestBundle}
 	 * @return the {@link OpenemsApp} instance
 	 */
-	public static final FeneconHome feneconHome(AppManagerTestBundle t) {
-		return app(t, FeneconHome::new, "App.FENECON.Home");
+	public static final FeneconHome10 feneconHome10(AppManagerTestBundle t) {
+		return app(t, FeneconHome10::new, "App.FENECON.Home");
+	}
+
+	/**
+	 * Test method for creating a {@link FeneconHome6}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final FeneconHome6 feneconHome6(AppManagerTestBundle t) {
+		return app(t, FeneconHome6::new, "App.FENECON.Home6");
+	}
+
+	/**
+	 * Test method for creating a {@link FeneconHome10Gen2}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final FeneconHome10Gen2 feneconHome10Gen2(AppManagerTestBundle t) {
+		return app(t, FeneconHome10Gen2::new, "App.FENECON.Home10.Gen2");
+	}
+
+	/**
+	 * Test method for creating a {@link FeneconHome15}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final FeneconHome15 feneconHome15(AppManagerTestBundle t) {
+		return app(t, FeneconHome15::new, "App.FENECON.Home15");
 	}
 
 	/**
@@ -286,6 +335,16 @@ public final class Apps {
 		return app(t, TechbaseCm4sGen2::new, "App.OpenemsHardware.CM4S.Gen2");
 	}
 
+	/**
+	 * Test method for creating a {@link TestPermissions}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final TestPermissions testPermissions(AppManagerTestBundle t) {
+		return app(t, TestPermissions::new, "App.Test.TestPermissions");
+	}
+	
 	// Test
 
 	/**
@@ -351,6 +410,36 @@ public final class Apps {
 	}
 
 	/**
+	 * Test method for creating a {@link MqttApi}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final MqttApi mqttApi(AppManagerTestBundle t) {
+		return app(t, MqttApi::new, "App.Api.Mqtt");
+	}
+
+	/**
+	 * Test method for creating a {@link ModbusRtuApiReadOnly}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final ModbusRtuApiReadOnly modbusRtuApiReadOnly(AppManagerTestBundle t) {
+		return app(t, ModbusRtuApiReadOnly::new, "App.Api.ModbusRtu.ReadOnly");
+	}
+
+	/**
+	 * Test method for creating a {@link ModbusRtuApiReadWrite}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final ModbusRtuApiReadWrite modbusRtuApiReadWrite(AppManagerTestBundle t) {
+		return app(t, ModbusRtuApiReadWrite::new, "App.Api.ModbusRtu.ReadWrite");
+	}
+
+	/**
 	 * Test method for creating a {@link RestJsonApiReadOnly}.
 	 * 
 	 * @param t the {@link AppManagerTestBundle}
@@ -378,6 +467,26 @@ public final class Apps {
 	 * @param t the {@link AppManagerTestBundle}
 	 * @return the {@link OpenemsApp} instance
 	 */
+	public static final AlpitronicEvcs alpitronic(AppManagerTestBundle t) {
+		return app(t, AlpitronicEvcs::new, "App.Evcs.Alpitronic");
+	}
+
+	/**
+	 * Test method for creating a {@link RestJsonApiReadOnly}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final DezonyEvcs dezony(AppManagerTestBundle t) {
+		return app(t, DezonyEvcs::new, "App.Evcs.Dezony");
+	}
+
+	/**
+	 * Test method for creating a {@link RestJsonApiReadOnly}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
 	public static final HardyBarthEvcs hardyBarthEvcs(AppManagerTestBundle t) {
 		return app(t, HardyBarthEvcs::new, "App.Evcs.HardyBarth");
 	}
@@ -390,6 +499,16 @@ public final class Apps {
 	 */
 	public static final KebaEvcs kebaEvcs(AppManagerTestBundle t) {
 		return app(t, KebaEvcs::new, "App.Evcs.Keba");
+	}
+
+	/**
+	 * Test method for creating a {@link MennekesEvcsReadOnly}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final MennekesEvcsReadOnly mennekesEvcsReadOnlyEvcs(AppManagerTestBundle t) {
+		return app(t, MennekesEvcsReadOnly::new, "App.Evcs.Mennekes.ReadOnly");
 	}
 
 	/**
@@ -450,6 +569,28 @@ public final class Apps {
 	 */
 	public static final EvcsCluster evcsCluster(AppManagerTestBundle t) {
 		return app(t, EvcsCluster::new, "App.Evcs.Cluster");
+	}
+
+	// Hardware
+
+	/**
+	 * Test method for creating a {@link KMtronic8Channel}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final KMtronic8Channel kmtronic8Channel(AppManagerTestBundle t) {
+		return app(t, KMtronic8Channel::new, "App.Hardware.KMtronic8Channel");
+	}
+
+	/**
+	 * Test method for creating a {@link IoGpio}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final IoGpio ioGpio(AppManagerTestBundle t) {
+		return app(t, IoGpio::new, "App.Hardware.IoGpio");
 	}
 
 	// Heat
@@ -538,6 +679,16 @@ public final class Apps {
 	 */
 	public static final SocomecMeter socomecMeter(AppManagerTestBundle t) {
 		return app(t, SocomecMeter::new, "App.Meter.Socomec");
+	}
+
+	/**
+	 * Test method for creating a {@link KdkMeter}.
+	 * 
+	 * @param t the {@link AppManagerTestBundle}
+	 * @return the {@link OpenemsApp} instance
+	 */
+	public static final KdkMeter kdkMeter(AppManagerTestBundle t) {
+		return app(t, KdkMeter::new, "App.Meter.Kdk");
 	}
 
 	/**
@@ -726,6 +877,25 @@ public final class Apps {
 		return app(t, Limiter14a::new, "App.Ess.Limiter14a");
 	}
 
+	/**
+	 * Gets the minimum configuration of an app for easily creating instances in
+	 * tests.
+	 * 
+	 * @param appId the id of the {@link OpenemsApp}
+	 * @return the configuration to create an instance
+	 */
+	public static JsonObject getMinConfig(String appId) {
+		return switch (appId) {
+		case "App.FENECON.Home" -> TestFeneconHome10.minSettings();
+		case "App.FENECON.Home.20" -> TestFeneconHome20.minSettings();
+		case "App.FENECON.Home.30" -> TestFeneconHome30.minSettings();
+		case "App.FENECON.Home6" -> TestFeneconHome10Gen2.minSettings();
+		case "App.FENECON.Home10.Gen2" -> TestFeneconHome10Gen2.minSettings();
+		case "App.FENECON.Home15" -> TestFeneconHome10Gen2.minSettings();
+		default -> new JsonObject();
+		};
+	}
+
 	private static final <T> T app(AppManagerTestBundle t, DefaultAppConstructor<T> constructor, String appId) {
 		return constructor.create(t.componentManger, AppManagerTestBundle.getComponentContext(appId), t.cm,
 				t.componentUtil);
@@ -735,6 +905,11 @@ public final class Apps {
 			String appId) {
 		return constructor.create(t.componentManger, AppManagerTestBundle.getComponentContext(appId), t.cm,
 				t.componentUtil, t.appManagerUtil);
+	}
+
+	private static final <T> T app(AppManagerTestBundle t, DefaultAppConstructorWithHost<T> constructor, String appId) {
+		return constructor.create(t.componentManger, AppManagerTestBundle.getComponentContext(appId), t.cm,
+				t.componentUtil, t.host);
 	}
 
 	private static interface DefaultAppConstructor<A> {
@@ -748,6 +923,13 @@ public final class Apps {
 
 		public A create(ComponentManager componentManager, ComponentContext componentContext, ConfigurationAdmin cm,
 				ComponentUtil componentUtil, AppManagerUtil util);
+
+	}
+
+	private static interface DefaultAppConstructorWithHost<A> {
+
+		public A create(ComponentManager componentManager, ComponentContext componentContext, ConfigurationAdmin cm,
+				ComponentUtil componentUtil, Host host);
 
 	}
 
