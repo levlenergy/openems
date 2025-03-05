@@ -24,6 +24,7 @@ import io.openems.edge.evcs.api.AbstractManagedEvcsComponent;
 import io.openems.edge.evcs.api.Evcs;
 import io.openems.edge.evcs.api.EvcsPower;
 import io.openems.edge.evcs.api.ManagedEvcs;
+import io.openems.edge.evcs.api.PhaseRotation;
 import io.openems.edge.evcs.api.Status;
 import io.openems.edge.meter.api.ElectricityMeter;
 
@@ -164,5 +165,11 @@ public class SimulatorEvcsImpl extends AbstractManagedEvcsComponent
 	@Override
 	public boolean applyDisplayText(String text) throws OpenemsException {
 		return false;
+	}
+
+	@Override
+	public PhaseRotation getPhaseRotation() {
+		// TODO implement handling for rotated Phases
+		return PhaseRotation.L1_L2_L3;
 	}
 }
