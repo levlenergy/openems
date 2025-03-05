@@ -154,7 +154,6 @@
 	bnd.identity;id='io.openems.edge.kaco.blueplanet.hybrid10',\
 	bnd.identity;id='io.openems.edge.katek.edcom',\
 	bnd.identity;id='io.openems.edge.kostal.piko',\
-	bnd.identity;id='io.openems.edge.levl.controller',\
 	bnd.identity;id='io.openems.edge.meter.abb',\
 	bnd.identity;id='io.openems.edge.meter.artemes.am2',\
 	bnd.identity;id='io.openems.edge.meter.bcontrol.em300',\
@@ -203,7 +202,6 @@
 	bnd.identity;id='io.openems.edge.timeofusetariff.rabotcharge',\
 	bnd.identity;id='io.openems.edge.timeofusetariff.swisspower',\
 	bnd.identity;id='io.openems.edge.timeofusetariff.tibber',\
-	bnd.identity;id='io.openems.edge.levl.controller',\
 	bnd.identity;id='io.openems.edge.levl.simulator',\
 
 -runbundles: \
@@ -344,7 +342,6 @@
 	io.openems.edge.kaco.blueplanet.hybrid10;version=snapshot,\
 	io.openems.edge.katek.edcom;version=snapshot,\
 	io.openems.edge.kostal.piko;version=snapshot,\
-	io.openems.edge.levl.controller;version=snapshot,\
 	io.openems.edge.meter.abb;version=snapshot,\
 	io.openems.edge.meter.api;version=snapshot,\
 	io.openems.edge.meter.artemes.am2;version=snapshot,\
@@ -457,6 +454,5 @@
 	reactive-streams;version='[1.0.4,1.0.5)',\
 	rrd4j;version='[3.9.0,3.9.1)',\
 	stax2-api;version='[4.2.2,4.2.3)',\
-	io.openems.edge.levl.controller;version=snapshot,\
 	io.openems.edge.levl.simulator;version=snapshot
 		
